@@ -98,7 +98,7 @@ class PatternFinder(ABC):
                         matched = True
                         break
                 except re.PatternError:
-                    program.log_error(f"invalid regex pattern: {sub_pattern}", raise_system_exit=True)
+                    program.log_error(f"invalid pattern: {sub_pattern}", raise_system_exit=True)
 
             if not matched:
                 return False
