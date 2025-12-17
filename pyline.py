@@ -53,12 +53,12 @@ class PyLine(CLIProgram):
         parser.add_argument("files", help="files to search", metavar="FILES", nargs="*")
         parser.add_argument("-c", "--count", action="store_true",
                             help="print only a count of matching lines per input file")
+        parser.add_argument("-e", "--regexp", action="extend", help="print lines that match PATTERN", metavar="PATTERN",
+                            required=True, nargs=1)
         parser.add_argument("-H", "--no-file-header", action="store_true",
                             help="suppress the file name header on output")
         parser.add_argument("-i", "--ignore-case", action="store_true", help="ignore case in patterns and input data")
         parser.add_argument("-I", "--invert-match", action="store_true", help="print nonmatching lines")
-        parser.add_argument("-m", "--match", action="extend", help="print lines that match PATTERN", metavar="PATTERN",
-                            required=True, nargs=1)
         parser.add_argument("-n", "--line-number", action="store_true", help="print line number with output lines")
         parser.add_argument("-q", "--quiet", "--silent", action="store_true", help="suppress all normal output")
         parser.add_argument("-s", "--no-messages", action="store_true", help="suppress error messages about files")
@@ -147,7 +147,7 @@ class PyLine(CLIProgram):
 
         # Find matches.
         for index, line in enumerate(lines):
-            if PatternFinder.text_has_all_patterns(self, line, self.args.match,
+            if PatternFinder.text_has_all_patterns(self, line, self.args.regexp,
                                                    ignore_case=self.args.ignore_case) != self.args.invert_match:  # --invert-match
                 self.at_least_one_match = True
 
@@ -156,7 +156,7 @@ class PyLine(CLIProgram):
                     raise SystemExit(0)
 
                 if self.print_color and not self.args.invert_match:  # --invert-match
-                    line = PatternFinder.color_patterns_in_text(self.args.match, line,
+                    line = PatternFinder.color_patterns_in_text(self.args.regexp, line,
                                                                 ignore_case=self.args.ignore_case, color=Colors.MATCH)
 
                 if self.args.line_number:  # --line-number
