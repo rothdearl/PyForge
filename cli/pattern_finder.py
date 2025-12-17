@@ -37,8 +37,8 @@ class PatternFinder(ABC):
     def color_patterns_in_text(patterns: list[str], text: str, *, ignore_case: bool, color: str) -> str:
         """
         Colors all patterns in the text.
-        :param text: The text.
         :param patterns: The patterns.
+        :param text: The text.
         :param ignore_case: Whether to ignore case.
         :param color: The color.
         :return: The text with all the patterns colored.
