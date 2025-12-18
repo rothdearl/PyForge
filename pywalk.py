@@ -150,7 +150,7 @@ class PyWalk(CLIProgram):
 
     def file_has_patterns(self, file: str, patterns: list[str]) -> bool:
         """
-        Returns whether the file has all the patterns.
+        Returns whether the file has the patterns.
         :param file: The file.
         :param patterns: The patterns.
         :return: True or False.
@@ -185,6 +185,7 @@ class PyWalk(CLIProgram):
         file_name = file.name if file.name else os.path.curdir  # The dot file does not have a file name.
         file_path = str(file.parent)
 
+        # Check --name then --path then filters.
         if self.file_has_patterns(file_name, self.args.name) and self.file_has_patterns(file_path, self.args.path):
             if self.file_matches_filters(file):
                 self.at_least_one_match = True
