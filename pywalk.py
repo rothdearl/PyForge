@@ -4,7 +4,7 @@
 """
 Filename: pywalk.py
 Author: Roth Earl
-Version: 1.2.0
+Version: 1.2.1
 Description: A program to print files in a directory hierarchy.
 License: GNU GPLv3
 """
@@ -37,7 +37,7 @@ class PyWalk(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="pywalk", version="1.2.0", error_exit_code=2)
+        super().__init__(name="pywalk", version="1.2.1", error_exit_code=2)
 
         self.at_least_one_match: bool = False
 

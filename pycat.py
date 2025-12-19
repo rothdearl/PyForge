@@ -4,7 +4,7 @@
 """
 Filename: pycat.py
 Author: Roth Earl
-Version: 1.2.0
+Version: 1.2.1
 Description: A program to concatenate files to standard output.
 License: GNU GPLv3
 """
@@ -36,7 +36,7 @@ class PyCat(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="pycat", version="1.2.0")
+        super().__init__(name="pycat", version="1.2.1")
 
         self.number: int = 0
         self.repeated_blank_lines: int = 0
@@ -64,7 +64,7 @@ class PyCat(CLIProgram):
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="display the spaces, tabs, end of line and numbers in color")
         parser.add_argument("--iso", action="store_true", help="use iso-8859-1 instead of utf-8 when reading files")
-        parser.add_argument("--xargs", action="store_true", help="read FILES from standard output")
+        parser.add_argument("--pipe", action="store_true", help="read FILES from standard output")
         parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {self.VERSION}")
 
         return parser
@@ -75,7 +75,7 @@ class PyCat(CLIProgram):
         :return: None
         """
         if CLIProgram.input_is_redirected():
-            if self.args.xargs:  # --xargs
+            if self.args.pipe:  # --pipe
                 self.print_lines_from_files(sys.stdin.readlines())
             else:
                 self.print_lines(sys.stdin)

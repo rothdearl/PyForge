@@ -4,7 +4,7 @@
 """
 Filename: pyspl.py
 Author: Roth Earl
-Version: 1.2.0
+Version: 1.2.1
 Description: A program to split lines into fields.
 License: GNU GPLv3
 """
@@ -39,7 +39,7 @@ class PySplit(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="pyspl", version="1.2.0")
+        super().__init__(name="pyspl", version="1.2.1")
 
         self.DEFAULT_PATTERN: Final[str] = r"\s+"  # All whitespace.
         self.field_index_end: int = 0
@@ -73,7 +73,7 @@ class PySplit(CLIProgram):
         parser.add_argument("--iso", action="store_true", help="use iso-8859-1 instead of utf-8 when reading files")
         parser.add_argument("--total", choices=("auto", "on", "off"), default="auto",
                             help="print a line with total count")
-        parser.add_argument("--xargs", action="store_true", help="read FILES from standard output")
+        parser.add_argument("--pipe", action="store_true", help="read FILES from standard output")
         parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {self.VERSION}")
 
         return parser
@@ -85,12 +85,12 @@ class PySplit(CLIProgram):
         """
         self.set_field_info_values()
 
-        # Set --no-file-header to True if there are no files and --xargs=False.
-        if not self.args.files and not self.args.xargs:
+        # Set --no-file-header to True if there are no files and --pipe=False.
+        if not self.args.files and not self.args.pipe:
             self.args.no_file_header = True
 
         if CLIProgram.input_is_redirected():
-            if self.args.xargs:  # --xargs
+            if self.args.pipe:  # --pipe
                 self.split_lines_from_files(sys.stdin)
             else:
                 if standard_input := sys.stdin.readlines():

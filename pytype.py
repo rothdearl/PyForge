@@ -4,7 +4,7 @@
 """
 Filename: pytype.py
 Author: Roth Earl
-Version: 1.2.0
+Version: 1.2.1
 Description: A program to print files to standard output.
 License: GNU GPLv3
 """
@@ -37,7 +37,7 @@ class PyType(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="pytype", version="1.2.0")
+        super().__init__(name="pytype", version="1.2.1")
 
         self.line_start: int = 0
         self.lines: int = 0
@@ -60,7 +60,7 @@ class PyType(CLIProgram):
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="display the file names and line numbers in color")
         parser.add_argument("--iso", action="store_true", help="use iso-8859-1 instead of utf-8 when reading files")
-        parser.add_argument("--xargs", action="store_true", help="read FILES from standard output")
+        parser.add_argument("--pipe", action="store_true", help="read FILES from standard output")
         parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {self.VERSION}")
 
         return parser
@@ -72,12 +72,12 @@ class PyType(CLIProgram):
         """
         self.set_line_info_values()
 
-        # Set --no-file-header to True if there are no files and --xargs=False.
-        if not self.args.files and not self.args.xargs:
+        # Set --no-file-header to True if there are no files and --pipe=False.
+        if not self.args.files and not self.args.pipe:
             self.args.no_file_header = True
 
         if CLIProgram.input_is_redirected():
-            if self.args.xargs:  # --xargs
+            if self.args.pipe:  # --pipe
                 self.print_lines_from_files(sys.stdin)
             else:
                 if standard_input := sys.stdin.readlines():
