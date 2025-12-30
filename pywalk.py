@@ -63,7 +63,7 @@ class PyWalk(CLIProgram):
         parser.add_argument("-q", "--quiet", "--silent", action="store_true", help="suppress all normal output")
         parser.add_argument("-s", "--no-messages", action="store_true", help="suppress error messages about files")
         path_group.add_argument("--abs", action="store_true", help="print absolute file paths")
-        path_group.add_argument("--cur", action="store_true", help=f"print current directory with file paths")
+        path_group.add_argument("--cur", action="store_true", help="print the current directory")
         parser.add_argument("--color", choices=("on", "off"), default="on", help="display the matched strings in color")
         parser.add_argument("--empty", choices=("y", "n"), help="print files that are empty")
         modified_group.add_argument("--m-days", help="print files modified < than or > than n days", metavar="±n",
