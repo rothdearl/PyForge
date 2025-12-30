@@ -63,7 +63,7 @@ class PyWalk(CLIProgram):
         parser.add_argument("-q", "--quiet", "--silent", action="store_true", help="suppress all normal output")
         parser.add_argument("-s", "--no-messages", action="store_true", help="suppress error messages about files")
         path_group.add_argument("--abs", action="store_true", help="print absolute file paths")
-        path_group.add_argument("--rel", action="store_true", help=f"print relative file paths (.{os.path.sep})")
+        path_group.add_argument("--cur", action="store_true", help=f"print current directory with file paths")
         parser.add_argument("--color", choices=("on", "off"), default="on", help="display the matched strings in color")
         parser.add_argument("--empty", choices=("y", "n"), help="print files that are empty")
         modified_group.add_argument("--m-days", help="print files modified < than or > than n days", metavar="±n",
@@ -186,17 +186,16 @@ class PyWalk(CLIProgram):
         file_name = file.name if file.name else os.curdir  # The dot file does not have a file name.
         file_path = str(file.parent) if len(file.parts) > 1 else ""  # Do not use the dot file in the path.
 
-        # Check --depth then --name then --path then filters.
-        if self.args.depth and self.args.depth < len(file.parents):
+        if self.args.depth and self.args.depth < len(file.parents):  # --depth
             return
 
-        if not self.file_has_patterns(file_name, self.args.name):
+        if not self.file_has_patterns(file_name, self.args.name):  # --name
             return
 
-        if not self.file_has_patterns(file_path, self.args.path):
+        if not self.file_has_patterns(file_path, self.args.path):  # --path
             return
 
-        if not self.file_matches_filters(file):
+        if not self.file_matches_filters(file):  # --type, --empty, --m-days, --m-hours, or --m-mins
             return
 
         self.at_least_one_match = True
@@ -211,7 +210,7 @@ class PyWalk(CLIProgram):
 
         if self.args.abs:  # --abs
             path = os.path.join(pathlib.Path.cwd(), file_path, file_name)
-        elif file.name and self.args.rel:  # Join the current directory if not the dot file and --rel.
+        elif self.args.cur and file.name:  # --cur and not the dot file.
             path = os.path.join(os.curdir, file_path, file_name)
         else:
             path = os.path.join(file_path, file_name)
