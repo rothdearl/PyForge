@@ -188,7 +188,7 @@ class PyWalk(CLIProgram):
         if not file.name and not self.args.dot:  # Skip the dot file if not --dot.
             return
 
-        if self.args.depth and self.args.depth < len(file.parents):  # --depth
+        if self.args.depth and self.args.depth < len(file.parts):  # --depth
             return
 
         if not self.file_has_patterns(file_name, self.args.name):  # --name
