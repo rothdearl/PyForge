@@ -71,7 +71,7 @@ class PyWalk(CLIProgram):
                                     type=int)
         modified_group.add_argument("--m-mins", help="print files modified < than or > than n minutes", metavar="±n",
                                     type=int)
-        parser.add_argument("--quote", action="store_true", help="print files in double quotes")
+        parser.add_argument("--quotes", action="store_true", help="print files in double quotes")
         parser.add_argument("--type", choices=("d", "f"), help="print files by type")
         parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {self.VERSION}")
 
@@ -220,7 +220,7 @@ class PyWalk(CLIProgram):
         else:
             path = os.path.join(file_path, file_name)
 
-        if self.args.quote:  # --quote
+        if self.args.quotes:  # --quotes
             path = f"\"{path}\""
 
         print(path)
