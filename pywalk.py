@@ -61,8 +61,8 @@ class PyWalk(CLIProgram):
                             nargs=1)
         parser.add_argument("-q", "--quiet", "--silent", action="store_true", help="suppress all normal output")
         parser.add_argument("-s", "--no-messages", action="store_true", help="suppress error messages about files")
+        parser.add_argument("--abs", action="store_true", help="print absolute file paths")
         parser.add_argument("--color", choices=("on", "off"), default="on", help="display the matched strings in color")
-        parser.add_argument("--cwd", action="store_true", help="print the current working directory")
         parser.add_argument("--dot", action="store_true", help="print the dot (.) file")
         parser.add_argument("--empty", choices=("y", "n"), help="print files that are empty")
         modified_group.add_argument("--m-days", help="print files modified < than or > than n days", metavar="±n",
@@ -71,7 +71,7 @@ class PyWalk(CLIProgram):
                                     type=int)
         modified_group.add_argument("--m-mins", help="print files modified < than or > than n minutes", metavar="±n",
                                     type=int)
-        parser.add_argument("--quote", action="store_true", help="print files in quotation marks")
+        parser.add_argument("--quote", action="store_true", help="print files in double quotes")
         parser.add_argument("--type", choices=("d", "f"), help="print files by type")
         parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {self.VERSION}")
 
@@ -210,7 +210,7 @@ class PyWalk(CLIProgram):
             file_name = self.color_patterns_in_path(file_name, self.args.name)
             file_path = self.color_patterns_in_path(file_path, self.args.path)
 
-        if self.args.cwd:  # --cwd
+        if self.args.abs:  # --abs
             if file.name:  # Do not join the current working directory with the dot file.
                 path = os.path.join(pathlib.Path.cwd(), file_path, file_name)
             else:
