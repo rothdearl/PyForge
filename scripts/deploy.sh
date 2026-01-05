@@ -6,7 +6,7 @@ bright_yellow="\x1b[93m"
 reset="\x1b[0m"
 
 # Copy scripts to ./local/bin.
-declare -a scripts=("concat" "dupe" "match" "peek" "seek" "show" "tally" "track")
+declare -a scripts=("dupe" "glue" "match" "peek" "seek" "show" "tally" "track")
 
 for script in "${scripts[@]}"
 do

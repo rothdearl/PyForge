@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Filename: concat.py
+Filename: glue.py
 Author: Roth Earl
 Version: 1.3.0
 Description: A program to concatenate files to standard output.
@@ -27,7 +27,7 @@ class Colors:
 
 
 @final
-class Concat(CLIProgram):
+class Glue(CLIProgram):
     """
     A program to concatenate files to standard output.
     """
@@ -36,7 +36,7 @@ class Concat(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="concat", version="1.3.0")
+        super().__init__(name="glue", version="1.3.0")
 
         self.number: int = 0
         self.repeated_blank_lines: int = 0
@@ -189,4 +189,4 @@ class Whitespace:
 
 
 if __name__ == "__main__":
-    CLIProgram.run(Concat())
+    CLIProgram.run(Glue())
