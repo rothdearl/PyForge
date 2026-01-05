@@ -21,9 +21,7 @@ class Colors:
     """
     Class for managing colors.
     """
-    EOL: Final[str] = ConsoleColors.BRIGHT_BLUE
     NUMBER: Final[str] = ConsoleColors.BRIGHT_GREEN
-    WHITESPACE: Final[str] = ConsoleColors.BRIGHT_CYAN
 
 
 @final
@@ -56,13 +54,8 @@ class Glue(CLIProgram):
         number.add_argument("-n", "--number", action="store_true", help="number all output lines")
         blank.add_argument("-B", "--no-blank", action="store_true", help="suppress blank lines")
         blank.add_argument("-s", "--squeeze-blank", action="store_true", help="suppress repeated blank lines")
-        parser.add_argument("-E", "--show-ends", action="store_true",
-                            help=f"display {Whitespace.EOL} at end of each line")
         parser.add_argument("-g", "--group", action="store_true", help="separate files with an empty line")
-        parser.add_argument("-S", "--spaces", action="store_true", help=f"display spaces as {Whitespace.SPACE}")
-        parser.add_argument("-T", "--tabs", action="store_true", help=f"display tab characters as {Whitespace.TAB}")
-        parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="display the spaces, tabs, end of line and numbers in color")
+        parser.add_argument("--color", choices=("on", "off"), default="on", help="display the numbers in color")
         parser.add_argument("--iso", action="store_true", help="use iso-8859-1 instead of utf-8 when reading files")
         parser.add_argument("--pipe", action="store_true", help="read input from standard output")
         parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {self.VERSION}")
@@ -116,27 +109,6 @@ class Glue(CLIProgram):
             else:
                 self.repeated_blank_lines = 0
 
-            if self.args.spaces:  # --spaces
-                if self.print_color:
-                    line = line.replace(" ", f"{Colors.WHITESPACE}{Whitespace.SPACE}{ConsoleColors.RESET}")
-                else:
-                    line = line.replace(" ", Whitespace.SPACE)
-
-            if self.args.tabs:  # --tabs
-                if self.print_color:
-                    line = line.replace("\t", f"{Colors.WHITESPACE}{Whitespace.TAB}{ConsoleColors.RESET}")
-                else:
-                    line = line.replace("\t", Whitespace.TAB)
-
-            if self.args.show_ends:  # --show-ends
-                end_index = -1 if line.endswith("\n") else len(line)
-                newline = "\n" if end_index == -1 else ""
-
-                if self.print_color:
-                    line = f"{line[:end_index]}{Colors.EOL}{Whitespace.EOL}{ConsoleColors.RESET}{newline}"
-                else:
-                    line = f"{line[:end_index]}{Whitespace.EOL}{newline}"
-
             if print_number:
                 width = 7
 
@@ -176,16 +148,6 @@ class Glue(CLIProgram):
                 self.print_lines([input()])
             except EOFError:
                 eof = True
-
-
-@final
-class Whitespace:
-    """
-    Class for managing whitespace constants.
-    """
-    EOL: Final[str] = "$"
-    SPACE: Final[str] = "~"
-    TAB: Final[str] = ">···"
 
 
 if __name__ == "__main__":

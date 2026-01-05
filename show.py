@@ -23,8 +23,10 @@ class Colors:
     Class for managing colors.
     """
     COLON: Final[str] = ConsoleColors.BRIGHT_CYAN
+    EOL: Final[str] = ConsoleColors.BRIGHT_BLUE
     FILE_NAME: Final[str] = ConsoleColors.BRIGHT_MAGENTA
     LINE_NUMBER: Final[str] = ConsoleColors.BRIGHT_GREEN
+    WHITESPACE: Final[str] = ConsoleColors.BRIGHT_CYAN
 
 
 @final
@@ -57,9 +59,12 @@ class Show(CLIProgram):
         parser.add_argument("-n", "--line-number", action="store_true", help="print line number with output lines")
         parser.add_argument("-s", "--line-start", help="print at line n from the head or tail", metavar="±n", type=int)
         parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="display the file names and line numbers in color")
+                            help="display the file names, whitespace and line numbers in color")
+        parser.add_argument("--ends", action="store_true", help=f"display {Whitespace.EOL} at end of each line")
         parser.add_argument("--iso", action="store_true", help="use iso-8859-1 instead of utf-8 when reading files")
         parser.add_argument("--pipe", action="store_true", help="read input from standard output")
+        parser.add_argument("--spaces", action="store_true", help=f"display spaces as {Whitespace.SPACE}")
+        parser.add_argument("--tabs", action="store_true", help=f"display tab characters as {Whitespace.TAB}")
         parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {self.VERSION}")
 
         return parser
@@ -120,6 +125,27 @@ class Show(CLIProgram):
             line_number += 1
 
             if line_start <= line_number <= line_end:
+                if self.args.spaces:  # --spaces
+                    if self.print_color:
+                        line = line.replace(" ", f"{Colors.WHITESPACE}{Whitespace.SPACE}{ConsoleColors.RESET}")
+                    else:
+                        line = line.replace(" ", Whitespace.SPACE)
+
+                if self.args.tabs:  # --tabs
+                    if self.print_color:
+                        line = line.replace("\t", f"{Colors.WHITESPACE}{Whitespace.TAB}{ConsoleColors.RESET}")
+                    else:
+                        line = line.replace("\t", Whitespace.TAB)
+
+                if self.args.ends:  # --ends
+                    end_index = -1 if line.endswith("\n") else len(line)
+                    newline = "\n" if end_index == -1 else ""
+
+                    if self.print_color:
+                        line = f"{line[:end_index]}{Colors.EOL}{Whitespace.EOL}{ConsoleColors.RESET}{newline}"
+                    else:
+                        line = f"{line[:end_index]}{Whitespace.EOL}{newline}"
+
                 if self.args.line_number:  # --line-number
                     width = 7
 
@@ -173,6 +199,16 @@ class Show(CLIProgram):
 
         if self.lines < 1:
             self.log_error(f"lines ({self.lines}) cannot be less than 1", raise_system_exit=True)
+
+
+@final
+class Whitespace:
+    """
+    Class for managing whitespace constants.
+    """
+    EOL: Final[str] = "$"
+    SPACE: Final[str] = "~"
+    TAB: Final[str] = ">···"
 
 
 if __name__ == "__main__":
