@@ -4,7 +4,7 @@
 """
 Filename: seek.py
 Author: Roth Earl
-Version: 1.3.0
+Version: 1.3.1
 Description: A program to search for files in a directory hierarchy.
 License: GNU GPLv3
 """
@@ -37,7 +37,7 @@ class Seek(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="seek", version="1.3.0", error_exit_code=2)
+        super().__init__(name="seek", version="1.3.1", error_exit_code=2)
 
         self.at_least_one_match: bool = False
 
@@ -63,7 +63,7 @@ class Seek(CLIProgram):
         parser.add_argument("-q", "--quiet", "--silent", action="store_true", help="suppress all normal output")
         parser.add_argument("-s", "--no-messages", action="store_true", help="suppress error messages about files")
         parser.add_argument("--abs", action="store_true", help="print absolute file paths")
-        parser.add_argument("--color", choices=("on", "off"), default="on", help="display the matched strings in color")
+        parser.add_argument("--color", choices=("on", "off"), default="on", help="display matched strings in color")
         parser.add_argument("--dot", action="store_true", help="include dot (.) files in output")
         parser.add_argument("--empty", choices=("y", "n"), help="print only empty files")
         modified_group.add_argument("--m-days", help="print files modified less than or more than n days ago",

@@ -4,7 +4,7 @@
 """
 Filename: glue.py
 Author: Roth Earl
-Version: 1.3.0
+Version: 1.3.1
 Description: A program to concatenate files to standard output.
 License: GNU GPLv3
 """
@@ -36,7 +36,7 @@ class Glue(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="glue", version="1.3.0")
+        super().__init__(name="glue", version="1.3.1")
 
         self.number: int = 0
         self.repeated_blank_lines: int = 0
@@ -62,7 +62,7 @@ class Glue(CLIProgram):
         parser.add_argument("-T", "--show-tabs", action="store_true",
                             help=f"display tab characters as {Whitespace.TAB}")
         parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="display the whitespace and numbers in color")
+                            help="display whitespace and numbers in color")
         parser.add_argument("--iso", action="store_true", help="use iso-8859-1 instead of utf-8 when reading files")
         parser.add_argument("--pipe", action="store_true", help="read FILES from standard output")
         parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {self.VERSION}")

@@ -4,7 +4,7 @@
 """
 Filename: show.py
 Author: Roth Earl
-Version: 1.3.0
+Version: 1.3.1
 Description: A program to print files to standard output.
 License: GNU GPLv3
 """
@@ -39,7 +39,7 @@ class Show(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="show", version="1.3.0")
+        super().__init__(name="show", version="1.3.1")
 
         self.line_start: int = 0
         self.lines: int = 0
@@ -59,7 +59,7 @@ class Show(CLIProgram):
         parser.add_argument("-n", "--line-number", action="store_true", help="print line number with output lines")
         parser.add_argument("-s", "--line-start", help="print at line n from the head or tail", metavar="±n", type=int)
         parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="display the file names, whitespace and line numbers in color")
+                            help="display file names, whitespace and line numbers in color")
         parser.add_argument("--ends", action="store_true", help=f"display {Whitespace.EOL} at end of each line")
         parser.add_argument("--iso", action="store_true", help="use iso-8859-1 instead of utf-8 when reading files")
         parser.add_argument("--pipe", action="store_true", help="read FILES from standard output")

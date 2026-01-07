@@ -4,7 +4,7 @@
 """
 Filename: peek.py
 Author: Roth Earl
-Version: 1.3.0
+Version: 1.3.1
 Description: A program to print the first part of files.
 License: GNU GPLv3
 """
@@ -37,7 +37,7 @@ class Peek(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="peek", version="1.3.0")
+        super().__init__(name="peek", version="1.3.1")
 
     def build_arguments(self) -> argparse.ArgumentParser:
         """
@@ -52,7 +52,7 @@ class Peek(CLIProgram):
                             help="suppress the prefixing of file names on output")
         parser.add_argument("-n", "--lines", help="print the first or all but the last n lines", metavar="±n", type=int)
         parser.add_argument("-N", "--line-number", action="store_true", help="print line number with output lines")
-        parser.add_argument("--color", choices=("on", "off"), default="on", help="display the file headers in color")
+        parser.add_argument("--color", choices=("on", "off"), default="on", help="display file headers in color")
         parser.add_argument("--iso", action="store_true", help="use iso-8859-1 instead of utf-8 when reading files")
         parser.add_argument("--pipe", action="store_true", help="read FILES from standard output")
         parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {self.VERSION}")

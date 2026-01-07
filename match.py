@@ -4,7 +4,7 @@
 """
 Filename: match.py
 Author: Roth Earl
-Version: 1.3.0
+Version: 1.3.1
 Description: A program to print lines that match patterns.
 License: GNU GPLv3
 """
@@ -38,7 +38,7 @@ class Match(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="match", version="1.3.0", error_exit_code=2)
+        super().__init__(name="match", version="1.3.1", error_exit_code=2)
 
         self.at_least_one_match: bool = False
 
@@ -63,7 +63,7 @@ class Match(CLIProgram):
         parser.add_argument("-q", "--quiet", "--silent", action="store_true", help="suppress all normal output")
         parser.add_argument("-s", "--no-messages", action="store_true", help="suppress error messages about files")
         parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="display the matched strings, file names and line numbers in color")
+                            help="display matched strings, file names and line numbers in color")
         parser.add_argument("--iso", action="store_true", help="use iso-8859-1 instead of utf-8 when reading files")
         parser.add_argument("--pipe", action="store_true", help="read FILES from standard output")
         parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {self.VERSION}")
