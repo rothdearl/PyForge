@@ -172,7 +172,7 @@ class Seek(CLIProgram):
                 for directory in self.args.dirs:
                     self.print_files(directory)
         else:
-            dirs = [os.curdir] if not self.args.dirs else self.args.dirs
+            dirs = self.args.dirs if self.args.dirs else [os.curdir]
 
             for directory in dirs:
                 self.print_files(directory)

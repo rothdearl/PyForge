@@ -106,7 +106,7 @@ class Peek(CLIProgram):
         :return: None
         """
         line_number = 0
-        lines_to_print = 10 if not self.args.lines else self.args.lines  # --lines
+        lines_to_print = self.args.lines if self.args.lines else 10  # --lines
 
         # Print all but the last 'n' lines.
         if lines_to_print < 0:

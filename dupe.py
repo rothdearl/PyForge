@@ -285,9 +285,9 @@ class Dupe(CLIProgram):
         Sets the values to use for matching lines.
         :return: None
         """
-        self.max_chars = 1 if not self.args.max_chars else self.args.max_chars  # --max-chars
-        self.skip_chars = 0 if not self.args.skip_chars else self.args.skip_chars  # --skip-chars
-        self.skip_fields = 0 if not self.args.skip_fields else self.args.skip_fields  # --skip-fields
+        self.max_chars = self.args.max_chars if self.args.max_chars else 1  # --max-chars
+        self.skip_chars = self.args.skip_chars if self.args.skip_chars else 0  # --skip-chars
+        self.skip_fields = self.args.skip_fields if self.args.skip_fields else 0  # --skip-fields
 
         # Validate the match values.
         if self.skip_fields < 0:
