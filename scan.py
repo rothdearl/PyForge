@@ -5,7 +5,7 @@
 Filename: scan.py
 Author: Roth Earl
 Version: 1.3.1
-Description: A program to search for lines that match patterns.
+Description: A program to print lines that match patterns.
 License: GNU GPLv3
 """
 
@@ -31,7 +31,7 @@ class Colors:
 @final
 class Scan(CLIProgram):
     """
-    A program to search for lines that match patterns.
+    A program to print lines that match patterns.
     """
 
     def __init__(self) -> None:
@@ -47,7 +47,7 @@ class Scan(CLIProgram):
         Builds an argument parser.
         :return: An argument parser.
         """
-        parser = argparse.ArgumentParser(allow_abbrev=False, description="search for lines that match patterns",
+        parser = argparse.ArgumentParser(allow_abbrev=False, description="print lines that match patterns",
                                          epilog="with no FILES, read standard input", prog=self.NAME)
 
         parser.add_argument("files", help="files to search", metavar="FILES", nargs="*")
