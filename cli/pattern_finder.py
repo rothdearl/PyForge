@@ -1,12 +1,11 @@
 import re
-from abc import ABC
 from typing import Iterator, final
 
 from cli import CLIProgram, ConsoleColors
 
 
 @final
-class PatternFinder(ABC):
+class PatternFinder:
     """
     Utility class for programs to find patterns.
     """
@@ -93,7 +92,7 @@ class PatternFinder(ABC):
             for sub_pattern in PatternFinder.__split_pattern_on_pipe(pattern):
                 try:
                     group.append(re.compile(sub_pattern, flags=flags))
-                except re.PatternError:
+                except re.error:
                     program.print_error(f"invalid pattern: {sub_pattern}", raise_system_exit=True)
 
             compiled.append(group)

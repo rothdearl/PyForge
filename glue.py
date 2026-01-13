@@ -13,7 +13,7 @@ import argparse
 import sys
 from typing import Final, TextIO, final
 
-from cli import CLIProgram, ConsoleColors, FileReader
+from cli import CLIProgram, ConsoleColors, read_files
 
 
 @final
@@ -149,7 +149,7 @@ class Glue(CLIProgram):
         """
         last_file_index = len(files) - 1
 
-        for index, file, text in FileReader.read_files(self, files, self.encoding):
+        for index, file, text in read_files(self, files, self.encoding):
             try:
                 self.print_lines(text)
 

@@ -16,7 +16,7 @@ import time
 from threading import Thread
 from typing import Final, TextIO, final
 
-from cli import CLIProgram, ConsoleColors, FileReader
+from cli import CLIProgram, ConsoleColors, read_files
 
 
 @final
@@ -208,7 +208,7 @@ class Track(CLIProgram):
         """
         files_printed = []
 
-        for _, file, text in FileReader.read_files(self, files, self.encoding):
+        for _, file, text in read_files(self, files, self.encoding):
             try:
                 self.print_file_header(file=file)
                 self.print_lines(text.readlines())

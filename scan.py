@@ -15,7 +15,7 @@ import re
 import sys
 from typing import Final, TextIO, final
 
-from cli import CLIProgram, ConsoleColors, FileReader, PatternFinder
+from cli import CLIProgram, ConsoleColors, PatternFinder, read_files
 
 
 @final
@@ -113,7 +113,7 @@ class Scan(CLIProgram):
         :param files: The files.
         :return: None
         """
-        for _, file, text in FileReader.read_files(self, files, self.encoding):
+        for _, file, text in read_files(self, files, self.encoding):
             try:
                 self.print_matches_in_lines(text, origin_file=file)
             except UnicodeDecodeError:
