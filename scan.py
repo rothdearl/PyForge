@@ -41,6 +41,7 @@ class Scan(CLIProgram):
         """
         super().__init__(name="scan", version="1.3.3", error_exit_code=2)
 
+        self.line_number: int = 0
         self.found_match: bool = False
         self.patterns: list[list[re.Pattern]] = []
 
@@ -135,24 +136,30 @@ class Scan(CLIProgram):
                 if self.args.count:
                     lines.append(line)
                 else:
-                    self.print_matches_in_lines([line], origin_file="")
+                    self.print_matches_in_lines([line], origin_file="", reset_line_number=False)
             except EOFError:
                 eof = True
 
         if self.args.count:  # --count
             self.print_matches_in_lines(lines, origin_file="")
 
-    def print_matches_in_lines(self, lines: TextIO | list[str], *, origin_file: str) -> None:
+    def print_matches_in_lines(self, lines: TextIO | list[str], *, origin_file: str, reset_line_number=True) -> None:
         """
         Prints matches found in lines.
         :param lines: The lines.
         :param origin_file: The file where the lines originated from.
+        :param reset_line_number: Whether to reset the line number; default is True.
         :return: None
         """
         matches = []
 
+        if reset_line_number:
+            self.line_number = 0
+
         # Find matches.
-        for index, line in enumerate(lines, start=1):
+        for line in lines:
+            self.line_number += 1
+
             if patterns.text_has_patterns(line, self.patterns) != self.args.invert_match:  # --invert-match
                 self.found_match = True
 
@@ -165,12 +172,10 @@ class Scan(CLIProgram):
                                                            color=Colors.MATCH) if self.patterns else line
 
                 if self.args.line_number:  # --line-number
-                    width = 7
-
                     if self.print_color:
-                        line = f"{Colors.LINE_NUMBER}{index:>{width}}{Colors.COLON}:{colors.RESET}{line}"
+                        line = f"{Colors.LINE_NUMBER}{self.line_number:>}{Colors.COLON}:{colors.RESET}{line}"
                     else:
-                        line = f"{index:>{width}}:{line}"
+                        line = f"{self.line_number:>}:{line}"
 
                 matches.append(line)
 
