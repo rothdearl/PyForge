@@ -180,7 +180,7 @@ class Track(CLIProgram):
         :param lines: The lines.
         :return: None
         """
-        lines_to_print = self.args.lines if self.args.lines or self.args.lines == 0 else 10  # --lines
+        lines_to_print = self.args.lines if self.args.lines is not None else 10  # --lines
         padding = len(str(len(lines)))
         skip_to_line = len(lines) - lines_to_print
 

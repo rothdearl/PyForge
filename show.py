@@ -178,8 +178,8 @@ class Show(CLIProgram):
         Sets the values to use for printing lines.
         :return: None
         """
-        self.line_start = self.args.line_start if self.args.line_start or self.args.line_start == 0 else 1  # --line-start
-        self.lines = self.args.lines if self.args.lines or self.args.lines == 0 else sys.maxsize  # --lines
+        self.line_start = self.args.line_start if self.args.line_start is not None else 1  # --line-start
+        self.lines = self.args.lines if self.args.lines is not None else sys.maxsize  # --lines
 
         # Validate the line values.
         if self.line_start == 0:

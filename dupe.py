@@ -110,17 +110,17 @@ class Dupe(CLIProgram):
                 group_count_str = ""
 
                 if self.args.count:  # --count
-                    width = 7
+                    padding = 7
 
                     # Only print the group count for the first line.
                     if line_index == 0:
                         if self.print_color:
-                            group_count_str = f"{Colors.GROUP_COUNT}{group_count:>{width},}{Colors.COLON}:{colors.RESET}"
+                            group_count_str = f"{Colors.GROUP_COUNT}{group_count:>{padding},}{Colors.COLON}:{colors.RESET}"
                         else:
-                            group_count_str = f"{group_count:>{width},}:"
+                            group_count_str = f"{group_count:>{padding},}:"
                     else:
                         space = " "
-                        group_count_str = f"{space:>{width}} "
+                        group_count_str = f"{space:>{padding}} "
 
                 if self.args.duplicate or self.args.repeated:  # --duplicate or --repeated
                     can_print = group_count > 1
@@ -288,9 +288,9 @@ class Dupe(CLIProgram):
         Sets the values to use for matching lines.
         :return: None
         """
-        self.max_chars = self.args.max_chars if self.args.max_chars or self.args.max_chars == 0 else 1  # --max-chars
-        self.skip_chars = self.args.skip_chars if self.args.skip_chars else 0  # --skip-chars
-        self.skip_fields = self.args.skip_fields if self.args.skip_fields else 0  # --skip-fields
+        self.max_chars = self.args.max_chars if self.args.max_chars is not None else 1  # --max-chars
+        self.skip_chars = self.args.skip_chars if self.args.skip_chars is not None else 0  # --skip-chars
+        self.skip_fields = self.args.skip_fields if self.args.skip_fields is not None else 0  # --skip-fields
 
         # Validate the match values.
         if self.skip_fields < 0:

@@ -216,7 +216,7 @@ class Tally(CLIProgram):
         Sets the values to use for counting.
         :return: None
         """
-        self.tab_width = self.args.tab_width if self.args.tab_width or self.args.tab_width == 0 else 8  # --tab-width
+        self.tab_width = self.args.tab_width if self.args.tab_width is not None else 8  # --tab-width
 
         if self.tab_width < 1:
             self.print_error(f"'tab-width' must be >= 1", raise_system_exit=True)
