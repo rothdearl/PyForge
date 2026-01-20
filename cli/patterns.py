@@ -3,31 +3,8 @@ Module for pattern related functions.
 """
 
 import re
-from typing import Iterator
 
 from cli import CLIProgram, colors
-
-
-def _split_pattern_on_pipe(pattern: str) -> Iterator[str]:
-    """
-    Splits the pattern on the pipe character if it is not escaped by a backslash character.
-    :param pattern: The pattern to split.
-    :return: A list of patterns.
-    """
-    prev_ch = None
-    token_start = 0
-
-    for index, ch in enumerate(pattern):
-        if ch == "|" and prev_ch != "\\":
-            if token := pattern[token_start:index]:
-                yield token
-
-            token_start = index + 1
-
-        prev_ch = ch
-
-    if token := pattern[token_start:]:
-        yield token
 
 
 def color_patterns_in_text(text: str, patterns: list[re.Pattern], *, color: str) -> str:
@@ -83,13 +60,11 @@ def compile_patterns(program: CLIProgram, patterns: list[str], *, ignore_case: b
     flags = re.IGNORECASE if ignore_case else re.NOFLAG
 
     for pattern in patterns:
-        group = [sub_group for sub_group in _split_pattern_on_pipe(pattern)]
-
-        if not group:  # Skip empty groups.
+        if not pattern:  # Skip empty patterns.
             continue
 
         try:
-            compiled.append(re.compile("|".join(group), flags=flags))
+            compiled.append(re.compile(pattern, flags=flags))
         except re.error:  # re.PatternError was introduced in Python 3.13; use re.error for Python < 3.13.
             program.print_error(f"invalid pattern: {pattern}", raise_system_exit=True)
 
