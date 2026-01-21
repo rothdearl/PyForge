@@ -149,9 +149,8 @@ class Subs(CLIProgram):
         :return: None
         """
         for line in lines:
-            line = line.rstrip("\n")  # Remove trailing newlines so $ matches only once per line.
-
             if self.pattern:
+                line = line.rstrip("\n")  # Remove trailing newlines so $ matches only once per line.
                 line = self.pattern.sub(self.args.replace, line, count=self.max_replacements)
 
             io.print_line(line)
