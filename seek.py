@@ -15,17 +15,17 @@ import pathlib
 import re
 import sys
 import time
-from typing import Final, final
+from enum import StrEnum
+from typing import final
 
 from cli import CLIProgram, colors, patterns, terminal
 
 
-@final
-class Colors:
+class Colors(StrEnum):
     """
-    Class for managing color constants.
+    Enum for colors.
     """
-    MATCH: Final[str] = colors.BRIGHT_RED
+    MATCH = colors.BRIGHT_RED
 
 
 @final
@@ -66,7 +66,7 @@ class Seek(CLIProgram):
         parser.add_argument("-v", "--invert-match", action="store_true",
                             help="print files that do not match the specified criteria")
         parser.add_argument("--abs", action="store_true", help="print absolute file paths")
-        parser.add_argument("--color", choices=("on", "off"), default="on", help="display matched strings in color")
+        parser.add_argument("--color", choices=("on", "off"), default="on", help="colorize matches (default: on)")
         parser.add_argument("--dot", action="store_true", help="include dot (.) files in output")
         parser.add_argument("--empty", choices=("y", "n"), help="print only empty files")
         modified_group.add_argument("--m-days", help="print files modified less than or more than n days ago",

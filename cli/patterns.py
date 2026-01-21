@@ -48,6 +48,19 @@ def color_patterns_in_text(text: str, patterns: list[re.Pattern], *, color: str)
     return "".join(colored_text)
 
 
+def combine_patterns(patterns: list[re.Pattern], *, ignore_case: bool) -> re.Pattern:
+    """
+    Combines all patterns into a single compiled OR-pattern.
+    :param patterns: A list of compiled pattern groups.
+    :param ignore_case: Whether to ignore case.
+    :return: A single compiled regular expression matching any pattern.
+    """
+    flags = re.IGNORECASE if ignore_case else re.NOFLAG
+    sources = [group.pattern for group in patterns]
+
+    return re.compile("|".join(sources), flags=flags)
+
+
 def compile_patterns(program: CLIProgram, patterns: list[str], *, ignore_case: bool) -> list[re.Pattern]:
     """
     Compiles patterns into OR-groups implementing AND-of-OR matching.

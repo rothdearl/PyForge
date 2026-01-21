@@ -13,20 +13,20 @@ import argparse
 import os
 import sys
 import time
+from enum import StrEnum
 from threading import Thread
-from typing import Final, TextIO, final
+from typing import TextIO, final
 
 from cli import CLIProgram, colors, io, terminal
 
 
-@final
-class Colors:
+class Colors(StrEnum):
     """
-    Class for managing color constants.
+    Enum for colors.
     """
-    COLON: Final[str] = colors.BRIGHT_CYAN
-    FILE_NAME: Final[str] = colors.BRIGHT_MAGENTA
-    FOLLOWING: Final[str] = f"{colors.DIM}{colors.WHITE}"
+    COLON = colors.BRIGHT_CYAN
+    FILE_NAME = colors.BRIGHT_MAGENTA
+    FOLLOWING = f"{colors.DIM}{colors.WHITE}"
 
 
 @final
@@ -52,11 +52,10 @@ class Track(CLIProgram):
         parser.add_argument("files", help="files to print", metavar="FILES", nargs="*")
         parser.add_argument("-f", "--follow", action="store_true", help="output appended data as the file grows")
         parser.add_argument("-H", "--no-file-header", action="store_true",
-                            help="suppress the prefixing of file names on output")
+                            help="do not prefix output lines with file names")
         parser.add_argument("-n", "--lines", help="print the last or all but the first N lines", metavar="N",
                             type=int)
-        parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="display file headers in color (default: on)")
+        parser.add_argument("--color", choices=("on", "off"), default="on", help="colorize file headers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
         parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.VERSION}")

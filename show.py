@@ -12,33 +12,32 @@ License: GNU GPLv3
 import argparse
 import os
 import sys
-from typing import Final, TextIO, final
+from enum import StrEnum
+from typing import TextIO, final
 
 from cli import CLIProgram, colors, io, terminal
 
 
-@final
-class Colors:
+class Colors(StrEnum):
     """
-    Class for managing color constants.
+    Enum for colors.
     """
-    COLON: Final[str] = colors.BRIGHT_CYAN
-    EOL: Final[str] = colors.BRIGHT_BLUE
-    FILE_NAME: Final[str] = colors.BRIGHT_MAGENTA
-    LINE_NUMBER: Final[str] = colors.BRIGHT_GREEN
-    SPACE: Final[str] = colors.BRIGHT_CYAN
-    TAB: Final[str] = colors.BRIGHT_CYAN
+    COLON = colors.BRIGHT_CYAN
+    EOL = colors.BRIGHT_BLUE
+    FILE_NAME = colors.BRIGHT_MAGENTA
+    LINE_NUMBER = colors.BRIGHT_GREEN
+    SPACE = colors.BRIGHT_CYAN
+    TAB = colors.BRIGHT_CYAN
 
 
-@final
-class Whitespace:
+class Whitespace(StrEnum):
     """
-    Class for managing whitespace constants.
+    Enum for whitespace.
     """
-    EOL: Final[str] = "$"
-    SPACE: Final[str] = "·"
-    TAB: Final[str] = ">···"
-    TRAILING_SPACE: Final[str] = "~"
+    EOL = "$"
+    SPACE = "·"
+    TAB = ">···"
+    TRAILING_SPACE = "~"
 
 
 @final
@@ -66,13 +65,13 @@ class Show(CLIProgram):
 
         parser.add_argument("files", help="files to print", metavar="FILES", nargs="*")
         parser.add_argument("-H", "--no-file-header", action="store_true",
-                            help="suppress the prefixing of file names on output")
+                            help="do not prefix output lines with file names")
         parser.add_argument("-l", "--lines", help="print only N lines (N >= 1)", metavar="N", type=int)
         parser.add_argument("-n", "--line-number", action="store_true", help="print line number with output lines")
         parser.add_argument("-s", "--line-start", help="print the first or all but the last N lines (N != 0)",
                             metavar="N", type=int)
         parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="display file names, whitespace and line numbers in color (default: on)")
+                            help="colorize file names, whitespace and line numbers (default: on)")
         parser.add_argument("--ends", action="store_true", help=f"display {Whitespace.EOL} at end of each line")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
         parser.add_argument("--spaces", action="store_true",

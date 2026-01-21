@@ -12,6 +12,7 @@ License: GNU GPLv3
 import argparse
 import re
 import sys
+from enum import IntEnum, StrEnum
 from typing import Final, TextIO, TypeAlias, final
 
 from cli import CLIProgram, colors, io, terminal
@@ -20,25 +21,23 @@ from cli import CLIProgram, colors, io, terminal
 Stats: TypeAlias = tuple[int, int, int, int]
 
 
-@final
-class Colors:
+class Colors(StrEnum):
     """
-    Class for managing color constants.
+    Enum for colors.
     """
-    STAT: Final[str] = colors.BRIGHT_CYAN
-    STAT_ORIGIN: Final[str] = colors.BRIGHT_MAGENTA
-    STAT_TOTAL: Final[str] = colors.BRIGHT_YELLOW
+    STAT = colors.BRIGHT_CYAN
+    STAT_ORIGIN = colors.BRIGHT_MAGENTA
+    STAT_TOTAL = colors.BRIGHT_YELLOW
 
 
-@final
-class Indexes:
+class Indexes(IntEnum):
     """
-    Class for managing stat indexes.
+    Enum for stat indexes.
     """
-    LINES: Final[int] = 0
-    WORDS: Final[int] = 1
-    CHARACTERS: Final[int] = 2
-    MAX_LINE_LENGTH: Final[int] = 3
+    LINES = 0
+    WORDS = 1
+    CHARACTERS = 2
+    MAX_LINE_LENGTH = 3
 
 
 @final
@@ -89,7 +88,7 @@ class Tally(CLIProgram):
                             type=int)
         parser.add_argument("-w", "--words", action="store_true", help="print the word counts")
         parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="display counts and file names in color (default: on)")
+                            help="colorize counts and file names (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
         parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
         parser.add_argument("--total", choices=("auto", "on", "off"), default="auto",

@@ -13,19 +13,19 @@ import argparse
 import os
 import re
 import sys
+from enum import StrEnum
 from typing import Final, TextIO, final
 
 from cli import CLIProgram, colors, io, terminal
 
 
-@final
-class Colors:
+class Colors(StrEnum):
     """
-    Class for managing color constants.
+    Enum for colors.
     """
-    COLON: Final[str] = colors.BRIGHT_CYAN
-    FILE_NAME: Final[str] = colors.BRIGHT_MAGENTA
-    GROUP_COUNT: Final[str] = colors.BRIGHT_GREEN
+    COLON = colors.BRIGHT_CYAN
+    FILE_NAME = colors.BRIGHT_MAGENTA
+    GROUP_COUNT = colors.BRIGHT_GREEN
 
 
 @final
@@ -67,7 +67,7 @@ class Dupe(CLIProgram):
         parser.add_argument("-f", "--skip-fields", help="avoid comparing the first N fields (N >= 0)", metavar="N",
                             type=int)
         parser.add_argument("-H", "--no-file-header", action="store_true",
-                            help="suppress the prefixing of file names on output")
+                            help="do not prefix output lines with file names")
         parser.add_argument("-i", "--ignore-case", action="store_true",
                             help="ignore differences in case when comparing")
         parser.add_argument("-m", "--max-chars", help="compare no more than N characters (N >= 1)", metavar="N",
@@ -77,7 +77,7 @@ class Dupe(CLIProgram):
         parser.add_argument("-w", "--skip-whitespace", action="store_true",
                             help="avoid comparing leading and trailing whitespace")
         parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="display counts and file headers in color (default: on)")
+                            help="colorize counts and file headers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
         parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.VERSION}")

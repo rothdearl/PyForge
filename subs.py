@@ -2,20 +2,21 @@
 # -*- coding: utf-8 -*-
 
 """
-Filename: peek.py
+Filename: subs.py
 Author: Roth Earl
-Version: 1.3.4
-Description: A program to print the first part of files.
+Version: 1.0.0
+Description: A program to replace text in files.
 License: GNU GPLv3
 """
 
 import argparse
 import os
+import re
 import sys
 from enum import StrEnum
 from typing import TextIO, final
 
-from cli import CLIProgram, colors, io, terminal
+from cli import CLIProgram, colors, io, patterns, terminal
 
 
 class Colors(StrEnum):
@@ -27,32 +28,40 @@ class Colors(StrEnum):
 
 
 @final
-class Peek(CLIProgram):
+class Subs(CLIProgram):
     """
-    A program to print the first part of files.
+    A program to replace text in files.
     """
 
     def __init__(self) -> None:
         """
         Initializes a new instance.
         """
-        super().__init__(name="peek", version="1.3.4")
+        super().__init__(name="subs", version="1.0.0")
+
+        self.max_replacements: int = 0
+        self.pattern: re.Pattern | None = None
 
     def build_arguments(self) -> argparse.ArgumentParser:
         """
         Builds and returns an argument parser.
         :return: An argument parser.
         """
-        parser = argparse.ArgumentParser(allow_abbrev=False, description="print the first part of FILES",
+        parser = argparse.ArgumentParser(allow_abbrev=False, description="replace text in FILES",
                                          epilog="with no FILES, read standard input", prog=self.NAME)
 
-        parser.add_argument("files", help="files to print", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="files to process", metavar="FILES", nargs="*")
+        parser.add_argument("-f", "--find", action="extend", help="replace text matching PATTERN", metavar="PATTERN",
+                            nargs=1, required=True)
         parser.add_argument("-H", "--no-file-header", action="store_true",
                             help="do not prefix output lines with file names")
-        parser.add_argument("-n", "--lines", help="print the first or all but the last N lines (default: 10)",
-                            metavar="N", type=int)
+        parser.add_argument("-i", "--ignore-case", action="store_true", help="ignore case when matching patterns")
+        parser.add_argument("-r", "--replace", help="replace matches with literal STRING", metavar="STRING",
+                            required=True)
         parser.add_argument("--color", choices=("on", "off"), default="on", help="colorize file headers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
+        parser.add_argument("--max-replacements", help="limit replacements to N per line (default: unlimited; N >= 1)",
+                            metavar="N", type=int)
         parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.VERSION}")
 
@@ -63,24 +72,30 @@ class Peek(CLIProgram):
         The main function of the program.
         :return: None
         """
+        self.set_max_replacements()
+
+        # Pre-compile --find patterns.
+        if compiled := patterns.compile_patterns(self, self.args.find, ignore_case=self.args.ignore_case):
+            self.pattern = patterns.combine_patterns(compiled, ignore_case=self.args.ignore_case)
+
         # Set --no-file-header to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_header = True
 
         if terminal.input_is_redirected():
             if self.args.stdin_files:  # --stdin-files
-                self.print_lines_from_files(sys.stdin)
+                self.replace_matches_in_files(sys.stdin)
             else:
                 if standard_input := sys.stdin.readlines():
                     self.print_file_header(file="")
-                    self.print_lines(standard_input)
+                    self.replace_matches_in_lines(standard_input)
 
             if self.args.files:  # Process any additional files.
-                self.print_lines_from_files(self.args.files)
+                self.replace_matches_in_files(self.args.files)
         elif self.args.files:
-            self.print_lines_from_files(self.args.files)
+            self.replace_matches_in_files(self.args.files)
         else:
-            self.print_lines_from_input()
+            self.replace_matches_in_input()
 
     def print_file_header(self, file: str) -> None:
         """
@@ -98,40 +113,22 @@ class Peek(CLIProgram):
 
             print(file_name)
 
-    def print_lines(self, lines: list[str]) -> None:
+    def replace_matches_in_files(self, files: TextIO | list[str]) -> None:
         """
-        Prints the lines.
-        :param lines: The lines.
-        :return: None
-        """
-        lines_to_print = self.args.lines if self.args.lines is not None else 10  # --lines
-
-        # Print all but the last 'n' lines.
-        if lines_to_print < 0:
-            lines_to_print = len(lines) + lines_to_print
-
-        for index, line in enumerate(lines, start=1):
-            if index <= lines_to_print:
-                io.print_line(line)
-            else:
-                break
-
-    def print_lines_from_files(self, files: TextIO | list[str]) -> None:
-        """
-        Prints lines from files.
+        Replace matches in the lines from files.
         :param files: The files.
         :return: None
         """
         for _, file, text in io.read_files(self, files, self.encoding):
             try:
                 self.print_file_header(file=file)
-                self.print_lines(text.readlines())
+                self.replace_matches_in_lines(text.readlines())
             except UnicodeDecodeError:
                 self.print_file_error(f"{file}: unable to read with {self.encoding}")
 
-    def print_lines_from_input(self) -> None:
+    def replace_matches_in_input(self) -> None:
         """
-        Prints lines from standard input until EOF is entered.
+        Replace matches in the lines from standard input until EOF is entered.
         :return: None
         """
         eof = False
@@ -143,8 +140,33 @@ class Peek(CLIProgram):
             except EOFError:
                 eof = True
 
-        self.print_lines(lines)
+        self.replace_matches_in_lines(lines)
+
+    def replace_matches_in_lines(self, lines: list[str]) -> None:
+        """
+        Replace matches in the lines.
+        :param lines: The lines.
+        :return: None
+        """
+        for line in lines:
+            line = line.rstrip("\n")  # Remove trailing newlines so $ matches only once per line.
+
+            if self.pattern:
+                line = self.pattern.sub(self.args.replace, line, count=self.max_replacements)
+
+            io.print_line(line)
+
+    def set_max_replacements(self) -> None:
+        """
+        Sets the maximum replacements.
+        :return: None
+        """
+        if self.args.max_replacements is not None:
+            if self.args.max_replacements < 1:
+                self.print_error(f"'max-replacements' must be >= 1", raise_system_exit=True)
+
+            self.max_replacements = self.args.max_replacements
 
 
 if __name__ == "__main__":
-    Peek().run()
+    Subs().run()

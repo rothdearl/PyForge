@@ -11,28 +11,27 @@ License: GNU GPLv3
 
 import argparse
 import sys
-from typing import Final, TextIO, final
+from enum import StrEnum
+from typing import TextIO, final
 
 from cli import CLIProgram, colors, io, terminal
 
 
-@final
-class Colors:
+class Colors(StrEnum):
     """
-    Class for managing color constants.
+    Enum for colors.
     """
-    EOL: Final[str] = colors.BRIGHT_BLUE
-    NUMBER: Final[str] = colors.BRIGHT_GREEN
-    TABS: Final[str] = colors.BRIGHT_CYAN
+    EOL = colors.BRIGHT_BLUE
+    NUMBER = colors.BRIGHT_GREEN
+    TABS = colors.BRIGHT_CYAN
 
 
-@final
-class Whitespace:
+class Whitespace(StrEnum):
     """
-    Class for managing whitespace constants.
+    Enum for whitespace.
     """
-    EOL: Final[str] = "$"
-    TAB: Final[str] = ">···"
+    EOL = "$"
+    TAB = ">···"
 
 
 @final
@@ -71,7 +70,7 @@ class Glue(CLIProgram):
         parser.add_argument("-T", "--show-tabs", action="store_true",
                             help=f"display tab characters as {Whitespace.TAB}")
         parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="display whitespace and numbers in color (default: on)")
+                            help="colorize whitespace and numbers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
         parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.VERSION}")
