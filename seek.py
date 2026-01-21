@@ -23,7 +23,7 @@ from cli import CLIProgram, colors, patterns, terminal
 
 class Colors(StrEnum):
     """
-    Enum for colors.
+    Terminal color constants.
     """
     MATCH = colors.BRIGHT_RED
 

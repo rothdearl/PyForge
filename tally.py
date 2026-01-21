@@ -23,16 +23,16 @@ Stats: TypeAlias = tuple[int, int, int, int]
 
 class Colors(StrEnum):
     """
-    Enum for colors.
+    Terminal color constants.
     """
     STAT = colors.BRIGHT_CYAN
     STAT_ORIGIN = colors.BRIGHT_MAGENTA
     STAT_TOTAL = colors.BRIGHT_YELLOW
 
 
-class Indexes(IntEnum):
+class StatIndex(IntEnum):
     """
-    Enum for stat indexes.
+    Stat index constants.
     """
     LINES = 0
     WORDS = 1
@@ -65,10 +65,11 @@ class Tally(CLIProgram):
         :param stats: The stats.
         :return: None
         """
-        self.TOTALS[Indexes.LINES] += stats[Indexes.LINES]
-        self.TOTALS[Indexes.WORDS] += stats[Indexes.WORDS]
-        self.TOTALS[Indexes.CHARACTERS] += stats[Indexes.CHARACTERS]
-        self.TOTALS[Indexes.MAX_LINE_LENGTH] = max(self.TOTALS[Indexes.MAX_LINE_LENGTH], stats[Indexes.MAX_LINE_LENGTH])
+        self.TOTALS[StatIndex.LINES] += stats[StatIndex.LINES]
+        self.TOTALS[StatIndex.WORDS] += stats[StatIndex.WORDS]
+        self.TOTALS[StatIndex.CHARACTERS] += stats[StatIndex.CHARACTERS]
+        self.TOTALS[StatIndex.MAX_LINE_LENGTH] = max(self.TOTALS[StatIndex.MAX_LINE_LENGTH],
+                                                     stats[StatIndex.MAX_LINE_LENGTH])
 
     def build_arguments(self) -> argparse.ArgumentParser:
         """
@@ -103,10 +104,7 @@ class Tally(CLIProgram):
         :param text: The text.
         :return: The stats.
         """
-        character_count = 0
-        line_count = 0
-        max_line_length = 0
-        words = 0
+        character_count, line_count, max_line_length, words = 0, 0, 0, 0
 
         for line in text:
             line_length = len(line)
@@ -231,9 +229,9 @@ class Tally(CLIProgram):
 
         # If no stat options, default to lines, words and characters.
         if not self.options_count:
-            self.OPTIONS[Indexes.LINES] = True
-            self.OPTIONS[Indexes.WORDS] = True
-            self.OPTIONS[Indexes.CHARACTERS] = True
+            self.OPTIONS[StatIndex.LINES] = True
+            self.OPTIONS[StatIndex.WORDS] = True
+            self.OPTIONS[StatIndex.CHARACTERS] = True
             self.options_count = 3
 
 

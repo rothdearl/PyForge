@@ -19,7 +19,7 @@ from cli import CLIProgram, colors, io, terminal
 
 class Colors(StrEnum):
     """
-    Enum for colors.
+    Terminal color constants.
     """
     EOL = colors.BRIGHT_BLUE
     NUMBER = colors.BRIGHT_GREEN
@@ -28,7 +28,7 @@ class Colors(StrEnum):
 
 class Whitespace(StrEnum):
     """
-    Enum for whitespace.
+    Whitespace replacement constants.
     """
     EOL = "$"
     TAB = ">···"

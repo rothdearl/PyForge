@@ -20,7 +20,7 @@ from cli import CLIProgram, colors, io, terminal
 
 class Colors(StrEnum):
     """
-    Enum for colors.
+    Terminal color constants.
     """
     COLON = colors.BRIGHT_CYAN
     EOL = colors.BRIGHT_BLUE
@@ -32,7 +32,7 @@ class Colors(StrEnum):
 
 class Whitespace(StrEnum):
     """
-    Enum for whitespace.
+    Whitespace replacement constants.
     """
     EOL = "$"
     SPACE = "·"

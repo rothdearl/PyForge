@@ -21,7 +21,7 @@ from cli import CLIProgram, colors, io, patterns, terminal
 
 class Colors(StrEnum):
     """
-    Enum for colors.
+    Terminal color constants.
     """
     COLON = colors.BRIGHT_CYAN
     FILE_NAME = colors.BRIGHT_MAGENTA
