@@ -49,7 +49,7 @@ class Track(CLIProgram):
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print the last part of FILES",
                                          epilog="with no FILES, read standard input", prog=self.NAME)
 
-        parser.add_argument("files", help="files to print", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         parser.add_argument("-f", "--follow", action="store_true", help="output appended data as the file grows")
         parser.add_argument("-H", "--no-file-header", action="store_true",
                             help="do not prefix output lines with file names")

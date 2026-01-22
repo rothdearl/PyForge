@@ -54,7 +54,7 @@ class Dupe(CLIProgram):
                                          epilog="with no FILES, read standard input", prog=self.NAME)
         print_group = parser.add_mutually_exclusive_group()
 
-        parser.add_argument("files", help="files to filter", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         parser.add_argument("-a", "--adjacent", action="store_true", help="only filter matching adjacent lines")
         parser.add_argument("-b", "--skip-blank", action="store_true", help="avoid comparing blank lines")
         parser.add_argument("-c", "--count", action="store_true", help="prefix lines by the number of occurrences")

@@ -80,7 +80,7 @@ class Tally(CLIProgram):
                                          description="print line, word and character counts in FILES",
                                          epilog="with no FILES, read standard input", prog=self.NAME)
 
-        parser.add_argument("files", help="files to count", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         parser.add_argument("-c", "--chars", action="store_true", help="print the character counts")
         parser.add_argument("-l", "--lines", action="store_true", help="print the line counts")
         parser.add_argument("-L", "--max-line-length", action="store_true", help="print the maximum line length")

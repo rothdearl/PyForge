@@ -50,7 +50,7 @@ class Subs(CLIProgram):
         parser = argparse.ArgumentParser(allow_abbrev=False, description="replace text in FILES",
                                          epilog="with no FILES, read standard input", prog=self.NAME)
 
-        parser.add_argument("files", help="files to process", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         parser.add_argument("-f", "--find", action="extend", help="replace text matching PATTERN", metavar="PATTERN",
                             nargs=1, required=True)
         parser.add_argument("-H", "--no-file-header", action="store_true",

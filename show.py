@@ -63,7 +63,7 @@ class Show(CLIProgram):
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print FILES to standard output",
                                          epilog="with no FILES, read standard input", prog=self.NAME)
 
-        parser.add_argument("files", help="files to print", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         parser.add_argument("-H", "--no-file-header", action="store_true",
                             help="do not prefix output lines with file names")
         parser.add_argument("-l", "--lines", help="print only N lines (N >= 1)", metavar="N", type=int)

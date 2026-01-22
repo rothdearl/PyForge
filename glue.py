@@ -59,7 +59,7 @@ class Glue(CLIProgram):
         blank = parser.add_mutually_exclusive_group()
         number = parser.add_mutually_exclusive_group()
 
-        parser.add_argument("files", help="files to concatenate", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         number.add_argument("-b", "--number-nonblank", action="store_true", help="number nonblank output lines")
         number.add_argument("-n", "--number", action="store_true", help="number all output lines")
         blank.add_argument("-B", "--no-blank", action="store_true", help="suppress blank lines")

@@ -53,7 +53,7 @@ class Scan(CLIProgram):
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print lines that match patterns in FILES",
                                          epilog="with no FILES, read standard input", prog=self.NAME)
 
-        parser.add_argument("files", help="files to search", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         parser.add_argument("-c", "--count", action="store_true",
                             help="print only the count of matching lines per input file")
         parser.add_argument("-f", "--find", action="extend", help="print lines that match PATTERN", metavar="PATTERN",
