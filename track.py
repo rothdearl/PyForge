@@ -54,7 +54,8 @@ class Track(CLIProgram):
         parser.add_argument("-H", "--no-file-header", action="store_true",
                             help="do not prefix output lines with file names")
         parser.add_argument("-n", "--lines", default=10,
-                            help="print the last or all but the first N lines (default: 10)", metavar="N", type=int)
+                            help="print the last N lines, or all but the first N if negative (default: 10)",
+                            metavar="N", type=int)
         parser.add_argument("--color", choices=("on", "off"), default="on", help="colorize file headers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
         parser.add_argument("--stdin-files", action="store_true",

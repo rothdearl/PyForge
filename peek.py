@@ -50,7 +50,8 @@ class Peek(CLIProgram):
         parser.add_argument("-H", "--no-file-header", action="store_true",
                             help="do not prefix output lines with file names")
         parser.add_argument("-n", "--lines", default=10,
-                            help="print the first or all but the last N lines (default: 10)", metavar="N", type=int)
+                            help="print the first N lines, or all but the last N if negative (default: 10)",
+                            metavar="N", type=int)
         parser.add_argument("--color", choices=("on", "off"), default="on", help="colorize file headers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
         parser.add_argument("--stdin-files", action="store_true",
