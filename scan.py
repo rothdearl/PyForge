@@ -52,10 +52,13 @@ class Scan(CLIProgram):
         """
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print lines that match patterns in FILES",
                                          epilog="with no FILES, read standard input", prog=self.NAME)
+        count_group = parser.add_mutually_exclusive_group()
 
         parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
-        parser.add_argument("-c", "--count", action="store_true",
-                            help="print only the count of matching lines per input file")
+        count_group.add_argument("-c", "--count", action="store_true",
+                                 help="print the count of matching lines per input file")
+        count_group.add_argument("-C", "--count-nonzero", action="store_true",
+                                 help="print the count only for files with at least one match")
         parser.add_argument("-f", "--find", action="extend", help="print lines that match PATTERN", metavar="PATTERN",
                             nargs=1, required=True)
         parser.add_argument("-H", "--no-file-header", action="store_true",
@@ -132,15 +135,15 @@ class Scan(CLIProgram):
             try:
                 line = input()
 
-                # If --count, wait until EOF before finding matches.
-                if self.args.count:
+                # If --count or --count-nonzero, wait until EOF before finding matches.
+                if self.args.count or self.args.count_nonzero:
                     lines.append(line)
                 else:
                     self.print_matches_in_lines([line], origin_file="", reset_line_number=False)
             except EOFError:
                 eof = True
 
-        if self.args.count:  # --count
+        if self.args.count or self.args.count_nonzero:  # --count or --count-nonzero
             self.print_matches_in_lines(lines, origin_file="")
 
     def print_matches_in_lines(self, lines: TextIO | list[str], *, origin_file: str, reset_line_number=True) -> None:
@@ -176,6 +179,9 @@ class Scan(CLIProgram):
         # Print matches.
         filename = ""
 
+        if self.args.count_nonzero and not matches:  # --count-nonzero
+            return
+
         if not self.args.no_file_header:  # --no-file-header
             filename = os.path.relpath(origin_file) if origin_file else "(standard input)"
 
@@ -184,7 +190,7 @@ class Scan(CLIProgram):
             else:
                 filename = f"{filename}:"
 
-        if self.args.count:  # --count
+        if self.args.count or self.args.count_nonzero:  # --count or --count-nonzero
             print(f"{filename}{len(matches)}")
         elif matches:
             padding = len(str(matches[-1][0])) if reset_line_number else 0

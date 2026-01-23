@@ -57,14 +57,14 @@ class Glue(CLIProgram):
         parser = argparse.ArgumentParser(allow_abbrev=False,
                                          description="join FILES and standard input to standard output",
                                          epilog="with no FILES, read standard input", prog=self.NAME)
-        blank = parser.add_mutually_exclusive_group()
-        number = parser.add_mutually_exclusive_group()
+        blank_group = parser.add_mutually_exclusive_group()
+        number_group = parser.add_mutually_exclusive_group()
 
         parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
-        number.add_argument("-b", "--number-nonblank", action="store_true", help="number nonblank output lines")
-        number.add_argument("-n", "--number", action="store_true", help="number all output lines")
-        blank.add_argument("-B", "--no-blank", action="store_true", help="suppress all blank lines")
-        blank.add_argument("-s", "--squeeze-blank", action="store_true", help="suppress repeated blank lines")
+        number_group.add_argument("-b", "--number-nonblank", action="store_true", help="number nonblank output lines")
+        number_group.add_argument("-n", "--number", action="store_true", help="number all output lines")
+        blank_group.add_argument("-B", "--no-blank", action="store_true", help="suppress all blank lines")
+        blank_group.add_argument("-s", "--squeeze-blank", action="store_true", help="suppress repeated blank lines")
         parser.add_argument("-E", "--show-ends", action="store_true",
                             help=f"display '{Whitespace.EOL}' at end of each line")
         parser.add_argument("-g", "--group", action="store_true", help="separate FILES with a blank line")

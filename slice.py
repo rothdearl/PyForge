@@ -60,6 +60,8 @@ class Slice(CLIProgram):
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="colorize counts and file headers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
+        parser.add_argument("--literal-quotes", action="store_true",
+                            help="treat quotes as ordinary characters (disable shell-style quote parsing)")
         parser.add_argument("--print", action="extend",
                             help="print only the specified fields (1-based indices; duplicates allowed)", metavar="N",
                             nargs='+', type=int)
@@ -157,11 +159,18 @@ class Slice(CLIProgram):
         """
         lexer = shlex.shlex(line, posix=True, punctuation_chars=False)
 
-        # Treat whitespace as the token separator.
-        lexer.whitespace_split = True
+        # Configure the lexer.
+        lexer.whitespace_split = True  # Treat whitespace as the token separator.
 
-        # Get the fields.
-        fields = list(lexer)
+        if self.args.literal_quotes:  # --literal-quotes
+            lexer.quotes = ""  # Disables quotes.
+
+        # Parse the fields.
+        try:
+            fields = list(lexer)
+        except ValueError:
+            # Likely a "No closing quotation" error; strip the line and add it as a single field.
+            fields = [line.lstrip().rstrip(" \n")]
 
         # If --print, collect just the specified fields.
         if self.fields_to_print:
