@@ -57,7 +57,6 @@ class Tally(CLIProgram):
         self.WORD_PATTERN: Final[str] = r"\b\w+\b"
         self.files_counted: int = 0
         self.options_count: int = 0
-        self.tab_width: int = 8
 
     def add_stats_to_totals(self, stats: Stats) -> None:
         """
@@ -84,14 +83,15 @@ class Tally(CLIProgram):
         parser.add_argument("-c", "--chars", action="store_true", help="print the character counts")
         parser.add_argument("-l", "--lines", action="store_true", help="print the line counts")
         parser.add_argument("-L", "--max-line-length", action="store_true", help="print the maximum line length")
-        parser.add_argument("-t", "--tab-width",
+        parser.add_argument("-t", "--tab-width", default=8,
                             help="use N spaces for tabs when computing line length (default: 8; N >= 1)", metavar="N",
                             type=int)
         parser.add_argument("-w", "--words", action="store_true", help="print the word counts")
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="colorize counts and file names (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
-        parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
+        parser.add_argument("--stdin-files", action="store_true",
+                            help="treat standard input as a list of FILES (one per line)")
         parser.add_argument("--total", choices=("auto", "on", "off"), default="auto",
                             help="print a line with total counts")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.VERSION}")
@@ -108,7 +108,7 @@ class Tally(CLIProgram):
 
         for line in text:
             line_length = len(line)
-            max_display_width = line_length + (line.count("\t") * self.tab_width) - 1  # -1 for the newline.
+            max_display_width = line_length + (line.count("\t") * self.args.tab_width) - 1  # -1 for the newline.
 
             character_count += line_length
             line_count += 1
@@ -122,8 +122,6 @@ class Tally(CLIProgram):
         The main function of the program.
         :return: None
         """
-        self.set_count_info_values()
-
         if terminal.input_is_redirected():
             if self.args.stdin_files:  # --stdin-files
                 self.print_stats_from_files(sys.stdin)
@@ -208,18 +206,16 @@ class Tally(CLIProgram):
         self.add_stats_to_totals(stats)
         self.print_stats(stats, stat_origin="")
 
-    def set_count_info_values(self) -> None:
+    def validate_parsed_arguments(self) -> None:
         """
-        Sets the values to use for counting.
+        Validates the parsed command-line arguments.
         :return: None
         """
-        self.tab_width = self.args.tab_width if self.args.tab_width is not None else 8  # --tab-width
-
-        if self.tab_width < 1:
-            self.print_error_and_exit(f"'tab-width' must be >= 1")
+        if self.args.tab_width < 1:
+            self.print_error_and_exit("'tab-width' must be >= 1")
 
         # -1 one for the tab character.
-        self.tab_width -= 1
+        self.args.tab_width -= 1
 
         # Check which stat options were provided: --lines, --words, --chars, or --max-line-length
         for index, option in enumerate((self.args.lines, self.args.words, self.args.chars, self.args.max_line_length)):

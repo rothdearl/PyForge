@@ -37,6 +37,7 @@ class CLIProgram(ABC):
         Builds an argument parser.
         :return: An argument parser.
         """
+        ...
 
     def check_for_errors(self) -> None:
         """
@@ -53,6 +54,7 @@ class CLIProgram(ABC):
         The main function of the program.
         :return: None
         """
+        ...
 
     @final
     def parse_arguments(self) -> None:
@@ -106,6 +108,7 @@ class CLIProgram(ABC):
                 signal(SIGPIPE, SIG_DFL)
 
             self.parse_arguments()
+            self.validate_parsed_arguments()
             self.main()
             self.check_for_errors()
         except KeyboardInterrupt:
@@ -113,3 +116,10 @@ class CLIProgram(ABC):
             raise SystemExit(self.ERROR_EXIT_CODE if windows else keyboard_interrupt_error_code)
         except OSError as e:
             raise SystemExit(self.ERROR_EXIT_CODE) from e
+
+    def validate_parsed_arguments(self) -> None:
+        """
+        Validates the parsed command-line arguments.
+        :return: None
+        """
+        pass

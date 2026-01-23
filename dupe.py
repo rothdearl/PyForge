@@ -79,7 +79,8 @@ class Dupe(CLIProgram):
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="colorize counts and file headers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
-        parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
+        parser.add_argument("--stdin-files", action="store_true",
+                            help="treat standard input as a list of FILES (one per line)")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.VERSION}")
 
         return parser
@@ -285,13 +286,13 @@ class Dupe(CLIProgram):
 
         # Validate the match values.
         if self.skip_fields < 0:
-            self.print_error_and_exit(f"'skip-fields' must be >= 0")
+            self.print_error_and_exit("'skip-fields' must be >= 0")
 
         if self.skip_chars < 0:
-            self.print_error_and_exit(f"'skip-chars' must be >= 0")
+            self.print_error_and_exit("'skip-chars' must be >= 0")
 
         if self.max_chars < 1:
-            self.print_error_and_exit(f"'max-chars' must be >= 1")
+            self.print_error_and_exit("'max-chars' must be >= 1")
 
 
 if __name__ == "__main__":

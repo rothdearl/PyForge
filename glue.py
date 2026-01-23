@@ -5,7 +5,7 @@
 Filename: glue.py
 Author: Roth Earl
 Version: 1.3.4
-Description: A program to concatenate files to standard output.
+Description: A program to join files and standard input to standard output.
 License: GNU GPLv3
 """
 
@@ -37,7 +37,7 @@ class Whitespace(StrEnum):
 @final
 class Glue(CLIProgram):
     """
-    A program to concatenate files to standard output.
+    A program to join files and standard input to standard output.
     """
 
     def __init__(self) -> None:
@@ -54,7 +54,8 @@ class Glue(CLIProgram):
         Builds an argument parser.
         :return: An argument parser.
         """
-        parser = argparse.ArgumentParser(allow_abbrev=False, description="concatenate FILES to standard output",
+        parser = argparse.ArgumentParser(allow_abbrev=False,
+                                         description="join FILES and standard input to standard output",
                                          epilog="with no FILES, read standard input", prog=self.NAME)
         blank = parser.add_mutually_exclusive_group()
         number = parser.add_mutually_exclusive_group()
@@ -62,17 +63,20 @@ class Glue(CLIProgram):
         parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         number.add_argument("-b", "--number-nonblank", action="store_true", help="number nonblank output lines")
         number.add_argument("-n", "--number", action="store_true", help="number all output lines")
-        blank.add_argument("-B", "--no-blank", action="store_true", help="suppress blank lines")
+        blank.add_argument("-B", "--no-blank", action="store_true", help="suppress all blank lines")
         blank.add_argument("-s", "--squeeze-blank", action="store_true", help="suppress repeated blank lines")
         parser.add_argument("-E", "--show-ends", action="store_true",
-                            help=f"display {Whitespace.EOL} at end of each line")
-        parser.add_argument("-g", "--group", action="store_true", help="separate files with an empty line")
+                            help=f"display '{Whitespace.EOL}' at end of each line")
+        parser.add_argument("-g", "--group", action="store_true", help="separate FILES with a blank line")
         parser.add_argument("-T", "--show-tabs", action="store_true",
-                            help=f"display tab characters as {Whitespace.TAB}")
+                            help=f"display tab characters as '{Whitespace.TAB}'")
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="colorize whitespace and numbers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
-        parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
+        parser.add_argument("--number-width", default=7, help="pad line numbers to width N (default: 7)", metavar="N",
+                            type=int)
+        parser.add_argument("--stdin-files", action="store_true",
+                            help="treat standard input as a list of FILES (one per line)")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.VERSION}")
 
         return parser
@@ -109,7 +113,7 @@ class Glue(CLIProgram):
             if self.args.number or self.args.number_nonblank:  # --number or --number-nonblank
                 print_number = True
 
-            if not line or line == "\n":
+            if line == "\n":  # Blank line?
                 self.repeated_blank_lines += 1
 
                 if self.args.number_nonblank:  # --number-nonblank
@@ -140,12 +144,10 @@ class Glue(CLIProgram):
                     line = f"{line[:end_index]}{Whitespace.EOL}{newline}"
 
             if print_number:
-                width = 7
-
                 if self.print_color:
-                    line = f"{Colors.NUMBER}{self.number:>{width}}{colors.RESET} {line}"
+                    line = f"{Colors.NUMBER}{self.number:>{self.args.number_width}}{colors.RESET} {line}"
                 else:
-                    line = f"{self.number:>{width}} {line}"
+                    line = f"{self.number:>{self.args.number_width}} {line}"
 
             io.print_line(line)
 
@@ -178,6 +180,14 @@ class Glue(CLIProgram):
                 self.print_lines([input()])
             except EOFError:
                 eof = True
+
+    def validate_parsed_arguments(self) -> None:
+        """
+        Validates the parsed command-line arguments.
+        :return: None
+        """
+        if self.args.number_width < 1:  # --number-width
+            self.print_error_and_exit("'number-width' must be >= 1")
 
 
 if __name__ == "__main__":

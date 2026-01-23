@@ -53,11 +53,12 @@ class Track(CLIProgram):
         parser.add_argument("-f", "--follow", action="store_true", help="output appended data as the file grows")
         parser.add_argument("-H", "--no-file-header", action="store_true",
                             help="do not prefix output lines with file names")
-        parser.add_argument("-n", "--lines", help="print the last or all but the first N lines", metavar="N",
-                            type=int)
+        parser.add_argument("-n", "--lines", default=10,
+                            help="print the last or all but the first N lines (default: 10)", metavar="N", type=int)
         parser.add_argument("--color", choices=("on", "off"), default="on", help="colorize file headers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
-        parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
+        parser.add_argument("--stdin-files", action="store_true",
+                            help="treat standard input as a list of FILES (one per line)")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.VERSION}")
 
         return parser
@@ -174,7 +175,7 @@ class Track(CLIProgram):
         :param lines: The lines.
         :return: None
         """
-        lines_to_print = self.args.lines if self.args.lines is not None else 10  # --lines
+        lines_to_print = self.args.lines  # --lines
         skip_to_line = len(lines) - lines_to_print
 
         # Print all but the first 'n' lines.

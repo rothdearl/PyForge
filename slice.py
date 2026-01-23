@@ -65,7 +65,8 @@ class Slice(CLIProgram):
                             nargs='+', type=int)
         parser.add_argument("--quotes", choices=("d", "s"),
                             help="wrap fields in double (d) or single (s) quotes (default: none)")
-        parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
+        parser.add_argument("--stdin-files", action="store_true",
+                            help="treat standard input as a list of FILES (one per line)")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.VERSION}")
 
         return parser
@@ -75,8 +76,6 @@ class Slice(CLIProgram):
         The main function of the program.
         :return: None
         """
-        self.set_fields_to_print()
-
         # Set --no-file-header to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_header = True
@@ -150,24 +149,6 @@ class Slice(CLIProgram):
         """
         self.print_sliced_lines(sys.stdin.read().splitlines())
 
-    def set_fields_to_print(self) -> None:
-        """
-        Sets the fields to print.
-        :return: None
-        """
-        self.fields_to_print = self.args.print or []  # --print
-
-        if self.args.unique:  # --unique
-            self.fields_to_print = sorted(set(self.fields_to_print))
-
-        # Validate the field values.
-        for field in self.fields_to_print:
-            if field < 1:
-                self.print_error_and_exit(f"'print' must contain fields >= 1")
-
-        # Convert one-based input to zero-based.
-        self.fields_to_print = [i - 1 for i in self.fields_to_print]
-
     def slice_line(self, line: str) -> list[str]:
         """
         Slices the line into fields.
@@ -189,6 +170,24 @@ class Slice(CLIProgram):
             fields = [fields[i] for i in self.fields_to_print if i < max_fields]
 
         return fields
+
+    def validate_parsed_arguments(self) -> None:
+        """
+        Validates the parsed command-line arguments.
+        :return: None
+        """
+        self.fields_to_print = self.args.print or []  # --print
+
+        # Validate --print values.
+        for field in self.fields_to_print:
+            if field < 1:
+                self.print_error_and_exit("'print' must contain fields >= 1")
+
+        if self.args.unique:  # --unique
+            self.fields_to_print = sorted(set(self.fields_to_print))
+
+        # Convert one-based input to zero-based.
+        self.fields_to_print = [i - 1 for i in self.fields_to_print]
 
 
 if __name__ == "__main__":

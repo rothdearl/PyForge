@@ -39,7 +39,6 @@ class Subs(CLIProgram):
         """
         super().__init__(name="subs", version="1.0.0")
 
-        self.max_replacements: int = 0
         self.pattern: re.Pattern[str] | None = None
 
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -62,9 +61,10 @@ class Subs(CLIProgram):
         parser.add_argument("--in-place", action="store_true",
                             help="write changes back to FILES instead of standard output")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
-        parser.add_argument("--max-replacements", help="limit replacements to N per line (default: unlimited; N >= 1)",
-                            metavar="N", type=int)
-        parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
+        parser.add_argument("--max-replacements", default=sys.maxsize,
+                            help="limit replacements to N per line (default: unlimited; N >= 1)", metavar="N", type=int)
+        parser.add_argument("--stdin-files", action="store_true",
+                            help="treat standard input as a list of FILES (one per line)")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.VERSION}")
 
         return parser
@@ -79,7 +79,7 @@ class Subs(CLIProgram):
             line = line.rstrip("\n")  # Remove trailing newlines so $ matches only once per line.
 
             if self.pattern:
-                line = self.pattern.sub(self.args.replace, line, count=self.max_replacements)
+                line = self.pattern.sub(self.args.replace, line, count=self.args.max_replacements)
 
             yield line
 
@@ -88,8 +88,6 @@ class Subs(CLIProgram):
         The main function of the program.
         :return: None
         """
-        self.set_max_replacements()
-
         # Pre-compile --find patterns.
         if compiled := patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case, logger=self):
             self.pattern = patterns.combine_patterns(compiled, ignore_case=self.args.ignore_case)
@@ -162,16 +160,13 @@ class Subs(CLIProgram):
                 except UnicodeDecodeError:
                     self.print_io_error(f"{file_info.filename}: unable to read with {self.encoding}")
 
-    def set_max_replacements(self) -> None:
+    def validate_parsed_arguments(self) -> None:
         """
-        Sets the maximum replacements.
+        Validates the parsed command-line arguments.
         :return: None
         """
-        if self.args.max_replacements is not None:  # --max-replacements
-            if self.args.max_replacements < 1:
-                self.print_error_and_exit(f"'max-replacements' must be >= 1")
-
-            self.max_replacements = self.args.max_replacements
+        if self.args.max_replacements < 1:  # --max-replacements
+            self.print_error_and_exit("'max-replacements' must be >= 1")
 
 
 if __name__ == "__main__":

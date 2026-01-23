@@ -52,9 +52,6 @@ class Show(CLIProgram):
         """
         super().__init__(name="show", version="1.3.4")
 
-        self.line_start: int = 0
-        self.lines: int = 0
-
     def build_arguments(self) -> argparse.ArgumentParser:
         """
         Builds an argument parser.
@@ -66,18 +63,20 @@ class Show(CLIProgram):
         parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         parser.add_argument("-H", "--no-file-header", action="store_true",
                             help="do not prefix output lines with file names")
-        parser.add_argument("-l", "--lines", help="print only N lines (N >= 1)", metavar="N", type=int)
+        parser.add_argument("-l", "--lines", default=sys.maxsize, help="print only N lines (N >= 1)", metavar="N",
+                            type=int)
         parser.add_argument("-n", "--line-number", action="store_true", help="print line number with output lines")
-        parser.add_argument("-s", "--line-start", help="print the first or all but the last N lines (N != 0)",
-                            metavar="N", type=int)
+        parser.add_argument("-s", "--line-start", default=1,
+                            help="print the first or all but the last N lines (N != 0)", metavar="N", type=int)
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="colorize file names, whitespace and line numbers (default: on)")
-        parser.add_argument("--ends", action="store_true", help=f"display {Whitespace.EOL} at end of each line")
+        parser.add_argument("--ends", action="store_true", help=f"display '{Whitespace.EOL}' at end of each line")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
         parser.add_argument("--spaces", action="store_true",
-                            help=f"display spaces as {Whitespace.SPACE} and trailing spaces as {Whitespace.TRAILING_SPACE}")
-        parser.add_argument("--stdin-files", action="store_true", help="treat standard input as a list of FILES")
-        parser.add_argument("--tabs", action="store_true", help=f"display tab characters as {Whitespace.TAB}")
+                            help=f"display spaces as '{Whitespace.SPACE}' and trailing spaces as '{Whitespace.TRAILING_SPACE}'")
+        parser.add_argument("--stdin-files", action="store_true",
+                            help="treat standard input as a list of FILES (one per line)")
+        parser.add_argument("--tabs", action="store_true", help=f"display tab characters as '{Whitespace.TAB}'")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.VERSION}")
 
         return parser
@@ -87,8 +86,6 @@ class Show(CLIProgram):
         The main function of the program.
         :return: None
         """
-        self.set_line_info_values()
-
         # Set --no-file-header to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_header = True
@@ -130,8 +127,8 @@ class Show(CLIProgram):
         :param lines: The lines.
         :return: None
         """
-        line_start = len(lines) + self.line_start + 1 if self.line_start < 0 else self.line_start
-        line_end = line_start + self.lines - 1
+        line_start = len(lines) + self.args.line_start + 1 if self.args.line_start < 0 else self.args.line_start
+        line_end = line_start + self.args.lines - 1
         line_min = min(self.args.lines, len(lines)) if self.args.lines else len(lines)
         padding = len(str(line_min))
 
@@ -162,21 +159,6 @@ class Show(CLIProgram):
         :return: None
         """
         self.print_lines(sys.stdin.read().splitlines())
-
-    def set_line_info_values(self) -> None:
-        """
-        Sets the values to use for printing lines.
-        :return: None
-        """
-        self.line_start = self.args.line_start if self.args.line_start is not None else 1  # --line-start
-        self.lines = self.args.lines if self.args.lines is not None else sys.maxsize  # --lines
-
-        # Validate the line values.
-        if self.line_start == 0:
-            self.print_error_and_exit(f"'line-start' cannot = 0")
-
-        if self.lines < 1:
-            self.print_error_and_exit(f"'lines' must be >= 1")
 
     def show_ends(self, line: str) -> str:
         """
@@ -239,6 +221,17 @@ class Show(CLIProgram):
             return line.replace("\t", f"{Colors.TAB}{Whitespace.TAB}{colors.RESET}")
 
         return line.replace("\t", Whitespace.TAB)
+
+    def validate_parsed_arguments(self) -> None:
+        """
+        Validates the parsed command-line arguments.
+        :return: None
+        """
+        if self.args.line_start == 0:  # --line-start
+            self.print_error_and_exit("'line-start' cannot = 0")
+
+        if self.args.lines < 1:  # --lines
+            self.print_error_and_exit("'lines' must be >= 1")
 
 
 if __name__ == "__main__":
