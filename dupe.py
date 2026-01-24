@@ -4,7 +4,7 @@
 """
 Filename: dupe.py
 Author: Roth Earl
-Version: 1.3.4
+Version: 1.3.5
 Description: A program to filter matching lines in files.
 License: GNU GPLv3
 """
@@ -38,7 +38,7 @@ class Dupe(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="dupe", version="1.3.4")
+        super().__init__(name="dupe", version="1.3.5")
 
         self.FIELD_PATTERN: Final[str] = r"\s+|\W+"
         self.max_chars: int = 0

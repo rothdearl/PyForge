@@ -4,7 +4,7 @@
 """
 Filename: tally.py
 Author: Roth Earl
-Version: 1.3.4
+Version: 1.3.5
 Description: A program to print line, word and character counts in files.
 License: GNU GPLv3
 """
@@ -50,7 +50,7 @@ class Tally(CLIProgram):
         """
         Initializes a new instance.
         """
-        super().__init__(name="tally", version="1.3.4")
+        super().__init__(name="tally", version="1.3.5")
 
         self.OPTIONS: Final[list[bool]] = [False, False, False, False]
         self.TOTALS: Final[list[int]] = [0, 0, 0, 0]
@@ -98,17 +98,20 @@ class Tally(CLIProgram):
 
         return parser
 
-    def get_stats(self, text: Iterable[str] | TextIO) -> Stats:
+    def get_stats(self, text: Iterable[str] | TextIO, *, has_newlines: bool) -> Stats:
         """
         Returns the counts for the lines, words, characters and the maximum line length in the text.
         :param text: The text.
+        :param has_newlines: Whether the text has newlines.
         :return: The stats.
         """
         character_count, line_count, max_line_length, words = 0, 0, 0, 0
+        display_width_offset = -1 if has_newlines else 0
+        line_length_offset = 0 if has_newlines else 1
 
         for line in text:
-            line_length = len(line)
-            max_display_width = line_length + (line.count("\t") * self.args.tab_width) - 1  # -1 for the newline.
+            line_length = len(line) + line_length_offset
+            max_display_width = len(line) + (line.count("\t") * self.args.tab_width) - display_width_offset
 
             character_count += line_length
             line_count += 1
@@ -127,7 +130,7 @@ class Tally(CLIProgram):
                 self.print_stats_from_files(sys.stdin)
             else:
                 if standard_input := sys.stdin.readlines():
-                    stats = self.get_stats(standard_input)
+                    stats = self.get_stats(standard_input, has_newlines=True)
 
                     self.files_counted += 1
                     self.add_stats_to_totals(stats)
@@ -178,7 +181,7 @@ class Tally(CLIProgram):
         """
         for file_info in io.read_files(files, self.encoding, reporter=self):
             try:
-                stats = self.get_stats(file_info.text)
+                stats = self.get_stats(file_info.text, has_newlines=True)
 
                 self.files_counted += 1
                 self.add_stats_to_totals(stats)
@@ -191,17 +194,7 @@ class Tally(CLIProgram):
         Prints stats from standard input until EOF is entered.
         :return: None
         """
-        eof = False
-        lines = []
-
-        while not eof:
-            try:
-                lines.append(f"{input()}\n")  # Add a newline to the input.
-            except EOFError:
-                eof = True
-
-        # Print stats.
-        stats = self.get_stats(lines)
+        stats = self.get_stats(sys.stdin.read().splitlines(), has_newlines=False)
 
         self.add_stats_to_totals(stats)
         self.print_stats(stats, stat_origin="")
