@@ -14,14 +14,23 @@ from cli import terminal
 class CLIProgram(ABC):
     """
     ABC base class for command-line programs.
+
+    :ivar int ERROR_EXIT_CODE: Exit code when an error occurs (default: 1).
+    :ivar str NAME: Program name.
+    :ivar str VERSION: Program version.
+    :ivar argparse.Namespace args: Parsed command-line arguments.
+    :ivar str encoding: Encoding for reading and writing to files.
+    :ivar bool has_errors: Whether the program has encountered errors.
+    :ivar bool print_color: Whether color output is enabled.
     """
 
     def __init__(self, *, name: str, version: str, error_exit_code: int = 1) -> None:
         """
         Initializes a new instance.
-        :param name: The name.
-        :param version: The version.
-        :param error_exit_code: The exit code when an error occurs; default is 1.
+
+        :param name: Program name.
+        :param version: Program version.
+        :param error_exit_code: Exit code when an error occurs (default: 1).
         """
         self.ERROR_EXIT_CODE: Final[int] = error_exit_code
         self.NAME: Final[str] = name
@@ -35,6 +44,7 @@ class CLIProgram(ABC):
     def build_arguments(self) -> argparse.ArgumentParser:
         """
         Builds an argument parser.
+
         :return: An argument parser.
         """
         ...
@@ -42,7 +52,7 @@ class CLIProgram(ABC):
     def check_for_errors(self) -> None:
         """
         Raises a SystemExit if there are any errors.
-        :return: None
+
         :raises SystemExit: Request to exit from the interpreter if there are any errors.
         """
         if self.has_errors:
@@ -52,7 +62,6 @@ class CLIProgram(ABC):
     def main(self) -> None:
         """
         The main function of the program.
-        :return: None
         """
         ...
 
@@ -60,7 +69,6 @@ class CLIProgram(ABC):
     def parse_arguments(self) -> None:
         """
         Parses the command line arguments to get the program options.
-        :return: None
         """
         self.args = self.build_arguments().parse_args()
         self.encoding = "iso-8859-1" if getattr(self.args, "latin1", False) else "utf-8"  # --latin1
@@ -70,8 +78,8 @@ class CLIProgram(ABC):
     def print_error(self, error_message: str) -> None:
         """
         Sets the error flag to True and prints the error message to standard error if the argument no_messages = False.
-        :param error_message: The error message to print.
-        :return: None
+
+        :param error_message: Error message to print.
         """
         self.has_errors = True
 
@@ -82,8 +90,8 @@ class CLIProgram(ABC):
     def print_error_and_exit(self, error_message: str) -> None:
         """
         Prints the error message to standard error and raises a SystemExit.
-        :param error_message: The error message to print.
-        :return: None
+
+        :param error_message: Error message to print.
         """
         print(f"{self.NAME}: error: {error_message}", file=sys.stderr)
         raise SystemExit(self.ERROR_EXIT_CODE)
@@ -92,7 +100,6 @@ class CLIProgram(ABC):
     def run(self) -> None:
         """
         Runs the program.
-        :return: None
         """
         keyboard_interrupt_error_code = 130
         windows = os.name == "nt"
@@ -121,6 +128,5 @@ class CLIProgram(ABC):
     def validate_parsed_arguments(self) -> None:
         """
         Validates the parsed command-line arguments.
-        :return: None
         """
         ...

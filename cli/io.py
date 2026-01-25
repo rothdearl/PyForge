@@ -14,8 +14,8 @@ class _ErrorReporter(Protocol):
     def print_error(self, error_message: str) -> None:
         """
         Prints the error message to standard error.
-        :param error_message: The error message to print.
-        :return: None
+
+        :param error_message: Error message to print.
         """
         ...
 
@@ -24,10 +24,9 @@ class FileInfo(NamedTuple):
     """
     Immutable container for information about a file being read.
 
-    Attributes:
-        file_index: Position of the file name in the input sequence.
-        filename: The file name as provided.
-        text: Open text stream for the file.
+    :ivar int file_index: Position of the file name in the input sequence.
+    :ivar str filename: File name as provided.
+    :ivar TextIO text: Open text stream for the file.
     """
     file_index: int
     filename: str
@@ -37,8 +36,8 @@ class FileInfo(NamedTuple):
 def print_line(line: str) -> None:
     """
     Prints a line, ensuring exactly one trailing newline (e.g., for input from files or standard input).
-    :param line: The line to print.
-    :return: None
+
+    :param line: Line to print.
     """
     print(line, end="" if line.endswith("\n") else "\n")
 
@@ -46,10 +45,11 @@ def print_line(line: str) -> None:
 def read_files(files: Iterable[str] | TextIO, encoding: str, *, reporter: _ErrorReporter) -> Iterator[FileInfo]:
     """
     Opens the files for reading in text mode and returns an iterator yielding FileInfo objects.
-    :param files: A list of file names or a text stream containing file names (e.g. standard input).
-    :param encoding: The text encoding.
-    :param reporter: The reporter for printing file-related errors.
-    :return: An iterator of FileInfo objects.
+
+    :param files: List of file names or a text stream containing file names (e.g. standard input).
+    :param encoding: Text encoding.
+    :param reporter: Reporter for printing file-related errors.
+    :return: Iterator of FileInfo objects.
     """
     for file_index, filename in enumerate(files):
         filename = filename.rstrip()
@@ -72,11 +72,11 @@ def read_files(files: Iterable[str] | TextIO, encoding: str, *, reporter: _Error
 def write_text_to_file(filename: str, text: Iterable[str], encoding: str, *, reporter: _ErrorReporter) -> None:
     """
     Write text lines to the file in text mode where each output line is written with exactly one trailing newline.
-    :param filename: The filename.
-    :param text: An iterable of strings (e.g., list, generator, or text stream).
-    :param encoding: The text encoding.
-    :param reporter: The reporter for printing file-related errors.
-    :return: None
+
+    :param filename: File name.
+    :param text: Iterable of strings (e.g., list, generator, or text stream).
+    :param encoding: Text encoding.
+    :param reporter: Reporter for printing file-related errors.
     """
     try:
         with open(filename, "wt", encoding=encoding) as f:

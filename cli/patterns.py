@@ -16,8 +16,8 @@ class _ErrorReporter(Protocol):
     def print_error_and_exit(self, error_message: str) -> None:
         """
         Prints the error message to standard error and raises a SystemExit.
-        :param error_message: The error message to print.
-        :return: None
+
+        :param error_message: Error message to print.
         """
         ...
 
@@ -25,9 +25,10 @@ class _ErrorReporter(Protocol):
 def color_patterns_in_text(text: str, patterns: Iterable[re.Pattern[str]], *, color: str) -> str:
     """
     Colors all patterns in the text.
-    :param text: The text to color.
-    :param patterns: The patterns to color.
-    :param color: The color.
+
+    :param text: Text to color.
+    :param patterns: Patterns to find.
+    :param color: Color to use.
     :return: The text with all patterns colored.
     """
     indices = []
@@ -66,7 +67,8 @@ def color_patterns_in_text(text: str, patterns: Iterable[re.Pattern[str]], *, co
 def combine_patterns(patterns: Iterable[re.Pattern[str]], *, ignore_case: bool) -> re.Pattern[str]:
     """
     Combines all patterns into a single compiled OR-pattern.
-    :param patterns: A list of compiled pattern groups.
+
+    :param patterns: List of compiled pattern groups.
     :param ignore_case: Whether to ignore case.
     :return: A single compiled regular expression matching any pattern.
     """
@@ -79,9 +81,10 @@ def combine_patterns(patterns: Iterable[re.Pattern[str]], *, ignore_case: bool) 
 def compile_patterns(patterns: Iterable[str], *, ignore_case: bool, reporter: _ErrorReporter) -> list[re.Pattern[str]]:
     """
     Compiles patterns into OR-groups implementing AND-of-OR matching.
-    :param patterns: The patterns to compile.
+
+    :param patterns: Patterns to compile.
     :param ignore_case: Whether to ignore case.
-    :param reporter: The reporter for printing pattern-related errors.
+    :param reporter: Reporter for printing pattern-related errors.
     :return: A list of compiled regular expression patterns implementing AND-of-OR matching.
     """
     compiled = []
@@ -102,8 +105,9 @@ def compile_patterns(patterns: Iterable[str], *, ignore_case: bool, reporter: _E
 def text_has_patterns(text: str, patterns: Iterable[re.Pattern[str]]) -> bool:
     """
     Returns whether the text matches all patterns.
-    :param text: The text.
-    :param patterns: The patterns to match.
+
+    :param text: Text to search.
+    :param patterns: Patterns to match.
     :return: True or False.
     """
     for group in patterns:
