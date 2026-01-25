@@ -36,7 +36,7 @@ def build_arguments() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser(allow_abbrev=False,
                                      description="display the current calendar, with optional date and time",
-                                     epilog=f"datetime format is interpreted using strftime(3)", prog=When.NAME)
+                                     epilog="datetime format is interpreted using strftime(3)", prog=When.NAME)
     parser.add_argument("-c", "--calendar", choices=("m", "q", "y"), default="m",
                         help="print calendar as a month, quarter, or year (default: m)")
     parser.add_argument("-d", "--datetime", action="store_true",
@@ -190,8 +190,8 @@ class When:
     A program to display the current calendar, with optional date and time
 
     :cvar Final[str] DEFAULT_DATETIME_FORMAT: Default format for printing the date and time.
-    :cvar str NAME: Program name.
-    :cvar str VERSION: Program version.
+    :cvar Final[str] NAME: Program name.
+    :cvar Final[str] VERSION: Program version.
     :ivar argparse.Namespace args: Parsed command-line arguments.
     """
 
