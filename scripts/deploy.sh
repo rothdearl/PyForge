@@ -17,6 +17,7 @@ declare -a scripts=(
 "subs"
 "tally"
 "track"
+"when"
 )
 
 for script in "${scripts[@]}"

@@ -42,6 +42,7 @@ class Peek(CLIProgram):
     def build_arguments(self) -> argparse.ArgumentParser:
         """
         Builds and returns an argument parser.
+
         :return: An argument parser.
         """
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print the first part of FILES",
@@ -64,7 +65,6 @@ class Peek(CLIProgram):
     def main(self) -> None:
         """
         The main function of the program.
-        :return: None
         """
         # Set --no-file-header to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
@@ -88,8 +88,8 @@ class Peek(CLIProgram):
     def print_file_header(self, file: str) -> None:
         """
         Prints the file name, or (standard input) if empty, with a colon.
-        :param file: The file.
-        :return: None
+
+        :param file: File header to print.
         """
         if not self.args.no_file_header:  # --no-file-header
             filename = os.path.relpath(file) if file else "(standard input)"
@@ -104,8 +104,8 @@ class Peek(CLIProgram):
     def print_lines(self, lines: Iterable[str] | TextIO) -> None:
         """
         Prints the lines.
-        :param lines: The lines.
-        :return: None
+
+        :param lines: Lines to print.
         """
         # If --lines is positive or zero: print the first N lines.
         if self.args.lines >= 0:
@@ -129,8 +129,8 @@ class Peek(CLIProgram):
     def print_lines_from_files(self, files: Iterable[str] | TextIO) -> None:
         """
         Prints lines from files.
-        :param files: The files.
-        :return: None
+
+        :param files: Files to print lines from.
         """
         for file_info in io.read_files(files, self.encoding, reporter=self):
             try:
@@ -142,14 +142,12 @@ class Peek(CLIProgram):
     def print_lines_from_input(self) -> None:
         """
         Prints lines from standard input until EOF is entered.
-        :return: None
         """
         self.print_lines(sys.stdin.read().splitlines())
 
     def validate_parsed_arguments(self) -> None:
         """
         Validates the parsed command-line arguments.
-        :return: None
         """
         pass
 
