@@ -35,7 +35,7 @@ class Scan(CLIProgram):
     A program to print lines that match patterns in files.
 
     :ivar bool found_match: Whether a match was found in a file.
-    :ivar int line_number: Internal line number for tracking where matches were found.
+    :ivar int line_number: Line number for tracking where matches were found.
     :ivar list[re.Pattern[str]] patterns: Compiled patterns to match.
     """
 
@@ -74,7 +74,7 @@ class Scan(CLIProgram):
         parser.add_argument("-s", "--no-messages", action="store_true", help="suppress error messages about files")
         parser.add_argument("-v", "--invert-match", action="store_true", help="print lines that do not match")
         parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="colorize matches, file names and line numbers (default: on)")
+                            help="colorize matches, file names, and line numbers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
         parser.add_argument("--stdin-files", action="store_true",
                             help="treat standard input as a list of FILES (one per line)")

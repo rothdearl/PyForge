@@ -38,6 +38,8 @@ class Whitespace(StrEnum):
 class Glue(CLIProgram):
     """
     A program to join files and standard input to standard output.
+
+    :ivar int line_number: Line number to be printed with output lines.
     """
 
     def __init__(self) -> None:
@@ -46,12 +48,12 @@ class Glue(CLIProgram):
         """
         super().__init__(name="glue", version="1.3.5")
 
-        self.number: int = 0
-        self.repeated_blank_lines: int = 0
+        self.line_number: int = 0
 
     def build_arguments(self) -> argparse.ArgumentParser:
         """
         Builds an argument parser.
+
         :return: An argument parser.
         """
         parser = argparse.ArgumentParser(allow_abbrev=False,
@@ -84,7 +86,6 @@ class Glue(CLIProgram):
     def main(self) -> None:
         """
         The main function of the program.
-        :return: None
         """
         if terminal.input_is_redirected():
             if self.args.stdin_files:  # --stdin-files
@@ -102,31 +103,32 @@ class Glue(CLIProgram):
     def print_lines(self, lines: Iterable[str] | TextIO) -> None:
         """
         Prints the lines.
-        :param lines: The lines.
-        :return: None
+
+        :param lines: Lines to print.
         """
         print_number = False
+        repeated_blank_lines = 0
 
         for line in lines:
-            self.number += 1
+            self.line_number += 1
 
             if self.args.number or self.args.number_nonblank:  # --number or --number-nonblank
                 print_number = True
 
             if line == "\n":  # Blank line?
-                self.repeated_blank_lines += 1
+                repeated_blank_lines += 1
 
                 if self.args.number_nonblank:  # --number-nonblank
-                    self.number -= 1
+                    self.line_number -= 1
                     print_number = False
 
-                if self.args.no_blank and self.repeated_blank_lines:  # --no-blank
+                if self.args.no_blank and repeated_blank_lines:  # --no-blank
                     continue
 
-                if self.args.squeeze_blank and self.repeated_blank_lines > 1:  # --squeeze-blank
+                if self.args.squeeze_blank and repeated_blank_lines > 1:  # --squeeze-blank
                     continue
             else:
-                self.repeated_blank_lines = 0
+                repeated_blank_lines = 0
 
             if self.args.show_tabs:  # --show-tabs
                 if self.print_color:
@@ -145,17 +147,17 @@ class Glue(CLIProgram):
 
             if print_number:
                 if self.print_color:
-                    line = f"{Colors.NUMBER}{self.number:>{self.args.number_width}}{colors.RESET} {line}"
+                    line = f"{Colors.NUMBER}{self.line_number:>{self.args.number_width}}{colors.RESET} {line}"
                 else:
-                    line = f"{self.number:>{self.args.number_width}} {line}"
+                    line = f"{self.line_number:>{self.args.number_width}} {line}"
 
             io.print_line(line)
 
     def print_lines_from_files(self, files: Collection[str]) -> None:
         """
         Prints lines from files.
-        :param files: The files.
-        :return: None
+
+        :param files: Files to print lines from.
         """
         last_file_index = len(files) - 1
 
@@ -171,7 +173,6 @@ class Glue(CLIProgram):
     def print_lines_from_input(self) -> None:
         """
         Prints lines from standard input until EOF is entered.
-        :return: None
         """
         eof = False
 
@@ -184,7 +185,6 @@ class Glue(CLIProgram):
     def validate_parsed_arguments(self) -> None:
         """
         Validates the parsed command-line arguments.
-        :return: None
         """
         if self.args.number_width < 1:  # --number-width
             self.print_error_and_exit("'number-width' must be >= 1")
