@@ -4,7 +4,7 @@
 """
 Filename: when.py
 Author: Roth Earl
-Version: 1.0.0
+Version: 1.0.1
 Description: A program to display the current calendar, with optional date and time.
 License: GNU GPLv3
 """
@@ -30,7 +30,7 @@ class CalendarQuarterSlice(NamedTuple):
 
 def build_arguments() -> argparse.ArgumentParser:
     """
-    Builds and returns an argument parser.
+    Build and return an argument parser.
 
     :return: An argument parser.
     """
@@ -51,21 +51,21 @@ def build_arguments() -> argparse.ArgumentParser:
 
 def color_day_in_week_for_slice(week: str, day: str, quarter_slice: CalendarQuarterSlice) -> str:
     """
-    Colors the day in the week for a calendar quarter slice.
+    Color a day in the week for a calendar quarter slice.
 
     :param week: Current week.
     :param day: Current day.
     :param quarter_slice: Calendar quarter slice.
     :return: The week with the current day colored.
     """
-    colored_text = week[quarter_slice.start:quarter_slice.end].replace(day, reverse_color(day))
+    colored_text = week[quarter_slice.start:quarter_slice.end].replace(day, get_reverse_color(day))
 
     return week[:quarter_slice.start] + colored_text + week[quarter_slice.end:]
 
 
 def get_calendar_quarter_slice(date: datetime.date) -> CalendarQuarterSlice:
     """
-    Returns information about a calendar quarter slice for the given date.
+    Return information about a calendar quarter slice for the given date.
 
     :param date: Current date.
     :return: An immutable container for information about a calendar quarter slice.
@@ -79,25 +79,35 @@ def get_calendar_quarter_slice(date: datetime.date) -> CalendarQuarterSlice:
     return slices[(date.month - 1) % 3]
 
 
+def get_reverse_color(value: str) -> str:
+    """
+    Get a reverse color string with ``value``.
+
+    :param value: Value to get reverse color for.
+    :return: A color string.
+    """
+    return f"{colors.REVERSE}{value}{colors.RESET}"
+
+
 def print_month(date: datetime.date) -> None:
     """
-    Prints the current month.
+    Print the current month.
 
     :param date: Current date.
     """
     month = calendar.month(date.year, date.month, w=0, l=0).splitlines()
 
-    # Print the year header and the days of the week.
+    # Print year header and the days of the week.
     print(month[0])
     print(month[1])
 
-    # Print the weeks highlighting the current day of the month.
+    # Print weeks highlighting the current day of the month.
     day = f"{date.day:>2}"
     found_day = False
 
     for output in month[2:]:
         if not found_day and day in output:
-            output = output.replace(day, reverse_color(day))
+            output = output.replace(day, get_reverse_color(day))
             found_day = True
 
         print(output)
@@ -105,7 +115,7 @@ def print_month(date: datetime.date) -> None:
 
 def print_quarter(date: datetime.date) -> None:
     """
-    Prints all the months in the current quarter.
+    Print all the months in the current quarter.
 
     :param date: Current date.
     """
@@ -113,11 +123,11 @@ def print_quarter(date: datetime.date) -> None:
     quarter_slice = get_calendar_quarter_slice(date)
     year = calendar.calendar(date.year, w=2, l=1, c=6, m=3).splitlines()  # Deliberately use defaults for consistency.
 
-    # Print the year header.
+    # Print year header.
     print(year[0])
     print()
 
-    # Find the current quarter.
+    # Find current quarter.
     quarter_start = 2
 
     for output in year[quarter_start:]:
@@ -126,14 +136,14 @@ def print_quarter(date: datetime.date) -> None:
 
         quarter_start += 1
 
-    # Highlight the current month name.
-    year[quarter_start] = year[quarter_start].replace(month_name, reverse_color(month_name))
+    # Highlight current month name.
+    year[quarter_start] = year[quarter_start].replace(month_name, get_reverse_color(month_name))
 
-    # Print the month names and weekdays.
+    # Print month names and weekdays.
     print(year[quarter_start])
     print(year[quarter_start + 1])
 
-    # Print the weeks highlighting the current day of the current month.
+    # Print weeks highlighting the current day of the current month.
     day = f"{date.day:>2}"
     found_day = False
 
@@ -150,7 +160,7 @@ def print_quarter(date: datetime.date) -> None:
 
 def print_year(date: datetime.date) -> None:
     """
-    Prints all the months in the current year.
+    Print all the months in the current year.
 
     :param date: Current date.
     """
@@ -158,13 +168,13 @@ def print_year(date: datetime.date) -> None:
     quarter_slice = get_calendar_quarter_slice(date)
     year = calendar.calendar(date.year, w=2, l=1, c=6, m=3).splitlines()  # Deliberately use defaults for consistency.
 
-    # Print the months highlighting the current month and the current day.
+    # Print months highlighting the current month and the current day.
     day = f"{date.day:>2}"
     found_day, found_month = False, False
 
     for output in year:
         if not found_month and month_name in output:
-            output = output.replace(month_name, reverse_color(month_name))
+            output = output.replace(month_name, get_reverse_color(month_name))
             found_month = True
 
         if not found_day and found_month and day in output[quarter_slice.start:quarter_slice.end]:
@@ -172,16 +182,6 @@ def print_year(date: datetime.date) -> None:
             found_day = True
 
         print(output)
-
-
-def reverse_color(value: str) -> str:
-    """
-    Reverses the color for the value.
-
-    :param value: Value to reverse color for.
-    :return: The value with reversed color.
-    """
-    return f"{colors.REVERSE}{value}{colors.RESET}"
 
 
 @final
@@ -197,17 +197,17 @@ class When:
 
     DEFAULT_DATETIME_FORMAT: Final[str] = "%a %b %-d %-I:%M%p"
     NAME: Final[str] = "when"
-    VERSION: Final[str] = "1.0.0"
+    VERSION: Final[str] = "1.0.1"
 
     def __init__(self) -> None:
         """
-        Initializes a new instance.
+        Initialize a new instance.
         """
         self.args: argparse.Namespace = build_arguments().parse_args()
 
     def main(self) -> None:
         """
-        Runs the primary function of the program.
+        Run the primary function of the program.
         """
         today = datetime.date.today()
 
