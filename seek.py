@@ -215,7 +215,7 @@ class Seek(CLIProgram):
         """
         Pre-compiles patterns.
         """
-        if self.args.group:  # --group
+        if not OS_IS_WINDOWS and self.args.group:  # --group
             self.group_patterns = patterns.compile_patterns(self.args.group, ignore_case=self.args.ignore_case,
                                                             on_error=self.print_error_and_exit)
 
@@ -227,7 +227,7 @@ class Seek(CLIProgram):
             self.path_patterns = patterns.compile_patterns(self.args.path, ignore_case=self.args.ignore_case,
                                                            on_error=self.print_error_and_exit)
 
-        if self.args.user:  # --user
+        if not OS_IS_WINDOWS and self.args.user:  # --user
             self.user_patterns = patterns.compile_patterns(self.args.user, ignore_case=self.args.ignore_case,
                                                            on_error=self.print_error_and_exit)
 
