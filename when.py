@@ -12,9 +12,10 @@ License: GNU GPLv3
 import argparse
 import calendar
 import datetime
+import sys
 from typing import Final, NamedTuple, final
 
-from cli import ansi, OS_IS_WINDOWS
+from cli import ansi, OS_IS_POSIX
 
 
 class CalendarQuarterSlice(NamedTuple):
@@ -195,7 +196,7 @@ class When:
     :ivar args: Parsed command-line arguments.
     """
 
-    DEFAULT_DATETIME_FORMAT: Final[str] = "%a %b %d %I:%M%p" if OS_IS_WINDOWS else "%a %b %-d %-I:%M%p"
+    DEFAULT_DATETIME_FORMAT: Final[str] = "%a %b %-d %-I:%M%p" if OS_IS_POSIX else "%a %b %d %I:%M%p"
     NAME: Final[str] = "when"
     VERSION: Final[str] = "1.0.2"
 
@@ -222,11 +223,16 @@ class When:
             case _:
                 print_year(today)
 
-        if self.args.datetime:  # --datetime FIXME
+        if self.args.datetime:  # --datetime
             date_format = self.args.datetime_format or When.DEFAULT_DATETIME_FORMAT  # --datetime-format
+            now = datetime.datetime.now()
 
-            print()
-            print(datetime.datetime.now().strftime(date_format))
+            try:
+                print()
+                print(now.strftime(date_format))
+            except ValueError:  # Raised for invalid format directives on Windows; unreachable on POSIX.
+                print(f"{When.NAME}: error: invalid datetime format", file=sys.stderr)
+                sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -84,9 +84,9 @@ class Scan(CLIProgram):
 
     def check_for_errors(self) -> None:
         """
-        Raise SystemExit if there are any errors.
+        Raise ``SystemExit`` if the error flag is set or no match was found.
 
-        :raises SystemExit: If ``has_errors`` is set or ``found_match`` is ``False``.
+        :raises SystemExit: If the error flag is set or no match was found.
         """
         super().check_for_errors()
 

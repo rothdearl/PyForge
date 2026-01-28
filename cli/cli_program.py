@@ -51,9 +51,9 @@ class CLIProgram(ABC):
 
     def check_for_errors(self) -> None:
         """
-        Raise SystemExit if there are any errors.
+        Raise ``SystemExit`` if the error flag is set.
 
-        :raises SystemExit: If ``has_errors`` is set.
+        :raises SystemExit: If the error flag is set.
         """
         if self.has_errors:
             raise SystemExit(self.error_exit_code)
@@ -91,7 +91,7 @@ class CLIProgram(ABC):
     @final
     def print_error_and_exit(self, error_message: str) -> None:
         """
-        Print the error message to standard error and exit with ``error_exit_code``.
+        Print the error message to standard error and raise ``SystemExit``.
 
         :param error_message: Error message to print.
         :raises SystemExit: Always.
