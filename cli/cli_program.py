@@ -132,3 +132,6 @@ class CLIProgram(ABC):
         Validate the parsed command-line arguments.
         """
         ...
+
+
+__all__ = ["CLIProgram"]

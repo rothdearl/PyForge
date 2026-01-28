@@ -79,3 +79,11 @@ def write_text_to_file(file_name: str, text: Iterable[str], encoding: str, *, on
         on_error(f"{file_name}: unable to write file")
     except UnicodeEncodeError:
         on_error(f"{file_name}: unable to write with {encoding}")
+
+
+__all__ = [
+    "FileInfo",
+    "print_normalized_line",
+    "read_files",
+    "write_text_to_file"
+]

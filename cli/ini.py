@@ -154,3 +154,15 @@ def read_options(path: str, *, clear_previous: bool = True, on_error: ErrorRepor
         return False
 
     return True
+
+
+__all__ = [
+    "get_bool_option",
+    "get_float_option",
+    "get_int_option",
+    "get_json_option",
+    "get_str_option",
+    "get_str_option_with_fallback",
+    "get_str_options",
+    "read_options"
+]

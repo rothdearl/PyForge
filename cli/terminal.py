@@ -30,3 +30,10 @@ def output_is_terminal() -> bool:
     :return: ``True`` if output is to the terminal.
     """
     return sys.stdout.isatty()
+
+
+__all__ = [
+    "input_is_redirected",
+    "input_is_terminal",
+    "output_is_terminal"
+]

@@ -102,3 +102,11 @@ def text_matches_patterns(text: str, patterns: PatternGroups) -> bool:
             return False
 
     return True
+
+
+__all__ = [
+    "color_pattern_matches",
+    "combine_patterns",
+    "compile_patterns",
+    "text_matches_patterns"
+]
