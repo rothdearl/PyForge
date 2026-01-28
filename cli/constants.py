@@ -1,5 +1,5 @@
 """
-Module for defining constants used throughout the command-line interface package.
+Constants used throughout the command-line interface package.
 """
 
 import os

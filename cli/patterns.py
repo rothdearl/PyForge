@@ -5,7 +5,7 @@ Pattern-related helper functions.
 import re
 from collections.abc import Iterable
 
-from .colors import RESET
+from .ansi import RESET
 from .types import CompiledPatterns, ErrorReporter, PatternGroups
 
 

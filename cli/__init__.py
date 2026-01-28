@@ -2,8 +2,8 @@
 Initialization file for the command-line interface package.
 """
 
+from .ansi import *
 from .cli_program import CLIProgram
-from .colors import *
 from .constants import *
 
 from .ini import (
@@ -40,6 +40,6 @@ from .terminal import (
 from .types import (
     CompiledPatterns,
     ErrorReporter,
-    ErrorReporter,
-    Json
+    Json,
+    PatternGroups
 )
