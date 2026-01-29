@@ -60,9 +60,9 @@ class Show(CLIProgram):
         :return: An argument parser.
         """
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print FILES to standard output",
-                                         epilog="with no FILES, read standard input", prog=self.name)
+                                         epilog="if no FILES are specified, read standard input", prog=self.name)
 
-        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="one or more input files", metavar="FILES", nargs="*")
         parser.add_argument("-H", "--no-file-header", action="store_true",
                             help="do not prefix output lines with file names")
         parser.add_argument("-n", "--line-numbers", action="store_true", help="print line numbers with output lines")

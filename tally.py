@@ -87,9 +87,9 @@ class Tally(CLIProgram):
         """
         parser = argparse.ArgumentParser(allow_abbrev=False,
                                          description="print line, word, and character counts in FILES",
-                                         epilog="with no FILES, read standard input", prog=self.name)
+                                         epilog="if no FILES are specified, read standard input", prog=self.name)
 
-        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="one or more input files", metavar="FILES", nargs="*")
         parser.add_argument("-c", "--chars", action="store_true", help="print the character counts")
         parser.add_argument("-l", "--lines", action="store_true", help="print the line counts")
         parser.add_argument("-L", "--max-line-length", action="store_true",

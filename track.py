@@ -5,7 +5,7 @@
 Filename: track.py
 Author: Roth Earl
 Version: 1.3.7
-Description: A program to print the last part of files.
+Description: A program to print the last part of files, optionally following new lines.
 License: GNU GPLv3
 """
 
@@ -33,7 +33,7 @@ class Colors(StrEnum):
 @final
 class Track(CLIProgram):
     """
-    A program to print the last part of files.
+    A program to print the last part of files, optionally following new lines
     """
 
     def __init__(self) -> None:
@@ -48,15 +48,16 @@ class Track(CLIProgram):
 
         :return: An argument parser.
         """
-        parser = argparse.ArgumentParser(allow_abbrev=False, description="print the last part of FILES",
-                                         epilog="with no FILES, read standard input", prog=self.name)
+        parser = argparse.ArgumentParser(allow_abbrev=False,
+                                         description="print the last part of FILES, optionally following new lines",
+                                         epilog="if no FILES are specified, read standard input", prog=self.name)
 
-        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
-        parser.add_argument("-f", "--follow", action="store_true", help="output appended data as the file grows")
+        parser.add_argument("files", help="one or more input files", metavar="FILES", nargs="*")
+        parser.add_argument("-f", "--follow", action="store_true", help="output appended lines as the file grows")
         parser.add_argument("-H", "--no-file-header", action="store_true",
                             help="do not prefix output lines with file names")
         parser.add_argument("-n", "--lines", default=10,
-                            help="print the last N lines, or all but the first N if negative (default: 10)",
+                            help="print the last N lines (N >= 1), or all but the first N if negative (default: 10)",
                             metavar="N", type=int)
         parser.add_argument("--color", choices=("on", "off"), default="on", help="colorize file headers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
@@ -76,13 +77,13 @@ class Track(CLIProgram):
         """
         try:
             # Get the initial file content.
-            with open(file, "r", encoding=self.encoding) as f:
+            with open(file, "rt", encoding=self.encoding) as f:
                 previous_content = f.read()
 
             # Follow file until Ctrl-C.
             while True:
                 # Re-open the file with each iteration.
-                with open(file, "r", encoding=self.encoding) as f:
+                with open(file, "rt", encoding=self.encoding) as f:
                     next_content = f.read()
 
                     # Check for changes.
