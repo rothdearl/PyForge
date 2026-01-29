@@ -1,5 +1,5 @@
 """
-INI configuration helper functions for reading and parsing values.
+Functions for reading and parsing values from INI configuration files.
 """
 
 import configparser

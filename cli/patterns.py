@@ -1,5 +1,5 @@
 """
-Pattern-related helper functions.
+Functions for pattern-related operations.
 """
 
 import re

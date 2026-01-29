@@ -1,5 +1,5 @@
 """
-Terminal-related helper functions.
+Predicates for terminal-related state.
 """
 
 import sys

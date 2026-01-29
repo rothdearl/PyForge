@@ -1,5 +1,5 @@
 """
-File-related helper functions.
+Functions for file-related operations.
 """
 
 import os
