@@ -157,7 +157,7 @@ class Tally(CLIProgram):
         if self.args.total == "on" or (self.args.total == "auto" and self.files_counted > 1):  # --total
             self.print_counts(Tally.TOTALS, count_origin="total")
 
-    def print_counts(self, counts: Counts | Totals, *, count_origin: str) -> None:
+    def print_counts(self, counts: Iterable, *, count_origin: str) -> None:
         """
         Print the counts.
 
