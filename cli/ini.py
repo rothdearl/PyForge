@@ -1,5 +1,5 @@
 """
-INI configuration helper functions.
+INI configuration helper functions for reading and parsing values.
 """
 
 import configparser
@@ -19,11 +19,11 @@ _truthy_values: set[str] = {"1", "on", "true", "y", "yes"}
 
 def get_bool_option(section: str, option: str) -> bool | None:
     """
-    Return a boolean value from a configuration option.
+    Return a boolean value parsed from the option.
 
     :param section: Section name.
     :param option: Option name.
-    :return: Boolean value or ``None`` if the option is present but not truthy or falsy.
+    :return: Boolean value or ``None`` if the value is not truthy or falsy.
     """
     value = get_str_option_with_fallback(section, option, fallback="false").lower()
 
@@ -38,7 +38,7 @@ def get_bool_option(section: str, option: str) -> bool | None:
 
 def get_float_option(section: str, option: str) -> float | None:
     """
-    Return a floating-point value. Missing or empty option defaults to 0.0.
+    Return a floating-point value parsed from the option.
 
     :param section: Section name.
     :param option: Option name.
@@ -54,7 +54,7 @@ def get_float_option(section: str, option: str) -> float | None:
 
 def get_int_option(section: str, option: str) -> int | None:
     """
-    Return an integer value. Missing or empty option defaults to 0.
+    Return an integer value parsed from the option.
 
     :param section: Section name.
     :param option: Option name.
@@ -70,7 +70,7 @@ def get_int_option(section: str, option: str) -> int | None:
 
 def get_json_option(section: str, option: str) -> Json | None:
     """
-    Return a JSON value. Missing or empty option defaults to an empty JSON object.
+    Return a JSON value parsed from the option.
 
     :param section: Section name.
     :param option: Option name.
@@ -86,7 +86,7 @@ def get_json_option(section: str, option: str) -> Json | None:
 
 def get_str_option(section: str, option: str) -> str:
     """
-    Return a string value. Missing or empty option defaults to an empty string.
+    Return a string value.
 
     :param section: Section name.
     :param option: Option name.
@@ -109,7 +109,7 @@ def get_str_option_with_fallback(section: str, option: str, *, fallback: str) ->
 
 def get_str_options(section: str, option: str, *, separator: str = ",") -> list[str]:
     """
-    Return string values split on a separator, ignoring empty values.
+    Return string values split on a separator, ignoring empty entries.
 
     :param section: Section name.
     :param option: Option name.

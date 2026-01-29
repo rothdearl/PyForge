@@ -185,9 +185,9 @@ class Show(CLIProgram):
         :return: Line with a line number prepended.
         """
         if self.print_color:
-            return f"{Colors.LINE_NUMBER}{line_number:>{padding}}{Colors.COLON}:{ansi.RESET}{line}"
+            return f"{Colors.LINE_NUMBER}{line_number:>{padding}}{Colors.COLON}{ansi.RESET} {line}"
 
-        return f"{line_number:>{padding}}:{line}"
+        return f"{line_number:>{padding}} {line}"
 
     def show_spaces(self, line: str) -> str:
         """

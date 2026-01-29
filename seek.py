@@ -87,14 +87,12 @@ class Seek(CLIProgram):
 
     def check_for_errors(self) -> None:
         """
-        Raise ``SystemExit`` if the error flag is set or no match was found.
-
-        :raises SystemExit: If the error flag is set or no match was found.
+        Call ``sys.exit(1)`` if a match was not found.
         """
         super().check_for_errors()
 
         if not self.found_match:
-            raise SystemExit(1)
+            sys.exit(1)
 
     def file_matches_filters(self, file: pathlib.Path) -> bool:
         """
