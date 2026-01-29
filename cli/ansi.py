@@ -1,5 +1,5 @@
 """
-ANSI escape sequences.
+Constants for ANSI escape sequences used for terminal text attributes and color output.
 """
 
 from typing import Final as _Final
@@ -55,3 +55,7 @@ BG_MAGENTA: _Final[str] = f"{_CSI}45m"
 BG_RED: _Final[str] = f"{_CSI}41m"
 BG_WHITE: _Final[str] = f"{_CSI}47m"
 BG_YELLOW: _Final[str] = f"{_CSI}43m"
+
+# ANSI 256-color palette (xterm-compatible).
+BG_COLORS_256: _Final[list[str]] = [f"{_CSI}48;5;{i}m" for i in range(256)]
+COLORS_256: _Final[list[str]] = [f"{_CSI}38;5;{i}m" for i in range(256)]
