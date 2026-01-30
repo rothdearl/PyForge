@@ -56,17 +56,17 @@ class Scan(CLIProgram):
         :return: An argument parser.
         """
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print lines that match patterns in FILES",
-                                         epilog="if no FILES are specified, read standard input", prog=self.name)
+                                         epilog="if no FILES are specified, read from standard input", prog=self.name)
         count_group = parser.add_mutually_exclusive_group()
 
-        parser.add_argument("files", help="one or more input files", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         count_group.add_argument("-c", "--count", action="store_true",
                                  help="print the count of matching lines per input file")
         count_group.add_argument("-C", "--count-nonzero", action="store_true",
                                  help="print the count only for files with at least one match")
         parser.add_argument("-f", "--find", action="extend", help="print lines that match PATTERN", metavar="PATTERN",
                             nargs=1, required=True)
-        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prepend file names to output")
+        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-i", "--ignore-case", action="store_true", help="ignore case when matching patterns")
         parser.add_argument("-n", "--line-number", action="store_true", help="print line number with output lines")
         parser.add_argument("-q", "--quiet", "--silent", action="store_true", help="suppress all normal output")

@@ -53,10 +53,10 @@ class Slice(CLIProgram):
         :return: An argument parser.
         """
         parser = argparse.ArgumentParser(allow_abbrev=False, description="slice lines in FILES into shell-style fields",
-                                         epilog="if no FILES are specified, read standard input", prog=self.name)
+                                         epilog="if no FILES are specified, read from standard input", prog=self.name)
 
-        parser.add_argument("files", help="one or more input files", metavar="FILES", nargs="*")
-        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prepend file names to output")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
+        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-s", "--separator", help="use SEP to separate output fields (default: tab)", metavar="SEP")
         parser.add_argument("-u", "--unique", action="store_true",
                             help="print each field only once, in ascending order")

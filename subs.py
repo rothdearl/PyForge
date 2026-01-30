@@ -51,12 +51,12 @@ class Subs(CLIProgram):
         :return: An argument parser.
         """
         parser = argparse.ArgumentParser(allow_abbrev=False, description="replace text in FILES",
-                                         epilog="if no FILES are specified, read standard input", prog=self.name)
+                                         epilog="if no FILES are specified, read from standard input", prog=self.name)
 
-        parser.add_argument("files", help="one or more input files", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         parser.add_argument("-f", "--find", action="extend", help="replace text matching PATTERN", metavar="PATTERN",
                             nargs=1, required=True)
-        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prepend file names to output")
+        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-i", "--ignore-case", action="store_true", help="ignore case when matching patterns")
         parser.add_argument("-r", "--replace", help="replace matches with literal STRING", metavar="STRING",
                             required=True)

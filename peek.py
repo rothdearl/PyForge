@@ -47,10 +47,10 @@ class Peek(CLIProgram):
         :return: An argument parser.
         """
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print the first part of FILES",
-                                         epilog="if no FILES are specified, read standard input", prog=self.name)
+                                         epilog="if no FILES are specified, read from standard input", prog=self.name)
 
-        parser.add_argument("files", help="one or more input files", metavar="FILES", nargs="*")
-        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prepend file names to output")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
+        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-n", "--lines", default=10,
                             help="print the first N lines (N >= 1), or all but the last N if negative (default: 10)",
                             metavar="N", type=int)

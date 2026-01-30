@@ -59,11 +59,11 @@ class Glue(CLIProgram):
         """
         parser = argparse.ArgumentParser(allow_abbrev=False,
                                          description="join FILES and standard input to standard output",
-                                         epilog="if no FILES are specified, read standard input", prog=self.name)
+                                         epilog="if no FILES are specified, read from standard input", prog=self.name)
         blank_group = parser.add_mutually_exclusive_group()
         number_group = parser.add_mutually_exclusive_group()
 
-        parser.add_argument("files", help="one or more input files", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         number_group.add_argument("-b", "--number-nonblank", action="store_true", help="number nonblank output lines")
         number_group.add_argument("-n", "--number", action="store_true", help="number all output lines")
         blank_group.add_argument("-B", "--no-blank", action="store_true", help="suppress all blank lines")

@@ -62,10 +62,10 @@ class Order(CLIProgram):
         :return: An argument parser.
         """
         parser = argparse.ArgumentParser(allow_abbrev=False, description="sort and print FILES to standard output",
-                                         epilog="if no FILES are specified, read standard input", prog=self.name)
+                                         epilog="if no FILES are specified, read from standard input", prog=self.name)
         sort_group = parser.add_mutually_exclusive_group()
 
-        parser.add_argument("files", help="one or more input files", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         parser.add_argument("-b", "--ignore-leading-blanks", action="store_true", help="ignore leading blanks in lines")
         sort_group.add_argument("-d", "--dictionary-sort", action="store_true",
                                 help="sort lines using dictionary order")
@@ -77,7 +77,7 @@ class Order(CLIProgram):
         sort_group.add_argument("-R", "--random-sort", action="store_true", help="sort lines in random order")
         parser.add_argument("-f", "--skip-fields", help="skip the first N fields when sorting (N >= 0)", metavar="N",
                             type=int)
-        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prepend file names to output")
+        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-i", "--ignore-case", action="store_true",
                             help="ignore differences in case when comparing")
         parser.add_argument("-r", "--reverse", action="store_true", help="reverse the order of the sort")
