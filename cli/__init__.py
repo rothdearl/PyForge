@@ -23,7 +23,7 @@ from .ini import (
 from .io import (
     FileInfo,
     print_normalized_line,
-    read_files,
+    read_text_files,
     write_text_to_file
 )
 

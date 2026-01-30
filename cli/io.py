@@ -31,7 +31,7 @@ def print_normalized_line(line: str) -> None:
     print(line, end="" if line.endswith("\n") else "\n")
 
 
-def read_files(files: Iterable[str] | TextIO, encoding: str, *, on_error: ErrorReporter) -> Iterator[FileInfo]:
+def read_text_files(files: Iterable[str] | TextIO, encoding: str, *, on_error: ErrorReporter) -> Iterator[FileInfo]:
     """
     Open files for reading in text mode and yield ``FileInfo`` objects.
 
@@ -84,6 +84,6 @@ def write_text_to_file(file_name: str, text: Iterable[str], encoding: str, *, on
 __all__ = [
     "FileInfo",
     "print_normalized_line",
-    "read_files",
+    "read_text_files",
     "write_text_to_file"
 ]

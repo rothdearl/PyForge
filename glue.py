@@ -162,7 +162,7 @@ class Glue(CLIProgram):
         """
         last_file_index = len(files) - 1
 
-        for file_info in io.read_files(files, self.encoding, on_error=self.print_error):
+        for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
                 self.print_lines(file_info.text)
 

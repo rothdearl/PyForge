@@ -120,7 +120,7 @@ class Scan(CLIProgram):
 
         :param files: Files to search.
         """
-        for file_info in io.read_files(files, self.encoding, on_error=self.print_error):
+        for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
                 self.print_matches_in_lines(file_info.text, origin_file=file_info.file_name)
             except UnicodeDecodeError:

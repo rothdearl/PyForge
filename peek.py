@@ -76,7 +76,7 @@ class Peek(CLIProgram):
                 self.print_lines_from_files(sys.stdin)
             else:
                 if standard_input := sys.stdin.readlines():
-                    self.print_file_header(file="")
+                    self.print_file_header(file_name="")
                     self.print_lines(standard_input)
 
             if self.args.files:  # Process any additional files.
@@ -86,14 +86,14 @@ class Peek(CLIProgram):
         else:
             self.print_lines_from_input()
 
-    def print_file_header(self, file: str) -> None:
+    def print_file_header(self, file_name: str) -> None:
         """
-        Print the file name, or (standard input) if empty, with a colon.
+        Print the file name, or "(standard input)" if empty, with a colon.
 
-        :param file: File header to print.
+        :param file_name: File name to print.
         """
         if not self.args.no_file_header:  # --no-file-header
-            file_name = os.path.relpath(file) if file else "(standard input)"
+            file_name = os.path.relpath(file_name) if file_name else "(standard input)"
 
             if self.print_color:
                 file_name = f"{Colors.FILE_NAME}{file_name}{Colors.COLON}:{ansi.RESET}"
@@ -133,9 +133,9 @@ class Peek(CLIProgram):
 
         :param files: Files to print lines from.
         """
-        for file_info in io.read_files(files, self.encoding, on_error=self.print_error):
+        for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
-                self.print_file_header(file=file_info.file_name)
+                self.print_file_header(file_info.file_name)
                 self.print_lines(file_info.text)
             except UnicodeDecodeError:
                 self.print_error(f"{file_info.file_name}: unable to read with {self.encoding}")
