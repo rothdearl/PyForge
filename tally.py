@@ -19,7 +19,7 @@ from typing import Final, TextIO, TypeAlias, final
 from cli import CLIProgram, ansi, io, terminal
 
 # Define type aliases.
-Counts: TypeAlias = tuple[int, int, int, int]  # (LINES, WORDS, CHARACTERS, MAX_LINE_LENGTH)
+Counts: TypeAlias = tuple[int, int, int, int]  # Indexed by CountIndex.
 
 
 class Colors(StrEnum):
@@ -53,8 +53,8 @@ class Tally(CLIProgram):
     :ivar flag_count: Number of flags provided as arguments.
     """
 
-    COUNT_FLAGS: Final[list[bool]] = [False, False, False, False]  # [LINES, WORDS, CHARACTERS, MAX_LINE_LENGTH]
-    TOTALS: Final[list[int]] = [0, 0, 0, 0]  # [LINES, WORDS, CHARACTERS, MAX_LINE_LENGTH]
+    COUNT_FLAGS: Final[list[bool]] = [False, False, False, False]  # Indexed by CountIndex.
+    TOTALS: Final[list[int]] = [0, 0, 0, 0]  # Indexed by CountIndex.
     WORD_PATTERN: Final[str] = r"\b\w+\b"
 
     def __init__(self) -> None:
