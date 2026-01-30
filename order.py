@@ -4,7 +4,7 @@
 """
 Filename: order.py
 Author: Roth Earl
-Version: 1.3.7
+Version: 1.3.8
 Description: A program to sort and print files to standard output.
 License: GNU GPLv3
 """
@@ -51,7 +51,7 @@ class Order(CLIProgram):
         """
         Initialize a new ``Order`` instance.
         """
-        super().__init__(name="order", version="1.3.7")
+        super().__init__(name="order", version="1.3.8")
 
         self.skip_fields: int = 0
 
@@ -77,11 +77,11 @@ class Order(CLIProgram):
         sort_group.add_argument("-R", "--random-sort", action="store_true", help="sort lines in random order")
         parser.add_argument("-f", "--skip-fields", help="skip the first N fields when sorting (N >= 0)", metavar="N",
                             type=int)
-        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prefix output with file names")
+        parser.add_argument("-H", "--no-file-name", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-i", "--ignore-case", action="store_true",
                             help="ignore differences in case when comparing")
+        parser.add_argument("-I", "--ignore-blank-lines", action="store_true", help="ignore blank lines when comparing")
         parser.add_argument("-r", "--reverse", action="store_true", help="reverse the order of the sort")
-        parser.add_argument("-s", "--skip-blank", action="store_true", help="ignore blank lines when comparing")
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="use color for file headers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
@@ -159,7 +159,7 @@ class Order(CLIProgram):
 
         :param file_name: File name to print.
         """
-        if not self.args.no_file_header:  # --no-file-header
+        if not self.args.no_file_name:  # --no-file-name
             file_name = os.path.relpath(file_name) if file_name else "(standard input)"
 
             if self.print_color:
@@ -177,9 +177,9 @@ class Order(CLIProgram):
         if self.args.dictionary_sort or self.args.natural_sort:
             self.args.ignore_case = True
 
-        # Set --no-file-header to True if there are no files and --stdin-files=False.
+        # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
-            self.args.no_file_header = True
+            self.args.no_file_name = True
 
         if terminal.input_is_redirected():
             if self.args.stdin_files:  # --stdin-files
@@ -219,7 +219,7 @@ class Order(CLIProgram):
 
         # Print lines.
         for line in lines:
-            if self.args.skip_blank and not line.rstrip():  # --skip-blank
+            if self.args.ignore_blank_lines and not line.rstrip():  # --ignore-blank-lines
                 continue
 
             io.print_normalized_line(line)

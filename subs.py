@@ -4,7 +4,7 @@
 """
 Filename: subs.py
 Author: Roth Earl
-Version: 1.3.7
+Version: 1.3.8
 Description: A program to replace text in files.
 License: GNU GPLv3
 """
@@ -40,7 +40,7 @@ class Subs(CLIProgram):
         """
         Initialize a new Subs instance.
         """
-        super().__init__(name="subs", version="1.3.7")
+        super().__init__(name="subs", version="1.3.8")
 
         self.pattern: re.Pattern[str] | None = None
 
@@ -56,7 +56,7 @@ class Subs(CLIProgram):
         parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         parser.add_argument("-f", "--find", action="extend", help="replace text matching PATTERN", metavar="PATTERN",
                             nargs=1, required=True)
-        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prefix output with file names")
+        parser.add_argument("-H", "--no-file-name", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-i", "--ignore-case", action="store_true", help="ignore case when matching patterns")
         parser.add_argument("-r", "--replace", help="replace matches with literal STRING", metavar="STRING",
                             required=True)
@@ -94,9 +94,9 @@ class Subs(CLIProgram):
         """
         self.precompile_patterns()
 
-        # Set --no-file-header to True if there are no files and --stdin-files=False.
+        # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
-            self.args.no_file_header = True
+            self.args.no_file_name = True
 
         if terminal.input_is_redirected():
             if self.args.stdin_files:  # --stdin-files
@@ -127,7 +127,7 @@ class Subs(CLIProgram):
 
         :param file_name: File name to print.
         """
-        if not self.args.no_file_header:  # --no-file-header
+        if not self.args.no_file_name:  # --no-file-name
             file_name = os.path.relpath(file_name) if file_name else "(standard input)"
 
             if self.print_color:

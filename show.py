@@ -4,7 +4,7 @@
 """
 Filename: show.py
 Author: Roth Earl
-Version: 1.3.7
+Version: 1.3.8
 Description: A program to print files to standard output.
 License: GNU GPLv3
 """
@@ -51,7 +51,7 @@ class Show(CLIProgram):
         """
         Initialize a new ``Show`` instance.
         """
-        super().__init__(name="show", version="1.3.7")
+        super().__init__(name="show", version="1.3.8")
 
     def build_arguments(self) -> argparse.ArgumentParser:
         """
@@ -63,7 +63,7 @@ class Show(CLIProgram):
                                          epilog="if no FILES are specified, read from standard input", prog=self.name)
 
         parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
-        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prefix output with file names")
+        parser.add_argument("-H", "--no-file-name", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-n", "--line-numbers", action="store_true", help="print line numbers with output lines")
         parser.add_argument("-p", "--print", default=sys.maxsize, help="print only N lines (N >= 1)", metavar="N",
                             type=int)
@@ -86,9 +86,9 @@ class Show(CLIProgram):
         """
         Run the program logic.
         """
-        # Set --no-file-header to True if there are no files and --stdin-files=False.
+        # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
-            self.args.no_file_header = True
+            self.args.no_file_name = True
 
         if terminal.input_is_redirected():
             if self.args.stdin_files:  # --stdin-files
@@ -111,7 +111,7 @@ class Show(CLIProgram):
 
         :param file_name: File name to print.
         """
-        if not self.args.no_file_header:  # --no-file-header
+        if not self.args.no_file_name:  # --no-file-name
             file_name = os.path.relpath(file_name) if file_name else "(standard input)"
 
             if self.print_color:

@@ -4,8 +4,8 @@
 """
 Filename: glue.py
 Author: Roth Earl
-Version: 1.3.7
-Description: A program to join files and standard input to standard output.
+Version: 1.3.8
+Description: A program to concatenate files and standard input to standard output.
 License: GNU GPLv3
 """
 
@@ -38,7 +38,7 @@ class Whitespace(StrEnum):
 @final
 class Glue(CLIProgram):
     """
-    A program to join files and standard input to standard output.
+    A program to concatenate files and standard input to standard output.
 
     :ivar line_number: Line number to be printed with output lines.
     """
@@ -47,7 +47,7 @@ class Glue(CLIProgram):
         """
         Initialize a new ``Glue`` instance.
         """
-        super().__init__(name="glue", version="1.3.7")
+        super().__init__(name="glue", version="1.3.8")
 
         self.line_number: int = 0
 
@@ -58,7 +58,7 @@ class Glue(CLIProgram):
         :return: An argument parser.
         """
         parser = argparse.ArgumentParser(allow_abbrev=False,
-                                         description="join FILES and standard input to standard output",
+                                         description="concatenate FILES and standard input to standard output",
                                          epilog="if no FILES are specified, read from standard input", prog=self.name)
         blank_group = parser.add_mutually_exclusive_group()
         number_group = parser.add_mutually_exclusive_group()
@@ -76,8 +76,8 @@ class Glue(CLIProgram):
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="use color for whitespace and numbers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
-        parser.add_argument("--number-width", default=7, help="pad line numbers to width N (default: 7)", metavar="N",
-                            type=int)
+        parser.add_argument("--number-width", default=7, help="pad line numbers to width N (default: 7; N >= 1)",
+                            metavar="N", type=int)
         parser.add_argument("--stdin-files", action="store_true",
                             help="treat standard input as a list of FILES (one per line)")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.version}")

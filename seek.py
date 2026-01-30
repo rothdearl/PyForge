@@ -4,7 +4,7 @@
 """
 Filename: seek.py
 Author: Roth Earl
-Version: 1.3.7
+Version: 1.3.8
 Description: A program to search for files in a directory hierarchy.
 License: GNU GPLv3
 """
@@ -41,7 +41,7 @@ class Seek(CLIProgram):
         """
         Initialize a new Seek instance.
         """
-        super().__init__(name="seek", version="1.3.7", error_exit_code=2)
+        super().__init__(name="seek", version="1.3.8", error_exit_code=2)
 
         self.found_match: bool = False
         self.name_patterns: CompiledPatterns = []
@@ -71,11 +71,14 @@ class Seek(CLIProgram):
         parser.add_argument("--color", choices=("on", "off"), default="on", help="use color for matches (default: on)")
         parser.add_argument("--dot", action="store_true", help="include dot (.) files in output")
         parser.add_argument("--empty", choices=("y", "n"), help="print only empty files")
-        modified_group.add_argument("--m-days", help="print files modified less than or more than N days ago",
+        modified_group.add_argument("--m-days",
+                                    help="print files modified less than or more than N days ago (use +N or -N)",
                                     metavar="N", type=int)
-        modified_group.add_argument("--m-hours", help="print files modified less than or more than N hours ago",
+        modified_group.add_argument("--m-hours",
+                                    help="print files modified less than or more than N hours ago (use +N or -N)",
                                     metavar="N", type=int)
-        modified_group.add_argument("--m-mins", help="print files modified less than or more than N minutes ago",
+        modified_group.add_argument("--m-mins",
+                                    help="print files modified less than or more than N minutes ago (use +N or -N)",
                                     metavar="N", type=int)
         parser.add_argument("--max-depth", default=sys.maxsize,
                             help="descend at most N levels below the starting points (N >= 1)", metavar="N", type=int)

@@ -4,7 +4,7 @@
 """
 Filename: scan.py
 Author: Roth Earl
-Version: 1.3.7
+Version: 1.3.8
 Description: A program to print lines that match patterns in files.
 License: GNU GPLv3
 """
@@ -43,7 +43,7 @@ class Scan(CLIProgram):
         """
         Initialize a new ``Scan`` instance.
         """
-        super().__init__(name="scan", version="1.3.7", error_exit_code=2)
+        super().__init__(name="scan", version="1.3.8", error_exit_code=2)
 
         self.found_match: bool = False
         self.line_number: int = 0
@@ -55,7 +55,7 @@ class Scan(CLIProgram):
 
         :return: An argument parser.
         """
-        parser = argparse.ArgumentParser(allow_abbrev=False, description="print lines that match patterns in FILES",
+        parser = argparse.ArgumentParser(allow_abbrev=False, description="print lines that match PATTERN in FILES",
                                          epilog="if no FILES are specified, read from standard input", prog=self.name)
         count_group = parser.add_mutually_exclusive_group()
 
@@ -66,7 +66,7 @@ class Scan(CLIProgram):
                                  help="print the count only for files with at least one match")
         parser.add_argument("-f", "--find", action="extend", help="print lines that match PATTERN", metavar="PATTERN",
                             nargs=1, required=True)
-        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prefix output with file names")
+        parser.add_argument("-H", "--no-file-name", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-i", "--ignore-case", action="store_true", help="ignore case when matching patterns")
         parser.add_argument("-n", "--line-number", action="store_true", help="print line number with output lines")
         parser.add_argument("-q", "--quiet", "--silent", action="store_true", help="suppress all normal output")
@@ -102,7 +102,7 @@ class Scan(CLIProgram):
             if self.args.stdin_files:  # --stdin-files
                 self.print_matches_in_files(sys.stdin)
             elif standard_input := sys.stdin.readlines():
-                self.args.no_file_header = self.args.no_file_header or not self.args.files  # No file header if no files
+                self.args.no_file_name = self.args.no_file_name or not self.args.files  # No file header if no files
                 self.print_matches_in_lines(standard_input, origin_file="")
 
             if self.args.files:  # Process any additional files.
@@ -110,7 +110,7 @@ class Scan(CLIProgram):
         elif self.args.files:
             self.print_matches_in_files(self.args.files)
         else:
-            self.args.no_file_header = True  # No file header if no files
+            self.args.no_file_name = True  # No file header if no files
             self.print_matches_in_input()
 
     def print_matches_in_files(self, files: Iterable[str] | TextIO) -> None:
@@ -184,7 +184,7 @@ class Scan(CLIProgram):
         if self.args.count_nonzero and not matches:  # --count-nonzero
             return
 
-        if not self.args.no_file_header:  # --no-file-header
+        if not self.args.no_file_name:  # --no-file-name
             file_name = os.path.relpath(origin_file) if origin_file else "(standard input)"
 
             if self.print_color:

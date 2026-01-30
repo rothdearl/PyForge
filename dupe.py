@@ -4,8 +4,8 @@
 """
 Filename: dupe.py
 Author: Roth Earl
-Version: 1.3.7
-Description: A program to filter duplicate or unique lines in files.
+Version: 1.3.8
+Description: A program to filter duplicate and unique lines in files.
 License: GNU GPLv3
 """
 
@@ -32,7 +32,7 @@ class Colors(StrEnum):
 @final
 class Dupe(CLIProgram):
     """
-    A program to filter duplicate or unique lines in files.
+    A program to filter duplicate and unique lines in files.
 
     :cvar FIELD_PATTERN: Pattern for splitting lines into fields.
     :ivar max_chars: Maximum number of characters to compare.
@@ -46,7 +46,7 @@ class Dupe(CLIProgram):
         """
         Initialize a new ``Dupe`` instance.
         """
-        super().__init__(name="dupe", version="1.3.7")
+        super().__init__(name="dupe", version="1.3.8")
 
         self.max_chars: int = 0
         self.skip_chars: int = 0
@@ -58,7 +58,7 @@ class Dupe(CLIProgram):
 
         :return: An argument parser.
         """
-        parser = argparse.ArgumentParser(allow_abbrev=False, description="filter duplicate or unique lines in FILES",
+        parser = argparse.ArgumentParser(allow_abbrev=False, description="filter duplicate and unique lines in FILES",
                                          epilog="if no FILES are specified, read from standard input", prog=self.name)
         print_group = parser.add_mutually_exclusive_group()
 
@@ -74,7 +74,7 @@ class Dupe(CLIProgram):
         print_group.add_argument("-u", "--unique", action="store_true", help="only print unique lines")
         parser.add_argument("-f", "--skip-fields", help="skip the first N fields when comparing (N >= 0)", metavar="N",
                             type=int)
-        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prefix output with file names")
+        parser.add_argument("-H", "--no-file-name", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-i", "--ignore-case", action="store_true",
                             help="ignore differences in case when comparing")
         parser.add_argument("-m", "--max-chars", help="compare no more than N characters (N >= 1)", metavar="N",
@@ -173,9 +173,9 @@ class Dupe(CLIProgram):
         """
         Run the program logic.
         """
-        # Set --no-file-header to True if there are no files and --stdin-files=False.
+        # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
-            self.args.no_file_header = True
+            self.args.no_file_name = True
 
         if terminal.input_is_redirected():
             if self.args.stdin_files:  # --stdin-files
@@ -197,7 +197,7 @@ class Dupe(CLIProgram):
 
         :param file_name: File name to print.
         """
-        if not self.args.no_file_header:  # --no-file-header
+        if not self.args.no_file_name:  # --no-file-name
             file_name = os.path.relpath(file_name) if file_name else "(standard input)"
 
             if self.print_color:

@@ -4,8 +4,8 @@
 """
 Filename: slice.py
 Author: Roth Earl
-Version: 1.3.7
-Description: A program to slice lines in files into shell-style fields.
+Version: 1.3.8
+Description: A program to split lines in files into shell-style fields.
 License: GNU GPLv3
 """
 
@@ -33,7 +33,7 @@ class Colors(StrEnum):
 @final
 class Slice(CLIProgram):
     """
-    A program to slice lines in files into shell-style fields.
+    A program to split lines in files into shell-style fields.
 
     :ivar fields_to_print: Fields to print.
     """
@@ -42,7 +42,7 @@ class Slice(CLIProgram):
         """
         Initialize a new ``Slice`` instance.
         """
-        super().__init__(name="slice", version="1.3.7")
+        super().__init__(name="slice", version="1.3.8")
 
         self.fields_to_print: list[int] = []
 
@@ -52,11 +52,11 @@ class Slice(CLIProgram):
 
         :return: An argument parser.
         """
-        parser = argparse.ArgumentParser(allow_abbrev=False, description="slice lines in FILES into shell-style fields",
+        parser = argparse.ArgumentParser(allow_abbrev=False, description="split lines in FILES into shell-style fields",
                                          epilog="if no FILES are specified, read from standard input", prog=self.name)
 
         parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
-        parser.add_argument("-H", "--no-file-header", action="store_true", help="do not prefix output with file names")
+        parser.add_argument("-H", "--no-file-name", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-s", "--separator", help="use SEP to separate output fields (default: tab)", metavar="SEP")
         parser.add_argument("-u", "--unique", action="store_true",
                             help="print each field only once, in ascending order")
@@ -80,9 +80,9 @@ class Slice(CLIProgram):
         """
         Run the program logic.
         """
-        # Set --no-file-header to True if there are no files and --stdin-files=False.
+        # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
-            self.args.no_file_header = True
+            self.args.no_file_name = True
 
         if terminal.input_is_redirected():
             if self.args.stdin_files:  # --stdin-files
@@ -105,7 +105,7 @@ class Slice(CLIProgram):
 
         :param file_name: File name to print.
         """
-        if not self.args.no_file_header:  # --no-file-header
+        if not self.args.no_file_name:  # --no-file-name
             file_name = os.path.relpath(file_name) if file_name else "(standard input)"
 
             if self.print_color:
