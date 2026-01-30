@@ -15,7 +15,7 @@ import random
 import re
 import sys
 from enum import StrEnum
-from typing import Final, TextIO, final
+from typing import TextIO, final
 
 from dateutil.parser import ParserError, parse
 
@@ -30,20 +30,22 @@ class Colors(StrEnum):
     FILE_NAME = ansi.BRIGHT_MAGENTA
 
 
+class FieldPatterns(StrEnum):
+    """
+    Field separator pattern constants.
+    """
+    DATES = r"[\f\r\n\t\v]"  # All whitespace except spaces.
+    WHITESPACE = r"\s+"  # All whitespace.
+    WORDS = r"\s+|\W+"  # All whitespace and non-words.
+
+
 @final
 class Order(CLIProgram):
     """
     A program to sort and print files to standard output.
 
-    :cvar DATE_PATTERN: Pattern for splitting lines on dates.
-    :cvar DEFAULT_PATTERN: Pattern for splitting lines on whitespace.
-    :cvar WORD_PATTERN: Pattern for splitting lines on words.
     :ivar skip_fields: Number of fields to skip at the beginning of each line.
     """
-
-    DATE_PATTERN: Final[str] = r"[\f\r\n\t\v]"  # All whitespace except spaces.
-    DEFAULT_PATTERN: Final[str] = r"\s+"  # All whitespace.
-    WORD_PATTERN: Final[str] = r"\s+|\W+"  # All whitespace and non-words.
 
     def __init__(self) -> None:
         """
@@ -64,9 +66,13 @@ class Order(CLIProgram):
         sort_group = parser.add_mutually_exclusive_group()
 
         parser.add_argument("files", help="one or more input files", metavar="FILES", nargs="*")
-        parser.add_argument("-b", "--no-blank", action="store_true", help="suppress all blank lines")
-        sort_group.add_argument("-d", "--dictionary-sort", action="store_true", help="compare lines lexicographically")
+        parser.add_argument("-b", "--ignore-leading-blanks", action="store_true", help="ignore leading blanks")
+        parser.add_argument("-B", "--no-blank", action="store_true", help="suppress all blank lines")
+        sort_group.add_argument("-d", "--dictionary-sort", action="store_true",
+                                help="compare lines using dictionary order")
         sort_group.add_argument("-D", "--date-sort", action="store_true", help="compare dates from newest to oldest")
+        sort_group.add_argument("-k", "--key-pattern", help="split lines using PATTERN to generate sort keys",
+                                metavar="PATTERN")
         sort_group.add_argument("-n", "--natural-sort", action="store_true",
                                 help="compare words alphabetically and numbers numerically")
         sort_group.add_argument("-R", "--random-sort", action="store_true", help="randomize the result of comparisons")
@@ -76,7 +82,6 @@ class Order(CLIProgram):
                             help="do not prefix output lines with file names")
         parser.add_argument("-i", "--ignore-case", action="store_true",
                             help="ignore differences in case when comparing")
-        parser.add_argument("-p", "--pattern", help="split lines into fields using PATTERN")
         parser.add_argument("-r", "--reverse", action="store_true", help="reverse the result of comparisons")
         parser.add_argument("--color", choices=("on", "off"), default="on", help="colorize file headers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
@@ -93,7 +98,7 @@ class Order(CLIProgram):
         :param line: Line to generate key from.
         :return: Date sort key.
         """
-        fields = self.split_line(line, self.args.pattern or Order.DATE_PATTERN, strip_number_separators=False)
+        fields = self.split_line(line, FieldPatterns.DATES, strip_number_separators=False)
 
         try:
             date = str(parse(fields[0])) if fields else line
@@ -109,7 +114,7 @@ class Order(CLIProgram):
         :param line: Line to generate key from.
         :return: Default sort key.
         """
-        return self.split_line(line, self.args.pattern or Order.DEFAULT_PATTERN, strip_number_separators=False)
+        return self.split_line(line, FieldPatterns.WHITESPACE, strip_number_separators=False)
 
     def generate_dictionary_sort_key(self, line: str) -> list[str]:
         """
@@ -118,7 +123,16 @@ class Order(CLIProgram):
         :param line: Line to generate key from.
         :return: Dictionary sort key.
         """
-        return self.split_line(line, self.args.pattern or Order.WORD_PATTERN, strip_number_separators=False)
+        return self.split_line(line, FieldPatterns.WORDS, strip_number_separators=False)
+
+    def generate_key_pattern_sort_key(self, line: str) -> list[str]:
+        """
+        Return a key pattern sort key.
+
+        :param line: Line to generate key from.
+        :return: Key pattern sort key.
+        """
+        return self.split_line(line, self.args.key_pattern, strip_number_separators=False)
 
     def generate_natural_sort_key(self, line: str) -> list[str]:
         """
@@ -128,7 +142,7 @@ class Order(CLIProgram):
         :return: Natural sort key.
         """
         digits = []
-        pattern = self.args.pattern or Order.DEFAULT_PATTERN
+        pattern = FieldPatterns.WHITESPACE
 
         for field in self.split_line(line, pattern, strip_number_separators=True):
             # Zero-pad integers so they sort numerically.
@@ -188,16 +202,20 @@ class Order(CLIProgram):
 
         :param lines: Lines to sort.
         """
+        reverse = self.args.reverse  # --reverse
+
         if self.args.date_sort:  # --date-sort
-            lines.sort(key=self.generate_date_sort_key, reverse=self.args.reverse)
+            lines.sort(key=self.generate_date_sort_key, reverse=reverse)
         elif self.args.dictionary_sort:  # --dictionary-sort
-            lines.sort(key=self.generate_dictionary_sort_key, reverse=self.args.reverse)
+            lines.sort(key=self.generate_dictionary_sort_key, reverse=reverse)
+        elif self.args.key_pattern:  # --key-pattern
+            lines.sort(key=self.generate_key_pattern_sort_key, reverse=reverse)
         elif self.args.natural_sort:  # --natural-sort
-            lines.sort(key=self.generate_natural_sort_key, reverse=self.args.reverse)
+            lines.sort(key=self.generate_natural_sort_key, reverse=reverse)
         elif self.args.random_sort:  # --random-sort
             random.shuffle(lines)
-        else:  # --reverse
-            lines.sort(key=self.generate_default_sort_key, reverse=self.args.reverse)
+        else:
+            lines.sort(key=self.generate_default_sort_key, reverse=reverse)
 
         # Print lines.
         for line in lines:
@@ -236,12 +254,11 @@ class Order(CLIProgram):
         """
         fields = []
 
-        # Strip leading and trailing whitespace.
-        line = line.strip()
+        if self.args.ignore_leading_blanks:  # --ignore-leading-blanks
+            line = line.strip()
 
-        # Strip commas and decimals.
         if strip_number_separators:
-            line = line.replace(",", "").replace(".", "")
+            line = line.replace(",", "").replace(".", "")  # Strip commas and decimals.
 
         try:
             for index, field in enumerate(re.split(field_pattern, line)):
