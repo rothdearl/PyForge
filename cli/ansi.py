@@ -11,7 +11,7 @@ _CSI: Final[str] = "\x1b["
 RESET: Final[str] = f"{_CSI}0m"
 
 # Text attributes.
-TEXT_ATTRIBUTES: Final[list[str]] = [f"{_CSI}{code}m" for code in range(1, 10)]
+TEXT_ATTRIBUTES: Final[list[str]] = [f"{_CSI}{code}m" for code in range(1, 10) if code != 6]
 
 # 16-color palettes.
 BG_COLORS_16: Final[list[str]] = [f"{_CSI}{code}m" for code in (*range(40, 48), *range(100, 108))]
@@ -27,7 +27,7 @@ def _normalize_index(index: int, max_index: int) -> int:
     Normalize an index to a valid range, defaulting to ``0`` if the index is out of range.
 
     :param index: Index to normalize.
-    :param max_index: Exclusive upper bound for valid indices.
+    :param max_index: Exclusive upper bound for valid indexes.
     :return: A normalized index.
     """
     return index if 0 <= index < max_index else 0

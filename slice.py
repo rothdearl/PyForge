@@ -66,7 +66,7 @@ class Slice(CLIProgram):
         parser.add_argument("--literal-quotes", action="store_true",
                             help="treat quotes as ordinary characters (disable shell-style quote parsing)")
         parser.add_argument("--print", action="extend",
-                            help="print only the specified fields (1-based indices; duplicates allowed)", metavar="N",
+                            help="print only the specified fields (1-based indexes; duplicates allowed)", metavar="N",
                             nargs='+', type=int)
         parser.add_argument("--quotes", choices=("d", "s"),
                             help="wrap fields in double (d) or single (s) quotes (default: none)")

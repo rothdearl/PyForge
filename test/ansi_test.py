@@ -14,11 +14,16 @@ class ANSITest(unittest.TestCase):
     """
 
     def test_256_color_palette(self) -> None:
-        self.assertEqual(len(ansi.TEXT_ATTRIBUTES), 9)
+        # Verify lengths.
+        self.assertEqual(len(ansi.TEXT_ATTRIBUTES), 8)
         self.assertEqual(len(ansi.BG_COLORS_16), 16)
         self.assertEqual(len(ansi.COLORS_16), 16)
         self.assertEqual(len(ansi.BG_COLORS_256), 256)
         self.assertEqual(len(ansi.COLORS_256), 256)
+
+        # Verify normalized indexes.
+        self.assertEqual(ansi.foreground_color_16(1000), ansi.COLORS_16[0])
+        self.assertEqual(ansi.foreground_color_16(-1000), ansi.COLORS_16[0])
 
         # Print the ANSI text attributes.
         print(f"ANSI text attributes")
