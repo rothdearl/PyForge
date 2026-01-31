@@ -95,3 +95,25 @@ class INITest(unittest.TestCase):
 
         # Invalid.
         self.assertIsNone(ini.get_int_option("json_options", "invalid_value"))
+
+    def test_values_string(self) -> None:
+        # Valid.
+        self.assertEqual(ini.get_str_option("string_options", "normal_string"), "hello world")
+
+        # Fallback.
+        self.assertEqual(ini.get_str_option("string_options", "empty_value"), "")
+        self.assertEqual(ini.get_str_option("string_options", "missing_value"), "")
+        self.assertEqual(ini.get_str_option("missing_section", "normal_string"), "")
+
+    def test_values_strings(self) -> None:
+        # Valid.
+        self.assertEqual(ini.get_str_options("string_list_options", "comma_separated"), ["a", "b", "c"])
+        self.assertEqual(ini.get_str_options("string_list_options", "comma_with_spaces"), ["a", "b", "c"])
+        self.assertEqual(ini.get_str_options("string_list_options", "leading_trailing"), ["a", "b"])
+        self.assertEqual(ini.get_str_options("string_list_options", "only_separators"), [])
+        self.assertEqual(ini.get_str_options("string_list_options", "single_value"), ["one"])
+
+        # Fallback.
+        self.assertEqual(ini.get_str_options("string_list_options", "empty_value"), [])
+        self.assertEqual(ini.get_str_options("string_list_options", "missing_value"), [])
+        self.assertEqual(ini.get_str_options("missing_section", "comma_separated"), [])
