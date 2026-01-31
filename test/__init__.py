@@ -11,3 +11,5 @@ from .patterns_test import (
     TestCompilePatterns,
     TestMatchesAllPatterns
 )
+
+from .terminal_test import TerminalTest

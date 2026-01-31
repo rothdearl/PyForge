@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Install the required packages.
+# Install required packages.
 pip3 install colorama --upgrade --user "$@"
-#pip3 install coverage --upgrade --user "$@"
 pip3 install python-dateutil --upgrade --user "$@"

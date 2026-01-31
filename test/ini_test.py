@@ -14,13 +14,16 @@ class INITest(unittest.TestCase):
         # File does not exist.
         self.assertFalse(ini.read_options("", clear_previous=False, on_error=print))
 
+        # File is invalid.
+        self.assertFalse(ini.read_options("ini-test-invalid.ini", clear_previous=False, on_error=print))
+
         # No options.
         self.assertTrue(ini.is_empty())
         self.assertFalse(ini.has_defaults())
         self.assertFalse(ini.has_sections())
 
         # Valid file with options.
-        self.assertTrue(ini.read_options("../test/ini_test.ini", clear_previous=False, on_error=print))
+        self.assertTrue(ini.read_options("ini-test.ini", clear_previous=True, on_error=print))
 
         # Has options.
         self.assertFalse(ini.is_empty())
