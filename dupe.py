@@ -92,6 +92,15 @@ class Dupe(CLIProgram):
 
         return parser
 
+    def can_group_key(self, key: str) -> bool:
+        """
+        Return whether the key can be grouped.
+
+        :param key: The key to check.
+        :return: ``True`` if the key is non-empty, or if blank keys are allowed.
+        """
+        return not self.args.no_blank or key.strip()  # --no-blank
+
     def get_compare_key(self, line: str) -> str:
         """
         Return a normalized comparison key derived from the line, applying rules according to command-line options.
@@ -130,7 +139,7 @@ class Dupe(CLIProgram):
         for line in lines:
             next_line = self.get_compare_key(line)
 
-            if self.args.no_blank and (not next_line or next_line == "\n"):  # --no-blank
+            if not self.can_group_key(next_line):
                 continue
 
             if previous_line is None:
@@ -157,7 +166,7 @@ class Dupe(CLIProgram):
         for line in lines:
             key = self.get_compare_key(line)
 
-            if self.args.no_blank and (not key or key == "\n"):  # --no-blank
+            if not self.can_group_key(key):
                 continue
 
             if key in group_map:
