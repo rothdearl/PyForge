@@ -71,13 +71,13 @@ class Seek(CLIProgram):
         parser.add_argument("--color", choices=("on", "off"), default="on", help="use color for matches (default: on)")
         parser.add_argument("--dot", action="store_true", help="include dot (.) files in output")
         parser.add_argument("--empty-only", action="store_true", help="print only empty files")
-        modified_group.add_argument("--m-days",
+        modified_group.add_argument("--mtime-days",
                                     help="print files modified less than or more than N days ago (use +N or -N)",
                                     metavar="N", type=int)
-        modified_group.add_argument("--m-hours",
+        modified_group.add_argument("--mtime-hours",
                                     help="print files modified less than or more than N hours ago (use +N or -N)",
                                     metavar="N", type=int)
-        modified_group.add_argument("--m-mins",
+        modified_group.add_argument("--mtime-mins",
                                     help="print files modified less than or more than N minutes ago (use +N or -N)",
                                     metavar="N", type=int)
         parser.add_argument("--max-depth", default=sys.maxsize,
@@ -121,14 +121,14 @@ class Seek(CLIProgram):
                 else:
                     matches_filters = not file.lstat().st_size
 
-            # --m-days, --m-hours, or --m-mins
-            if matches_filters and any((self.args.m_days, self.args.m_hours, self.args.m_mins)):
-                if self.args.m_days:
-                    last_modified = self.args.m_days * 86400  # Convert seconds to days.
-                elif self.args.m_hours:
-                    last_modified = self.args.m_hours * 3600  # Convert seconds to hours.
+            # --mtime-days, --mtime-hours, or --mtime-mins
+            if matches_filters and any((self.args.mtime_days, self.args.mtime_hours, self.args.mtime_mins)):
+                if self.args.mtime_days:
+                    last_modified = self.args.mtime_days * 86400  # Convert seconds to days.
+                elif self.args.mtime_hours:
+                    last_modified = self.args.mtime_hours * 3600  # Convert seconds to hours.
                 else:
-                    last_modified = self.args.m_mins * 60  # Convert seconds to minutes.
+                    last_modified = self.args.mtime_mins * 60  # Convert seconds to minutes.
 
                 difference = time.time() - file.lstat().st_mtime
 
