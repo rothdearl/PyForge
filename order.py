@@ -153,22 +153,6 @@ class Order(CLIProgram):
 
         return digits
 
-    def print_file_header(self, file_name: str) -> None:
-        """
-        Print the file name, or "(standard input)" if empty, with a colon.
-
-        :param file_name: File name to print.
-        """
-        if not self.args.no_file_name:  # --no-file-name
-            file_name = os.path.relpath(file_name) if file_name else "(standard input)"
-
-            if self.print_color:
-                file_name = f"{Colors.FILE_NAME}{file_name}{Colors.COLON}:{ansi.RESET}"
-            else:
-                file_name = f"{file_name}:"
-
-            print(file_name)
-
     def main(self) -> None:
         """
         Run the program logic.
@@ -195,6 +179,43 @@ class Order(CLIProgram):
             self.sort_lines_from_files(self.args.files)
         else:
             self.sort_lines_from_input()
+
+    def normalize_line(self, line: str, *, strip_number_separators: bool) -> str:
+        """
+        Normalize the line for field splitting according to command-line options.
+
+        :param line: The line to normalize.
+        :param strip_number_separators: Whether to strip number separators (commas and decimals).
+        :return: A normalized line.
+        """
+        line = line.rstrip()  # Remove trailing whitespace.
+
+        if self.args.ignore_leading_blanks:  # --ignore-leading-blanks
+            line = line.lstrip()
+
+        if strip_number_separators:  # Strip commas and decimals.
+            line = line.replace(",", "").replace(".", "")
+
+        if self.args.ignore_case:  # --ignore-case
+            line = line.casefold()
+
+        return line
+
+    def print_file_header(self, file_name: str) -> None:
+        """
+        Print the file name, or "(standard input)" if empty, with a colon.
+
+        :param file_name: File name to print.
+        """
+        if not self.args.no_file_name:  # --no-file-name
+            file_name = os.path.relpath(file_name) if file_name else "(standard input)"
+
+            if self.print_color:
+                file_name = f"{Colors.FILE_NAME}{file_name}{Colors.COLON}:{ansi.RESET}"
+            else:
+                file_name = f"{file_name}:"
+
+            print(file_name)
 
     def sort_lines(self, lines: list[str]) -> None:
         """
@@ -245,7 +266,7 @@ class Order(CLIProgram):
 
     def split_line(self, line: str, field_pattern: str, *, strip_number_separators: bool) -> list[str]:
         """
-        Split the line into sortable fields according to command-line options.
+        Split the line into sortable fields.
 
         :param line: Line to split.
         :param field_pattern: Pattern for getting fields.
@@ -254,16 +275,13 @@ class Order(CLIProgram):
         """
         fields = []
 
-        if self.args.ignore_leading_blanks:  # --ignore-leading-blanks
-            line = line.strip()
-
-        if strip_number_separators:
-            line = line.replace(",", "").replace(".", "")  # Strip commas and decimals.
+        # Normalize the line before splitting.
+        line = self.normalize_line(line, strip_number_separators=strip_number_separators)
 
         try:
             for index, field in enumerate(re.split(field_pattern, line)):
                 if field and index >= self.skip_fields:
-                    fields.append(field.casefold() if self.args.ignore_case else field)  # --ignore-case
+                    fields.append(field)
         except re.error:
             self.print_error_and_exit(f"invalid regex pattern: {field_pattern}")
 
