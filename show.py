@@ -64,7 +64,7 @@ class Show(CLIProgram):
 
         parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         parser.add_argument("-H", "--no-file-name", action="store_true", help="do not prefix output with file names")
-        parser.add_argument("-n", "--line-numbers", action="store_true", help="print line numbers with output lines")
+        parser.add_argument("-n", "--line-numbers", action="store_true", help="number output lines")
         parser.add_argument("-p", "--print", default=sys.maxsize, help="print only N lines (N >= 1)", metavar="N",
                             type=int)
         parser.add_argument("-s", "--start", default=1, help="start at line N, from end if negative (N != 0)",

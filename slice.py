@@ -62,12 +62,12 @@ class Slice(CLIProgram):
                             help="print each field only once, in ascending order")
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="use color for counts and file headers (default: on)")
+        parser.add_argument("--fields", action="extend",
+                            help="print only the specified fields (1-based indexes; duplicates allowed)", metavar="N",
+                            nargs='+', type=int)
         parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
         parser.add_argument("--literal-quotes", action="store_true",
                             help="treat quotes as ordinary characters (disable shell-style quote parsing)")
-        parser.add_argument("--print", action="extend",
-                            help="print only the specified fields (1-based indexes; duplicates allowed)", metavar="N",
-                            nargs='+', type=int)
         parser.add_argument("--quotes", choices=("d", "s"),
                             help="wrap fields in double (d) or single (s) quotes (default: none)")
         parser.add_argument("--stdin-files", action="store_true",
@@ -186,9 +186,9 @@ class Slice(CLIProgram):
         """
         Validate the parsed command-line arguments.
         """
-        self.fields_to_print = self.args.print or []  # --print
+        self.fields_to_print = self.args.fields or []  # --fields
 
-        # Validate --print values.
+        # Validate --fields values.
         for field in self.fields_to_print:
             if field < 1:
                 self.print_error_and_exit("'print' must contain fields >= 1")

@@ -65,7 +65,7 @@ class Glue(CLIProgram):
 
         parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
         number_group.add_argument("-b", "--number-nonblank", action="store_true", help="number nonblank output lines")
-        number_group.add_argument("-n", "--number", action="store_true", help="number all output lines")
+        number_group.add_argument("-n", "--number", action="store_true", help="number output lines")
         blank_group.add_argument("-B", "--no-blank", action="store_true", help="suppress all blank lines")
         blank_group.add_argument("-s", "--squeeze-blank", action="store_true", help="suppress repeated blank lines")
         parser.add_argument("-E", "--show-ends", action="store_true",

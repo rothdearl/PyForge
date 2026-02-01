@@ -58,7 +58,7 @@ class Seek(CLIProgram):
         modified_group = parser.add_mutually_exclusive_group()
 
         parser.add_argument("dirs", help="directory starting points", metavar="DIRECTORIES", nargs="*")
-        parser.add_argument("-i", "--ignore-case", action="store_true", help="ignore case when matching patterns")
+        parser.add_argument("-i", "--ignore-case", action="store_true", help="ignore case distinctions")
         parser.add_argument("-n", "--name", action="extend", help="print files whose name matches PATTERN",
                             metavar="PATTERN", nargs=1)
         parser.add_argument("-p", "--path", action="extend", help="print files whose path matches PATTERN",

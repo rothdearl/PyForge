@@ -37,7 +37,7 @@ def text_attribute(index: int) -> str:
     """
     Return a text attribute, defaulting to ``0`` if the index is out of range.
 
-    :param index: Index of the text attribute.
+    :param index: Attribute index.
     :return: Text attribute.
     """
     return TEXT_ATTRIBUTES[_normalize_index(index, len(TEXT_ATTRIBUTES))]
@@ -47,7 +47,7 @@ def background_color_16(index: int) -> str:
     """
     Return a background color from the 16-color palette, defaulting to ``0`` if the index is out of range.
 
-    :param index: Index of the background color.
+    :param index: Color index.
     :return: Background color.
     """
     return BG_COLORS_16[_normalize_index(index, len(BG_COLORS_16))]
@@ -57,7 +57,7 @@ def background_color_256(index: int) -> str:
     """
     Return a background color from the 256-color palette, defaulting to ``0`` if the index is out of range.
 
-    :param index: Index of the background color.
+    :param index: Color index.
     :return: Background color.
     """
     return BG_COLORS_256[_normalize_index(index, len(BG_COLORS_256))]
@@ -67,7 +67,7 @@ def foreground_color_16(index: int) -> str:
     """
     Return a foreground color from the 16-color palette, defaulting to ``0`` if the index is out of range.
 
-    :param index: Index of the foreground color.
+    :param index: Color index.
     :return: Foreground color.
     """
     return COLORS_16[_normalize_index(index, len(COLORS_16))]
@@ -77,7 +77,7 @@ def foreground_color_256(index: int) -> str:
     """
     Return a foreground color from the 256-color palette, defaulting to ``0`` if the index is out of range.
 
-    :param index: Index of the foreground color.
+    :param index: Color index.
     :return: Foreground color.
     """
     return COLORS_256[_normalize_index(index, len(COLORS_256))]

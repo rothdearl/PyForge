@@ -121,7 +121,7 @@ class Dupe(CLIProgram):
         Group adjacent lines whose comparison keys match.
 
         :param lines: Lines to group.
-        :return: Lists of lines where the first element is the group and subsequent elements are matching lines.
+        :return: List of string groups, where the first element is the group and the remaining elements are matches.
         """
         group_index = 0
         group_list = []
@@ -150,7 +150,7 @@ class Dupe(CLIProgram):
         Group all lines globally by their comparison keys.
 
         :param lines: Lines to group.
-        :return: Mapping of lines where the key is the group and the values are matching lines.
+        :return: Mapping of string groups, where the key is the group and the value is a list of matches.
         """
         group_map = {}
 
@@ -160,9 +160,7 @@ class Dupe(CLIProgram):
             if self.args.skip_blank and (not key or key == "\n"):  # --skip-blank
                 continue
 
-            if self.args.ignore_case and key in (k.casefold() for k in group_map.keys()):  # --ignore-case
-                group_map[key].append(line)
-            elif key in group_map:
+            if key in group_map:
                 group_map[key].append(line)
             else:
                 group_map[key] = [line]

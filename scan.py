@@ -65,10 +65,10 @@ class Scan(CLIProgram):
         count_group.add_argument("-C", "--count-nonzero", action="store_true",
                                  help="print the count only for files with at least one match")
         parser.add_argument("-f", "--find", action="extend", help="print lines that match PATTERN", metavar="PATTERN",
-                            nargs=1, required=True)
+                            nargs=1)
         parser.add_argument("-H", "--no-file-name", action="store_true", help="do not prefix output with file names")
-        parser.add_argument("-i", "--ignore-case", action="store_true", help="ignore case when matching patterns")
-        parser.add_argument("-n", "--line-number", action="store_true", help="print line number with output lines")
+        parser.add_argument("-i", "--ignore-case", action="store_true", help="ignore case distinctions")
+        parser.add_argument("-n", "--line-number", action="store_true", help="show line number for each matching line")
         parser.add_argument("-q", "--quiet", "--silent", action="store_true", help="suppress all normal output")
         parser.add_argument("-s", "--no-messages", action="store_true", help="suppress error messages about files")
         parser.add_argument("-v", "--invert-match", action="store_true", help="print lines that do not match")
@@ -90,13 +90,22 @@ class Scan(CLIProgram):
         if not self.found_match:
             sys.exit(1)
 
+    def is_printing_counts(self) -> bool:
+        """
+        Return whether count output is enabled.
+
+        :return: ``True`` if either ``--count`` or ``--count-nonzero`` is set.
+        """
+        return self.args.count or self.args.count_nonzero  # --count or --count-nonzero
+
     def main(self) -> None:
         """
         Run the program logic.
         """
         # Pre-compile --find patterns.
-        self.patterns = patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
-                                                  on_error=self.print_error_and_exit)
+        if self.args.find:
+            self.patterns = patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
+                                                      on_error=self.print_error_and_exit)
 
         if terminal.input_is_redirected():
             if self.args.stdin_files:  # --stdin-files
@@ -136,15 +145,15 @@ class Scan(CLIProgram):
             try:
                 line = input()
 
-                # If --count or --count-nonzero, wait until EOF before finding matches.
-                if self.args.count or self.args.count_nonzero:
+                # If printing counts, wait until EOF before finding matches.
+                if self.is_printing_counts():
                     lines.append(line)
                 else:
                     self.print_matches_in_lines([line], origin_file="", reset_line_number=False)
             except EOFError:
                 eof = True
 
-        if self.args.count or self.args.count_nonzero:  # --count or --count-nonzero
+        if self.is_printing_counts():
             self.print_matches_in_lines(lines, origin_file="")
 
     def print_matches_in_lines(self, lines: Iterable[str] | TextIO, *, origin_file: str,
@@ -192,7 +201,7 @@ class Scan(CLIProgram):
             else:
                 file_name = f"{file_name}:"
 
-        if self.args.count or self.args.count_nonzero:  # --count or --count-nonzero
+        if self.is_printing_counts():
             print(f"{file_name}{len(matches)}")
         elif matches:
             padding = len(str(matches[-1][0])) if reset_line_number else 0

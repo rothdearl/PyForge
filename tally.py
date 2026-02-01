@@ -5,7 +5,7 @@
 Filename: tally.py
 Author: Roth Earl
 Version: 1.3.9
-Description: A program to print line, word, and character counts in files.
+Description: A program to count lines, words, and characters in files.
 License: GNU GPLv3
 """
 
@@ -44,7 +44,7 @@ class CountIndex(IntEnum):
 @final
 class Tally(CLIProgram):
     """
-    A program to print line, word, and character counts in files.
+    A program to count lines, words, and characters in files.
 
     :cvar COUNT_FLAGS: Flags for determining if a count will be printed.
     :cvar TOTALS: Total counts across all files.
@@ -86,7 +86,7 @@ class Tally(CLIProgram):
         :return: An argument parser.
         """
         parser = argparse.ArgumentParser(allow_abbrev=False,
-                                         description="print line, word, and character counts in FILES",
+                                         description="count lines, words, and characters in FILES",
                                          epilog="if no FILES are specified, read from standard input", prog=self.name)
 
         parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
