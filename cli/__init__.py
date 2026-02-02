@@ -30,7 +30,7 @@ from .ini import (
 
 from .io import (
     FileInfo,
-    print_normalized_line,
+    print_line_normalized,
     read_text_files,
     write_text_to_file,
 )
@@ -51,6 +51,6 @@ from .terminal import (
 
 from .types import (
     ErrorReporter,
-    Json,
+    JsonObject,
     Patterns,
 )

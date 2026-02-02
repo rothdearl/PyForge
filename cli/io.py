@@ -13,16 +13,16 @@ class FileInfo(NamedTuple):
     """
     Immutable container for information about a file being read.
 
-    :ivar file_index: Position of the file name in the input sequence.
+    :ivar file_index: Position of the file name in the original input sequence.
     :ivar file_name: Normalized file name.
-    :ivar text: Open text stream for the file, valid until the next iteration.
+    :ivar text: Open text stream for the file, valid only until the next iteration.
     """
     file_index: int
     file_name: str
     text: TextIO
 
 
-def print_normalized_line(line: str) -> None:
+def print_line_normalized(line: str) -> None:
     """
     Print a line of text, ensuring exactly one trailing newline.
 
@@ -31,7 +31,7 @@ def print_normalized_line(line: str) -> None:
     print(line, end="" if line.endswith("\n") else "\n")
 
 
-def read_text_files(files: Iterable[str] | TextIO, encoding: str, *, on_error: ErrorReporter) -> Iterator[FileInfo]:
+def read_text_files(files: Iterable[str], encoding: str, *, on_error: ErrorReporter) -> Iterator[FileInfo]:
     """
     Open files for reading in text mode and yield ``FileInfo`` objects.
 
@@ -41,7 +41,7 @@ def read_text_files(files: Iterable[str] | TextIO, encoding: str, *, on_error: E
     :return: Iterator yielding ``FileInfo`` objects, where the text stream is only valid until the next iteration.
     """
     for file_index, file_name in enumerate(files):
-        file_name = file_name.strip()
+        file_name = file_name.rstrip("\n")  # Normalize file name.
 
         try:
             if os.path.isdir(file_name):
@@ -51,8 +51,8 @@ def read_text_files(files: Iterable[str] | TextIO, encoding: str, *, on_error: E
             with open(file_name, "rt", encoding=encoding) as text:
                 yield FileInfo(file_index, file_name, text)
         except FileNotFoundError:
-            file_name = file_name or '""'
-            on_error(f"{file_name}: no such file or directory")
+            name = file_name or '""'
+            on_error(f"{name}: no such file or directory")
         except PermissionError:
             on_error(f"{file_name}: permission denied")
         except OSError:
@@ -61,7 +61,7 @@ def read_text_files(files: Iterable[str] | TextIO, encoding: str, *, on_error: E
 
 def write_text_to_file(file_name: str, text: Iterable[str], encoding: str, *, on_error: ErrorReporter) -> None:
     """
-    Write text lines to a file, ensuring exactly one trailing newline per line.
+    Write text lines to a file, ensuring exactly one trailing newline is written for each input line.
 
     :param file_name: File name.
     :param text: Iterable of strings (e.g., list, generator, or text stream).
@@ -71,7 +71,7 @@ def write_text_to_file(file_name: str, text: Iterable[str], encoding: str, *, on
     try:
         with open(file_name, "wt", encoding=encoding) as f:
             for line in text:
-                line = line.rstrip("\n")
+                line = line.rstrip("\n")  # Normalize line.
                 f.write(f"{line}\n")
     except PermissionError:
         on_error(f"{file_name}: permission denied")
@@ -83,7 +83,7 @@ def write_text_to_file(file_name: str, text: Iterable[str], encoding: str, *, on
 
 __all__ = [
     "FileInfo",
-    "print_normalized_line",
+    "print_line_normalized",
     "read_text_files",
     "write_text_to_file",
 ]

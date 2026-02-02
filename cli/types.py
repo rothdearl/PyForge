@@ -9,7 +9,7 @@ from typing import Any
 type ErrorReporter = Callable[[str], None]
 """Callback for reporting error messages."""
 
-type Json = dict[str, Any]
+type JsonObject = dict[str, Any]
 """A JSON object: dictionary with string keys and JSON-compatible values."""
 
 type Patterns = list[re.Pattern[str]]
@@ -17,6 +17,6 @@ type Patterns = list[re.Pattern[str]]
 
 __all__ = [
     "ErrorReporter",
-    "Json",
+    "JsonObject",
     "Patterns",
 ]

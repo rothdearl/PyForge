@@ -5,7 +5,7 @@ Functions for reading and parsing values from INI configuration files.
 import configparser
 import json
 
-from .types import ErrorReporter, Json
+from .types import ErrorReporter, JsonObject
 
 # Configuration parser for an INI options file (intentional single global ConfigParser instance).
 _config: configparser.ConfigParser = configparser.ConfigParser()
@@ -68,13 +68,13 @@ def get_int_option(section: str, option: str) -> int | None:
         return None
 
 
-def get_json_option(section: str, option: str) -> Json | None:
+def get_json_option(section: str, option: str) -> JsonObject | None:
     """
-    Return a JSON value parsed from the option.
+    Return a JSON object value parsed from the option.
 
     :param section: Section name.
     :param option: Option name.
-    :return: Parsed JSON value or ``None`` if the value cannot be decoded.
+    :return: Parsed JSON object value or ``None`` if the value cannot be decoded.
     """
     value = get_str_option_with_fallback(section, option, fallback="{}")
 
