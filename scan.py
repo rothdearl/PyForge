@@ -16,7 +16,7 @@ from collections.abc import Iterable
 from enum import StrEnum
 from typing import Final, TextIO, final
 
-from cli import CLIProgram, CompiledPatterns, ansi, io, patterns, terminal
+from cli import CLIProgram, Patterns, ansi, io, patterns, terminal
 
 
 class Colors(StrEnum):
@@ -50,7 +50,7 @@ class Scan(CLIProgram):
 
         self.found_match: bool = False
         self.line_number: int = 0
-        self.patterns: CompiledPatterns = []
+        self.patterns: Patterns = []
 
     def build_arguments(self) -> argparse.ArgumentParser:
         """

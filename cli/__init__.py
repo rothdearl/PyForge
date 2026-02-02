@@ -54,8 +54,7 @@ from .terminal import (
 )
 
 from .types import (
-    CompiledPatterns,
     ErrorReporter,
     Json,
-    PatternGroups
+    Patterns
 )

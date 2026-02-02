@@ -3,17 +3,20 @@ Type aliases used throughout the command-line interface package.
 """
 
 import re
-from collections.abc import Callable, Iterable
-from typing import Any, TypeAlias
+from collections.abc import Callable
+from typing import Any
 
-CompiledPatterns: TypeAlias = list[re.Pattern[str]]
-ErrorReporter: TypeAlias = Callable[[str], None]
-Json: TypeAlias = dict[str, Any]
-PatternGroups: TypeAlias = Iterable[re.Pattern[str]]
+type ErrorReporter = Callable[[str], None]
+"""Callback for reporting error messages."""
+
+type Json = dict[str, Any]
+"""A JSON object: dictionary with string keys and JSON-compatible values."""
+
+type Patterns = list[re.Pattern[str]]
+"""List of compiled regular expression patterns."""
 
 __all__ = [
-    "CompiledPatterns",
     "ErrorReporter",
     "Json",
-    "PatternGroups"
+    "Patterns"
 ]

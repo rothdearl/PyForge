@@ -6,7 +6,7 @@ import re
 from collections.abc import Iterable
 
 from .ansi import RESET
-from .types import CompiledPatterns, ErrorReporter, PatternGroups
+from .types import ErrorReporter, Patterns
 
 
 def color_pattern_matches(text: str, patterns: Iterable[re.Pattern[str]], *, color: str) -> str:
@@ -14,7 +14,7 @@ def color_pattern_matches(text: str, patterns: Iterable[re.Pattern[str]], *, col
     Color all matches of the given patterns in the text.
 
     :param text: Text to color.
-    :param patterns: Compiled regular expression patterns to match.
+    :param patterns: Pattern groups to match.
     :param color: Color to use.
     :return: Text with all matched regions wrapped in color codes.
     """
@@ -51,11 +51,11 @@ def color_pattern_matches(text: str, patterns: Iterable[re.Pattern[str]], *, col
     return "".join(colored_text)
 
 
-def compile_combined_patterns(patterns: PatternGroups, *, ignore_case: bool) -> re.Pattern[str]:
+def compile_combined_patterns(patterns: Iterable[re.Pattern[str]], *, ignore_case: bool) -> re.Pattern[str]:
     """
     Combine patterns into a single compiled OR-pattern.
 
-    :param patterns: Iterable of compiled patterns.
+    :param patterns: Pattern groups to combine.
     :param ignore_case: Whether to ignore case.
     :return: Compiled regular expression matching any pattern.
     """
@@ -65,7 +65,7 @@ def compile_combined_patterns(patterns: PatternGroups, *, ignore_case: bool) -> 
     return re.compile("|".join(sources), flags=flags)
 
 
-def compile_patterns(patterns: Iterable[str], *, ignore_case: bool, on_error: ErrorReporter) -> CompiledPatterns:
+def compile_patterns(patterns: Iterable[str], *, ignore_case: bool, on_error: ErrorReporter) -> Patterns:
     """
     Compile patterns into OR groups implementing AND-of-OR matching.
 
@@ -89,12 +89,12 @@ def compile_patterns(patterns: Iterable[str], *, ignore_case: bool, on_error: Er
     return compiled
 
 
-def matches_all_patterns(text: str, patterns: PatternGroups) -> bool:
+def matches_all_patterns(text: str, patterns: Iterable[re.Pattern[str]]) -> bool:
     """
-    Return whether the text matches every pattern group.
+    Return whether the text matches all pattern groups.
 
     :param text: Text to search.
-    :param patterns: Patterns to match.
+    :param patterns: Pattern groups to match.
     :return: ``True`` if the text matches all pattern groups.
     """
     for group in patterns:

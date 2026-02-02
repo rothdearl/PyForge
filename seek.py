@@ -17,7 +17,7 @@ import time
 from enum import StrEnum
 from typing import final
 
-from cli import CLIProgram, CompiledPatterns, ansi, patterns, terminal
+from cli import CLIProgram, Patterns, ansi, patterns, terminal
 
 
 class Colors(StrEnum):
@@ -44,8 +44,8 @@ class Seek(CLIProgram):
         super().__init__(name="seek", version="1.3.9", error_exit_code=2)
 
         self.found_match: bool = False
-        self.name_patterns: CompiledPatterns = []
-        self.path_patterns: CompiledPatterns = []
+        self.name_patterns: Patterns = []
+        self.path_patterns: Patterns = []
 
     def build_arguments(self) -> argparse.ArgumentParser:
         """
