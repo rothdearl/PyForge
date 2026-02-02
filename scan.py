@@ -86,7 +86,7 @@ class Scan(CLIProgram):
 
     def check_for_errors(self) -> None:
         """
-        Call ``sys.exit(1)`` if a match was not found.
+        Call ``sys.exit(NO_MATCHES_EXIT_CODE)`` if a match was not found.
         """
         super().check_for_errors()
 

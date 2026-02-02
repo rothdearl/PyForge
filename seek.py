@@ -15,7 +15,7 @@ import pathlib
 import sys
 import time
 from enum import StrEnum
-from typing import final
+from typing import Final, final
 
 from cli import CLIProgram, Patterns, ansi, patterns, terminal
 
@@ -32,10 +32,13 @@ class Seek(CLIProgram):
     """
     A program to search for files in a directory hierarchy.
 
+    :cvar NO_MATCHES_EXIT_CODE:  Exit code when no matches are found.
     :ivar found_match: Whether a match was found.
     :ivar name_patterns: Compiled name patterns to match.
     :ivar path_patterns: Compiled path patterns to match.
     """
+
+    NO_MATCHES_EXIT_CODE: Final[int] = 1
 
     def __init__(self) -> None:
         """
@@ -90,12 +93,12 @@ class Seek(CLIProgram):
 
     def check_for_errors(self) -> None:
         """
-        Call ``sys.exit(1)`` if a match was not found.
+        Call ``sys.exit(NO_MATCHES_EXIT_CODE)`` if a match was not found.
         """
         super().check_for_errors()
 
         if not self.found_match:
-            sys.exit(1)
+            sys.exit(Seek.NO_MATCHES_EXIT_CODE)
 
     def file_matches_filters(self, file: pathlib.Path) -> bool:
         """
