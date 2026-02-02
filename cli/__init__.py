@@ -25,32 +25,32 @@ from .ini import (
     has_defaults,
     has_sections,
     is_empty,
-    read_options
+    read_options,
 )
 
 from .io import (
     FileInfo,
     print_normalized_line,
     read_text_files,
-    write_text_to_file
+    write_text_to_file,
 )
 
 from .patterns import (
     color_pattern_matches,
     compile_combined_patterns,
     compile_patterns,
-    matches_all_patterns
+    matches_all_patterns,
 )
 
 from .terminal import (
     stdin_is_redirected,
     stdin_is_terminal,
     stdout_is_redirected,
-    stdout_is_terminal
+    stdout_is_terminal,
 )
 
 from .types import (
     ErrorReporter,
     Json,
-    Patterns
+    Patterns,
 )
