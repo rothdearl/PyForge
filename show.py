@@ -23,12 +23,12 @@ class Colors(StrEnum):
     """
     Terminal color constants.
     """
-    COLON = ansi.foreground_color_16(14)  # Bright Cyan
-    EOL = ansi.foreground_color_16(12)  # Bright Blue
-    FILE_NAME = ansi.foreground_color_16(13)  # Bright Magenta
-    LINE_NUMBER = ansi.foreground_color_16(10)  # Bright Green
-    SPACE = ansi.foreground_color_16(14)  # Bright Cyan
-    TAB = ansi.foreground_color_16(14)  # Bright Cyan
+    COLON = ansi.Colors16.BRIGHT_CYAN
+    EOL = ansi.Colors16.BRIGHT_BLUE
+    FILE_NAME = ansi.Colors16.BRIGHT_MAGENTA
+    LINE_NUMBER = ansi.Colors16.BRIGHT_GREEN
+    SPACE = ansi.Colors16.BRIGHT_CYAN
+    TAB = ansi.Colors16.BRIGHT_CYAN
 
 
 class Whitespace(StrEnum):

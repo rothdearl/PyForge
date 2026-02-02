@@ -26,9 +26,9 @@ class Colors(StrEnum):
     """
     Terminal color constants.
     """
-    COUNT = ansi.foreground_color_16(14)  # Bright Cyan
-    COUNT_ORIGIN = ansi.foreground_color_16(13)  # Bright Magenta
-    COUNT_TOTAL = ansi.foreground_color_16(11)  # Bright Yellow
+    COUNT = ansi.Colors16.BRIGHT_CYAN
+    COUNT_ORIGIN = ansi.Colors16.BRIGHT_MAGENTA
+    COUNT_TOTAL = ansi.Colors16.BRIGHT_YELLOW
 
 
 class CountIndex(IntEnum):

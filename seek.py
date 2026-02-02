@@ -24,7 +24,7 @@ class Colors(StrEnum):
     """
     Terminal color constants.
     """
-    MATCH = ansi.foreground_color_16(9)  # Bright Red
+    MATCH = ansi.Colors16.BRIGHT_RED
 
 
 @final

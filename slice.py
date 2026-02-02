@@ -24,10 +24,8 @@ class Colors(StrEnum):
     """
     Terminal color constants.
     """
-    COLON = ansi.foreground_color_16(14)  # Bright Cyan
-    COUNT = ansi.foreground_color_16(10)  # Bright Green
-    COUNT_TOTAL = ansi.foreground_color_16(11)  # Bright Yellow
-    FILE_NAME = ansi.foreground_color_16(13)  # Bright Magenta
+    COLON = ansi.Colors16.BRIGHT_CYAN
+    FILE_NAME = ansi.Colors16.BRIGHT_MAGENTA
 
 
 @final

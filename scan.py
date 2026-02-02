@@ -23,10 +23,10 @@ class Colors(StrEnum):
     """
     Terminal color constants.
     """
-    COLON = ansi.foreground_color_16(14)  # Bright Cyan
-    FILE_NAME = ansi.foreground_color_16(13)  # Bright Magenta
-    LINE_NUMBER = ansi.foreground_color_16(10)  # Bright Green
-    MATCH = ansi.foreground_color_16(9)  # Bright Red
+    COLON = ansi.Colors16.BRIGHT_CYAN
+    FILE_NAME = ansi.Colors16.BRIGHT_MAGENTA
+    LINE_NUMBER = ansi.Colors16.BRIGHT_GREEN
+    MATCH = ansi.Colors16.BRIGHT_RED
 
 
 @final

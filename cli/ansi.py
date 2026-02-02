@@ -1,98 +1,84 @@
 """
-Constants and functions for ANSI escape sequences used for terminal text attributes and color output.
+Define constants for ANSI escape sequences used for terminal text attributes and color output.
 """
 
+from enum import StrEnum
 from typing import Final
 
-# Escape with the Control Sequence Introducer.
+# Control Sequence Introducer (CSI).
 _CSI: Final[str] = "\x1b["
 
-# Controls.
+#: Reset all SGR attributes and colors.
 RESET: Final[str] = f"{_CSI}0m"
 
-# Text attributes (SGR codes 1–9 except 6 which is undefined)
-TEXT_ATTRIBUTES: Final[list[str]] = [f"{_CSI}{code}m" for code in (1, 2, 3, 4, 5, 7, 8, 9)]
 
-# 16-color palettes.
-BG_COLORS_16: Final[list[str]] = [f"{_CSI}{code}m" for code in (*range(40, 48), *range(100, 108))]
-COLORS_16: Final[list[str]] = [f"{_CSI}{code}m" for code in (*range(30, 38), *range(90, 98))]
-
-# 256-color palettes (xterm-compatible).
-BG_COLORS_256: Final[list[str]] = [f"{_CSI}48;5;{code}m" for code in range(256)]
-COLORS_256: Final[list[str]] = [f"{_CSI}38;5;{code}m" for code in range(256)]
-
-
-def _normalize_index(index: int, max_index: int) -> int:
+class BGColors16(StrEnum):
     """
-    Normalize an index to a valid range, defaulting to ``0`` if the index is out of range.
-
-    :param index: Index to normalize.
-    :param max_index: Exclusive upper bound for valid indexes.
-    :return: A normalized index.
+    16-color palette background color constants (SGR codes 40–47 and 100–107).
     """
-    return index if 0 <= index < max_index else 0
+    BG_BLACK = f"{_CSI}40m"
+    BG_RED = f"{_CSI}41m"
+    BG_GREEN = f"{_CSI}42m"
+    BG_YELLOW = f"{_CSI}43m"
+    BG_BLUE = f"{_CSI}44m"
+    BG_MAGENTA = f"{_CSI}45m"
+    BG_CYAN = f"{_CSI}46m"
+    BG_WHITE = f"{_CSI}47m"
+    BG_BRIGHT_BLACK = f"{_CSI}100m"
+    BG_BRIGHT_RED = f"{_CSI}101m"
+    BG_BRIGHT_GREEN = f"{_CSI}102m"
+    BG_BRIGHT_YELLOW = f"{_CSI}103m"
+    BG_BRIGHT_BLUE = f"{_CSI}104m"
+    BG_BRIGHT_MAGENTA = f"{_CSI}105m"
+    BG_BRIGHT_CYAN = f"{_CSI}106m"
+    BG_BRIGHT_WHITE = f"{_CSI}107m"
 
 
-def text_attribute(index: int) -> str:
+class Colors16(StrEnum):
     """
-    Return a text attribute, defaulting to ``0`` if the index is out of range.
-
-    :param index: Attribute index.
-    :return: Text attribute.
+    16-color palette foreground color constants (SGR codes 30–37 and 90–97).
     """
-    return TEXT_ATTRIBUTES[_normalize_index(index, len(TEXT_ATTRIBUTES))]
+    BLACK = f"{_CSI}30m"
+    RED = f"{_CSI}31m"
+    GREEN = f"{_CSI}32m"
+    YELLOW = f"{_CSI}33m"
+    BLUE = f"{_CSI}34m"
+    MAGENTA = f"{_CSI}35m"
+    CYAN = f"{_CSI}36m"
+    WHITE = f"{_CSI}37m"
+    BRIGHT_BLACK = f"{_CSI}90m"
+    BRIGHT_RED = f"{_CSI}91m"
+    BRIGHT_GREEN = f"{_CSI}92m"
+    BRIGHT_YELLOW = f"{_CSI}93m"
+    BRIGHT_BLUE = f"{_CSI}94m"
+    BRIGHT_MAGENTA = f"{_CSI}95m"
+    BRIGHT_CYAN = f"{_CSI}96m"
+    BRIGHT_WHITE = f"{_CSI}97m"
 
 
-def background_color_16(index: int) -> str:
+class TextAttributes(StrEnum):
     """
-    Return a background color from the 16-color palette, defaulting to ``0`` if the index is out of range.
-
-    :param index: Color index.
-    :return: Background color.
+    Text attribute constants (SGR codes 1–9 except 6 which is undefined).
     """
-    return BG_COLORS_16[_normalize_index(index, len(BG_COLORS_16))]
+    BOLD = f"{_CSI}1m"
+    DIM = f"{_CSI}2m"
+    ITALIC = f"{_CSI}3m"
+    UNDERLINE = f"{_CSI}4m"
+    BLINK = f"{_CSI}5m"
+    REVERSE = f"{_CSI}7m"
+    INVISIBLE = f"{_CSI}8m"
+    STRIKETHROUGH = f"{_CSI}9m"
 
 
-def background_color_256(index: int) -> str:
-    """
-    Return a background color from the 256-color palette, defaulting to ``0`` if the index is out of range.
-
-    :param index: Color index.
-    :return: Background color.
-    """
-    return BG_COLORS_256[_normalize_index(index, len(BG_COLORS_256))]
-
-
-def foreground_color_16(index: int) -> str:
-    """
-    Return a foreground color from the 16-color palette, defaulting to ``0`` if the index is out of range.
-
-    :param index: Color index.
-    :return: Foreground color.
-    """
-    return COLORS_16[_normalize_index(index, len(COLORS_16))]
-
-
-def foreground_color_256(index: int) -> str:
-    """
-    Return a foreground color from the 256-color palette, defaulting to ``0`` if the index is out of range.
-
-    :param index: Color index.
-    :return: Foreground color.
-    """
-    return COLORS_256[_normalize_index(index, len(COLORS_256))]
-
+# 256-color palettes (xterm-compatible SGR codes 38;5;0–255 and 48;5;0–255).
+BG_COLORS_256: Final[tuple[str, ...]] = tuple(f"{_CSI}48;5;{code}m" for code in range(256))
+COLORS_256: Final[tuple[str, ...]] = tuple(f"{_CSI}38;5;{code}m" for code in range(256))
 
 __all__ = [
-    "BG_COLORS_16",
+    "BGColors16",
     "BG_COLORS_256",
-    "COLORS_16",
     "COLORS_256",
+    "Colors16",
     "RESET",
-    "TEXT_ATTRIBUTES",
-    "background_color_16",
-    "background_color_256",
-    "foreground_color_16",
-    "foreground_color_256",
-    "text_attribute"
+    "TextAttributes",
 ]
