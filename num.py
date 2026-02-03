@@ -147,7 +147,7 @@ class Num(CLIProgram):
                 line_number += 1
 
                 if self.print_color:
-                    line = f"{Colors.LINE_NUMBER}{line_number:{format_prefix}{self.args.number_width}}{ansi.RESET}{Colors.COLON}{self.args.number_separator}{ansi.RESET}{line}"
+                    line = f"{Colors.LINE_NUMBER}{line_number:{format_prefix}{self.args.number_width}}{self.args.number_separator}{ansi.RESET}{line}"
                 else:
                     line = f"{line_number:{format_prefix}{self.args.number_width}}{self.args.number_separator}{line}"
 
