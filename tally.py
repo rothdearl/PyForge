@@ -13,7 +13,7 @@ import argparse
 import re
 import sys
 from collections.abc import Iterable
-from enum import IntEnum, StrEnum
+from enum import IntEnum
 from typing import Final, TypeAlias, final
 
 from cli import CLIProgram, ansi, io, terminal
@@ -22,13 +22,18 @@ from cli import CLIProgram, ansi, io, terminal
 Counts: TypeAlias = tuple[int, int, int, int]  # Indexed by CountIndex.
 
 
-class Colors(StrEnum):
+@final
+class Colors:
     """
     Terminal color constants.
+
+    :cvar COUNT: Color used for a count.
+    :cvar COUNT_TOTAL: Color used for a count total.
+    :cvar FILE_NAME: Color used for a file name.
     """
-    COUNT = ansi.Colors16.BRIGHT_CYAN
-    COUNT_ORIGIN = ansi.Colors16.BRIGHT_MAGENTA
-    COUNT_TOTAL = ansi.Colors16.BRIGHT_YELLOW
+    COUNT: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    COUNT_TOTAL: Final[str] = ansi.Colors16.BRIGHT_YELLOW
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
 
 
 class CountIndex(IntEnum):
@@ -111,22 +116,18 @@ class Tally(CLIProgram):
 
         return parser
 
-    def calculate_counts(self, text: Iterable[str], *, has_newlines: bool) -> Counts:
+    def calculate_counts(self, text: Iterable[str]) -> Counts:
         """
         Calculate the counts for the lines, words, characters, and the maximum line length in the text.
 
         :param text: Text to count.
-        :param has_newlines: Whether the text has newlines.
         :return: Count information.
         """
         character_count, line_count, max_line_length, words = 0, 0, 0, 0
-
-        # Account for newline handling differences between file input and stdin.
-        display_width_offset = -1 if has_newlines else 0
-        line_length_offset = 0 if has_newlines else 1
+        display_width_offset = -1  # Account for the newline.
 
         for line in text:
-            line_length = len(line) + line_length_offset
+            line_length = len(line)
             max_display_width = len(line) + (line.count("\t") * self.args.tab_width) - display_width_offset
 
             character_count += line_length
@@ -145,7 +146,7 @@ class Tally(CLIProgram):
                 self.print_counts_from_files(sys.stdin)
             else:
                 if standard_input := sys.stdin.readlines():
-                    counts = self.calculate_counts(standard_input, has_newlines=True)
+                    counts = self.calculate_counts(standard_input)
 
                     self.files_counted += 1
                     self.add_counts_to_totals(counts)
@@ -169,7 +170,7 @@ class Tally(CLIProgram):
         :param count_origin: Where the counts originated from.
         """
         count_color = Colors.COUNT_TOTAL if count_origin == "total" else Colors.COUNT
-        count_origin_color = Colors.COUNT_TOTAL if count_origin == "total" else Colors.COUNT_ORIGIN
+        count_origin_color = Colors.COUNT_TOTAL if count_origin == "total" else Colors.FILE_NAME
 
         for index, count in enumerate(counts):
             if Tally.COUNT_FLAGS[index]:
@@ -190,13 +191,13 @@ class Tally(CLIProgram):
 
     def print_counts_from_files(self, files: Iterable[str]) -> None:
         """
-        Print counts from files.
+        Read lines from each file, then count and print.
 
-        :param files: Files to count.
+        :param files: Iterable of files to read.
         """
         for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
-                counts = self.calculate_counts(file_info.text, has_newlines=True)
+                counts = self.calculate_counts(file_info.text)
 
                 self.files_counted += 1
                 self.add_counts_to_totals(counts)
@@ -206,9 +207,9 @@ class Tally(CLIProgram):
 
     def print_counts_from_input(self) -> None:
         """
-        Prints counts from standard input until EOF.
+        Read lines from standard input until EOF, then count and print.
         """
-        counts = self.calculate_counts(sys.stdin.read().splitlines(), has_newlines=False)
+        counts = self.calculate_counts(sys.stdin.readlines())
 
         self.add_counts_to_totals(counts)
         self.print_counts(counts, count_origin="")

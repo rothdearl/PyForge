@@ -14,19 +14,22 @@ import os
 import sys
 import time
 from collections.abc import Collection, Iterable
-from enum import StrEnum
 from threading import Thread
-from typing import final
+from typing import Final, final
 
 from cli import CLIProgram, ansi, io, terminal
 
 
-class Colors(StrEnum):
+@final
+class Colors:
     """
     Terminal color constants.
+
+    :cvar COLON: Color used for the colon following a file name.
+    :cvar FILE_NAME: Color used for a file name.
     """
-    COLON = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME = ansi.Colors16.BRIGHT_MAGENTA
+    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
 
 
 @final
@@ -140,7 +143,7 @@ class Track(CLIProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """
-        Print the file name, or "(standard input)" if empty, with a colon.
+        Print the file name, or "(standard input)" if empty, followed by a colon.
 
         :param file_name: File name to print.
         """
@@ -156,9 +159,9 @@ class Track(CLIProgram):
 
     def print_lines(self, lines: Collection[str]) -> None:
         """
-        Print lines.
+        Print lines to standard output.
 
-        :param lines: Lines to print.
+        :param lines: Iterable of lines to print.
         """
         max_lines = self.args.lines  # --lines
         skip_to_line = len(lines) - max_lines
@@ -173,10 +176,10 @@ class Track(CLIProgram):
 
     def print_lines_from_files(self, files: Iterable[str]) -> list[str]:
         """
-        Print lines from files.
+        Read lines from each file and print them.
 
-        :param files: Files to print lines from.
-        :return: List of the files printed.
+        :param files: Iterable of files to read.
+        :return: List of file names successfully printed, used to determine which are eligible for ``--follow``.
         """
         files_printed = []
 
@@ -192,7 +195,7 @@ class Track(CLIProgram):
 
     def print_lines_from_input(self) -> None:
         """
-        Print lines from standard input until EOF.
+        Read lines from standard input until EOF and print them.
         """
         eof = False
         lines = []

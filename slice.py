@@ -100,7 +100,7 @@ class Slice(CLIProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """
-        Print the file name, or "(standard input)" if empty, with a colon.
+        Print the file name, or "(standard input)" if empty, followed by a colon.
 
         :param file_name: File name to print.
         """

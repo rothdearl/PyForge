@@ -14,36 +14,38 @@ import os
 import random
 import re
 import sys
-from enum import StrEnum
-from typing import TextIO, final
+from typing import Final, TextIO, final
 
 from dateutil.parser import ParserError, parse
 
 from cli import CLIProgram, ansi, io, terminal
 
 
-class Colors(StrEnum):
+@final
+class Colors:
     """
     Terminal color constants.
-    """
-    COLON = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME = ansi.Colors16.BRIGHT_MAGENTA
 
-
-class FieldPatterns(StrEnum):
+    :cvar COLON: Color used for the colon following a file name.
+    :cvar FILE_NAME: Color used for a file name.
     """
-    Field separator pattern constants.
-    """
-    DATES = r"[\f\r\n\t\v]"  # All whitespace except spaces.
-    WHITESPACE = r"\s+"  # All whitespace.
-    WORDS = r"\s+|\W+"  # All whitespace and non-words.
+    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
 
 
 @final
 class Order(CLIProgram):
     """
     A program to sort and print files to standard output.
+
+    :cvar DATE_PATTERN: Pattern for splitting lines on all whitespace except spaces.
+    :cvar WHITESPACE_PATTERN: Pattern for splitting lines on all whitespace.
+    :cvar WORD_PATTERN: Pattern for splitting lines on all whitespace and non-words.
     """
+
+    DATE_PATTERN: Final[str] = r"[\f\r\n\t\v]"
+    WHITESPACE_PATTERN: Final[str] = r"\s+"
+    WORD_PATTERN: Final[str] = r"\s+|\W+"
 
     def __init__(self) -> None:
         """
@@ -94,7 +96,7 @@ class Order(CLIProgram):
         :param line: Line to derive key from.
         :return: Date sort key.
         """
-        fields = self.split_line(line, FieldPatterns.DATES, strip_number_separators=False)
+        fields = self.split_line(line, Order.DATE_PATTERN, strip_number_separators=False)
 
         try:
             date = str(parse(fields[0])) if fields else line
@@ -110,7 +112,7 @@ class Order(CLIProgram):
         :param line: Line to derive key from.
         :return: Default sort key.
         """
-        return self.split_line(line, FieldPatterns.WHITESPACE, strip_number_separators=False)
+        return self.split_line(line, Order.WHITESPACE_PATTERN, strip_number_separators=False)
 
     def generate_dictionary_sort_key(self, line: str) -> list[str]:
         """
@@ -119,7 +121,7 @@ class Order(CLIProgram):
         :param line: Line to derive key from.
         :return: Dictionary sort key.
         """
-        return self.split_line(line, FieldPatterns.WORDS, strip_number_separators=False)
+        return self.split_line(line, Order.WORD_PATTERN, strip_number_separators=False)
 
     def generate_key_pattern_sort_key(self, line: str) -> list[str]:
         """
@@ -138,7 +140,7 @@ class Order(CLIProgram):
         :return: Natural sort key.
         """
         digits = []
-        pattern = FieldPatterns.WHITESPACE
+        pattern = Order.WHITESPACE_PATTERN
 
         for field in self.split_line(line, pattern, strip_number_separators=True):
             # Zero-pad integers so they sort numerically.
@@ -199,7 +201,7 @@ class Order(CLIProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """
-        Print the file name, or "(standard input)" if empty, with a colon.
+        Print the file name, or "(standard input)" if empty, followed by a colon.
 
         :param file_name: File name to print.
         """
@@ -215,9 +217,9 @@ class Order(CLIProgram):
 
     def sort_and_print_lines(self, lines: list[str]) -> None:
         """
-        Sort lines and print.
+        Sort and print lines to standard output according to command-line arguments.
 
-        :param lines: Lines to sort.
+        :param lines: Iterable of lines to sort.
         """
         reverse = self.args.reverse  # --reverse
 
@@ -243,9 +245,9 @@ class Order(CLIProgram):
 
     def sort_and_print_lines_from_files(self, files: TextIO | list[str]) -> None:
         """
-        Sort lines from files and print.
+        Read lines from each file and print them.
 
-        :param files: Files to sort lines from.
+        :param files: Iterable of files to read.
         """
         for _, file, text in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
@@ -256,9 +258,9 @@ class Order(CLIProgram):
 
     def sort_and_print_lines_from_input(self) -> None:
         """
-        Sort lines from standard input until EOF and print.
+        Read lines from standard input until EOF and print them.
         """
-        self.sort_and_print_lines(sys.stdin.read().splitlines())
+        self.sort_and_print_lines(sys.stdin.readlines())
 
     def split_line(self, line: str, field_pattern: str, *, strip_number_separators: bool) -> list[str]:
         """

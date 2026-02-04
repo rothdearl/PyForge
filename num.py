@@ -12,20 +12,24 @@ License: GNU GPLv3
 import argparse
 import os
 import sys
-from collections.abc import Collection, Iterable
-from enum import StrEnum
+from collections.abc import Iterable
 from typing import Final, final
 
 from cli import CLIProgram, ansi, io, terminal
 
 
-class Colors(StrEnum):
+@final
+class Colors:
     """
     Terminal color constants.
+
+    :cvar COLON: Color used for the colon following a file name.
+    :cvar FILE_NAME: Color used for a file name.
+    :cvar LINE_NUMBER: Color used for line numbers and number separators.
     """
-    COLON = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME = ansi.Colors16.BRIGHT_MAGENTA
-    LINE_NUMBER = ansi.Colors16.BRIGHT_GREEN
+    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
+    LINE_NUMBER: Final[str] = ansi.Colors16.BRIGHT_GREEN
 
 
 @final
@@ -34,6 +38,7 @@ class Num(CLIProgram):
     A program to number output lines from files to standard output.
 
     :cvar FORMAT_PREFIXES: Mapping of short format keys to format-spec prefixes used when formatting line numbers.
+    :ivar format_prefix: Format-spec prefix used when formatting line numbers.
     """
 
     FORMAT_PREFIXES: Final[dict[str, str]] = {"ln": "<", "rn": ">", "rz": "0>"}
@@ -43,6 +48,8 @@ class Num(CLIProgram):
         Initialize a new ``Num`` instance.
         """
         super().__init__(name="num", version="1.3.10")
+
+        self.format_prefix: str = ""
 
     def build_arguments(self) -> argparse.ArgumentParser:
         """
@@ -87,42 +94,25 @@ class Num(CLIProgram):
 
         if terminal.stdin_is_redirected():
             if self.args.stdin_files:  # --stdin-files
-                self.print_lines_from_files(sys.stdin)
+                self.number_lines_from_files(sys.stdin)
             else:
                 if standard_input := sys.stdin.readlines():
                     self.print_file_header(file_name="")
-                    self.print_lines(standard_input)
+                    self.number_lines(standard_input)
 
             if self.args.files:  # Process any additional files.
-                self.print_lines_from_files(self.args.files)
+                self.number_lines_from_files(self.args.files)
         elif self.args.files:
-            self.print_lines_from_files(self.args.files)
+            self.number_lines_from_files(self.args.files)
         else:
-            self.print_lines_from_input()
+            self.number_lines_from_input()
 
-    def print_file_header(self, file_name: str) -> None:
+    def number_lines(self, lines: Iterable[str]) -> None:
         """
-        Print the file name, or "(standard input)" if empty, with a colon.
+        Number and print lines to standard output according to command-line arguments.
 
-        :param file_name: File name to print.
+        :param lines: Iterable of lines to print.
         """
-        if not self.args.no_file_name:  # --no-file-name
-            file_name = os.path.relpath(file_name) if file_name else "(standard input)"
-
-            if self.print_color:
-                file_name = f"{Colors.FILE_NAME}{file_name}{Colors.COLON}:{ansi.RESET}"
-            else:
-                file_name = f"{file_name}:"
-
-            print(file_name)
-
-    def print_lines(self, lines: Iterable[str]) -> None:
-        """
-        Print lines using formatting specified by command-line arguments.
-
-        :param lines: Lines to print.
-        """
-        format_prefix = Num.FORMAT_PREFIXES[self.args.number_format]  # --number-format
         line_number = self.args.number_start - 1  # --number-start
         repeated_blank_lines = 0
 
@@ -147,35 +137,53 @@ class Num(CLIProgram):
                 line_number += 1
 
                 if self.print_color:
-                    line = f"{Colors.LINE_NUMBER}{line_number:{format_prefix}{self.args.number_width}}{self.args.number_separator}{ansi.RESET}{line}"
+                    line = f"{Colors.LINE_NUMBER}{line_number:{self.format_prefix}{self.args.number_width}}{self.args.number_separator}{ansi.RESET}{line}"
                 else:
-                    line = f"{line_number:{format_prefix}{self.args.number_width}}{self.args.number_separator}{line}"
+                    line = f"{line_number:{self.format_prefix}{self.args.number_width}}{self.args.number_separator}{line}"
 
             io.print_line_normalized(line)
 
-    def print_lines_from_files(self, files: Collection[str]) -> None:
+    def number_lines_from_files(self, files: Iterable[str]) -> None:
         """
-        Print lines from files using formatting specified by command-line arguments.
+        Read lines from each file, then number and print them.
 
-        :param files: Files to print lines from.
+        :param files: Iterable of files to read.
         """
         for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
                 self.print_file_header(file_info.file_name)
-                self.print_lines(file_info.text)
+                self.number_lines(file_info.text)
             except UnicodeDecodeError:
                 self.print_error(f"{file_info.file_name}: unable to read with {self.encoding}")
 
-    def print_lines_from_input(self) -> None:
+    def number_lines_from_input(self) -> None:
         """
-        Print lines from standard input until EOF using formatting specified by command-line arguments.
+        Read lines from standard input until EOF, then number and print them.
         """
-        self.print_lines(sys.stdin.read().splitlines())
+        self.number_lines(sys.stdin.readlines())
+
+    def print_file_header(self, file_name: str) -> None:
+        """
+        Print the file name, or "(standard input)" if empty, followed by a colon.
+
+        :param file_name: File name to print.
+        """
+        if not self.args.no_file_name:  # --no-file-name
+            file_name = os.path.relpath(file_name) if file_name else "(standard input)"
+
+            if self.print_color:
+                file_name = f"{Colors.FILE_NAME}{file_name}{Colors.COLON}:{ansi.RESET}"
+            else:
+                file_name = f"{file_name}:"
+
+            print(file_name)
 
     def validate_parsed_arguments(self) -> None:
         """
         Validate the parsed command-line arguments.
         """
+        self.format_prefix = Num.FORMAT_PREFIXES[self.args.number_format]  # --number-format
+
         if self.args.number_start < 0:  # --number-start
             self.print_error_and_exit("'--number-start' must be >= 0")
 

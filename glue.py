@@ -12,27 +12,35 @@ License: GNU GPLv3
 import argparse
 import sys
 from collections.abc import Collection, Iterable
-from enum import StrEnum
-from typing import final
+from typing import Final, final
 
 from cli import CLIProgram, ansi, io, terminal
 
 
-class Colors(StrEnum):
+@final
+class Colors:
     """
     Terminal color constants.
+
+    :cvar EOL: Color used for the EOL replacement.
+    :cvar NUMBER: Color used for numbering lines.
+    :cvar TAB: Color used for the tab replacement.
     """
-    EOL = ansi.Colors16.BRIGHT_BLUE
-    NUMBER = ansi.Colors16.BRIGHT_GREEN
-    TABS = ansi.Colors16.BRIGHT_CYAN
+    EOL: Final[str] = ansi.Colors16.BRIGHT_BLUE
+    NUMBER: Final[str] = ansi.Colors16.BRIGHT_GREEN
+    TAB: Final[str] = ansi.Colors16.BRIGHT_CYAN
 
 
-class Whitespace(StrEnum):
+@final
+class Whitespace:
     """
     Whitespace replacement constants.
+
+    :cvar EOL: Replacement for the EOL.
+    :cvar TAB: Replacement for a tab.
     """
-    EOL = "$"
-    TAB = ">···"
+    EOL: Final[str] = "$"
+    TAB: Final[str] = ">···"
 
 
 @final
@@ -103,9 +111,9 @@ class Glue(CLIProgram):
 
     def print_lines(self, lines: Iterable[str]) -> None:
         """
-        Print lines using formatting specified by command-line arguments.
+        Print lines to standard output according to command-line arguments.
 
-        :param lines: Lines to print.
+        :param lines: Iterable of lines to print.
         """
         print_number = False
         repeated_blank_lines = 0
@@ -130,7 +138,7 @@ class Glue(CLIProgram):
 
             if self.args.show_tabs:  # --show-tabs
                 if self.print_color:
-                    line = line.replace("\t", f"{Colors.TABS}{Whitespace.TAB}{ansi.RESET}")
+                    line = line.replace("\t", f"{Colors.TAB}{Whitespace.TAB}{ansi.RESET}")
                 else:
                     line = line.replace("\t", Whitespace.TAB)
 
@@ -155,9 +163,9 @@ class Glue(CLIProgram):
 
     def print_lines_from_files(self, files: Collection[str]) -> None:
         """
-        Print lines from files using formatting specified by command-line arguments.
+        Read lines from each file and print them.
 
-        :param files: Files to print lines from.
+        :param files: Iterable of files to read.
         """
         last_file_index = len(files) - 1
 
@@ -172,15 +180,9 @@ class Glue(CLIProgram):
 
     def print_lines_from_input(self) -> None:
         """
-        Print lines from standard input until EOF using formatting specified by command-line arguments.
+        Read lines from standard input until EOF and print them.
         """
-        eof = False
-
-        while not eof:
-            try:
-                self.print_lines([input()])
-            except EOFError:
-                eof = True
+        self.print_lines(sys.stdin.readlines())
 
     def validate_parsed_arguments(self) -> None:
         """

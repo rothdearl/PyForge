@@ -13,32 +13,45 @@ import argparse
 import os
 import sys
 from collections.abc import Collection, Iterable
-from enum import StrEnum
-from typing import final
+from typing import Final, final
 
 from cli import CLIProgram, ansi, io, terminal
 
 
-class Colors(StrEnum):
+@final
+class Colors:
     """
     Terminal color constants.
+
+    :cvar COLON: Color used for the colon following a file name.
+    :cvar EOL: Color used for the EOL replacement.
+    :cvar FILE_NAME: Color used for a file name.
+    :cvar LINE_NUMBER: Color used for line numbers.
+    :cvar SPACE: Color used for the space replacement.
+    :cvar TAB: Color used for the tab replacement.
     """
-    COLON = ansi.Colors16.BRIGHT_CYAN
-    EOL = ansi.Colors16.BRIGHT_BLUE
-    FILE_NAME = ansi.Colors16.BRIGHT_MAGENTA
-    LINE_NUMBER = ansi.Colors16.BRIGHT_GREEN
-    SPACE = ansi.Colors16.BRIGHT_CYAN
-    TAB = ansi.Colors16.BRIGHT_CYAN
+    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    EOL: Final[str] = ansi.Colors16.BRIGHT_BLUE
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
+    LINE_NUMBER: Final[str] = ansi.Colors16.BRIGHT_GREEN
+    SPACE: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    TAB: Final[str] = ansi.Colors16.BRIGHT_CYAN
 
 
-class Whitespace(StrEnum):
+@final
+class Whitespace:
     """
     Whitespace replacement constants.
+
+    :cvar EOL: Replacement for the EOL.
+    :cvar SPACE: Replacement for a space.
+    :cvar TAB: Replacement for a tab.
+    :cvar TRAILING_SPACE: Replacement for a trailing space.
     """
-    EOL = "$"
-    SPACE = "·"
-    TAB = ">···"
-    TRAILING_SPACE = "~"
+    EOL: Final[str] = "$"
+    SPACE: Final[str] = "·"
+    TAB: Final[str] = ">···"
+    TRAILING_SPACE: Final[str] = "~"
 
 
 @final
@@ -107,7 +120,7 @@ class Show(CLIProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """
-        Print the file name, or "(standard input)" if empty, with a colon.
+        Print the file name, or "(standard input)" if empty, followed by a colon.
 
         :param file_name: File name to print.
         """
@@ -123,9 +136,9 @@ class Show(CLIProgram):
 
     def print_lines(self, lines: Collection[str]) -> None:
         """
-        Print lines using formatting specified by command-line arguments.
+        Print lines to standard output according to command-line arguments.
 
-        :param lines: Lines to print.
+        :param lines: Iterable of lines to print.
         """
         line_start = len(lines) + self.args.start + 1 if self.args.start < 0 else self.args.start
         line_end = line_start + self.args.print - 1
@@ -142,9 +155,9 @@ class Show(CLIProgram):
 
     def print_lines_from_files(self, files: Iterable[str]) -> None:
         """
-        Print lines from files using formatting specified by command-line arguments.
+        Read lines from each file and print them.
 
-        :param files: Files to print lines from.
+        :param files: Iterable of files to read.
         """
         for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
@@ -155,9 +168,9 @@ class Show(CLIProgram):
 
     def print_lines_from_input(self) -> None:
         """
-        Print lines from standard input until EOF using formatting specified by command-line arguments.
+        Read lines from standard input until EOF and print them.
         """
-        self.print_lines(sys.stdin.read().splitlines())
+        self.print_lines(sys.stdin.readlines())
 
     def show_ends(self, line: str) -> str:
         """

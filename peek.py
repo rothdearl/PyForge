@@ -14,18 +14,21 @@ import os
 import sys
 from collections import deque
 from collections.abc import Iterable
-from enum import StrEnum
-from typing import final
+from typing import Final, final
 
 from cli import CLIProgram, ansi, io, terminal
 
 
-class Colors(StrEnum):
+@final
+class Colors:
     """
     Terminal color constants.
+
+    :cvar COLON: Color used for the colon following a file name.
+    :cvar FILE_NAME: Color used for a file name.
     """
-    COLON = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME = ansi.Colors16.BRIGHT_MAGENTA
+    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
 
 
 @final
@@ -88,7 +91,7 @@ class Peek(CLIProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """
-        Print the file name, or "(standard input)" if empty, with a colon.
+        Print the file name, or "(standard input)" if empty, followed by a colon.
 
         :param file_name: File name to print.
         """
@@ -104,9 +107,9 @@ class Peek(CLIProgram):
 
     def print_lines(self, lines: Iterable[str]) -> None:
         """
-        Print lines.
+        Print lines to standard output.
 
-        :param lines: Lines to print.
+        :param lines: Iterable of lines to print.
         """
         # If --lines is positive or zero: print the first N lines.
         if self.args.lines >= 0:
@@ -129,9 +132,9 @@ class Peek(CLIProgram):
 
     def print_lines_from_files(self, files: Iterable[str]) -> None:
         """
-        Print lines from files.
+        Read lines from each file and print them.
 
-        :param files: Files to print lines from.
+        :param files: Iterable of files to read.
         """
         for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
@@ -142,9 +145,9 @@ class Peek(CLIProgram):
 
     def print_lines_from_input(self) -> None:
         """
-        Print lines from standard input until EOF.
+        Read lines from standard input until EOF and print them.
         """
-        self.print_lines(sys.stdin.read().splitlines())
+        self.print_lines(sys.stdin.readlines())
 
     def validate_parsed_arguments(self) -> None:
         """

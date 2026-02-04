@@ -14,18 +14,22 @@ import os
 import re
 import sys
 from collections.abc import Iterable
-from enum import StrEnum
 from typing import Final, final
 
 from cli import CLIProgram, ansi, io, terminal
 
 
-class Colors(StrEnum):
+@final
+class Colors:
     """
     Terminal color constants.
+
+    :cvar COLON: Color used for the colon following a file name.
+    :cvar FILE_NAME: Color used for a file name.
+    :cvar GROUP_COUNT: Color used for group counts.
     """
-    COLON = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME = ansi.Colors16.BRIGHT_MAGENTA
+    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
     GROUP_COUNT = ansi.Colors16.BRIGHT_GREEN
 
 
@@ -156,71 +160,11 @@ class Dupe(CLIProgram):
 
         return group_list
 
-    def group_lines_by_key(self, lines: Iterable[str]) -> dict[str, list[str]]:
+    def group_and_print_lines(self, lines: Iterable[str], *, origin_file) -> None:
         """
-        Group all lines globally by their comparison keys.
+        Group and print lines to standard output according to command-line arguments.
 
-        :param lines: Lines to group.
-        :return: Mapping of string groups, where the key is the group and the value is a list of matches.
-        """
-        group_map = {}
-
-        for line in lines:
-            key = self.get_compare_key(line)
-
-            if not self.can_group_key(key):
-                continue
-
-            if key in group_map:
-                group_map[key].append(line)
-            else:
-                group_map[key] = [line]
-
-        return group_map
-
-    def main(self) -> None:
-        """
-        Run the program logic.
-        """
-        # Set --no-file-name to True if there are no files and --stdin-files=False.
-        if not self.args.files and not self.args.stdin_files:
-            self.args.no_file_name = True
-
-        if terminal.stdin_is_redirected():
-            if self.args.stdin_files:  # --stdin-files
-                self.print_grouped_lines_from_files(sys.stdin)
-            else:
-                if standard_input := sys.stdin.readlines():
-                    self.print_grouped_lines(standard_input, origin_file="")
-
-            if self.args.files:  # Process any additional files.
-                self.print_grouped_lines_from_files(self.args.files)
-        elif self.args.files:
-            self.print_grouped_lines_from_files(self.args.files)
-        else:
-            self.print_grouped_lines_from_input()
-
-    def print_file_header(self, file_name: str) -> None:
-        """
-        Print the file name, or "(standard input)" if empty, with a colon.
-
-        :param file_name: File name to print.
-        """
-        if not self.args.no_file_name:  # --no-file-name
-            file_name = os.path.relpath(file_name) if file_name else "(standard input)"
-
-            if self.print_color:
-                file_name = f"{Colors.FILE_NAME}{file_name}{Colors.COLON}:{ansi.RESET}"
-            else:
-                file_name = f"{file_name}:"
-
-            print(file_name)
-
-    def print_grouped_lines(self, lines: Iterable[str], *, origin_file) -> None:
-        """
-        Print lines using rules specified by command-line arguments.
-
-        :param lines: Lines to print.
+        :param lines: Iterable of lines to group.
         :param origin_file: File where the lines originated from.
         """
         file_header_printed = False
@@ -270,23 +214,83 @@ class Dupe(CLIProgram):
             if self.args.group and group_index < last_group_index:  # --group
                 print()
 
-    def print_grouped_lines_from_files(self, files: Iterable[str]) -> None:
+    def group_and_print_lines_from_files(self, files: Iterable[str]) -> None:
         """
-        Print lines from files using rules specified by command-line arguments.
+        Read lines from each file and print them.
 
-        :param files: Files to print lines from.
+        :param files: Iterable of files to read.
         """
         for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
-                self.print_grouped_lines(file_info.text, origin_file=file_info.file_name)
+                self.group_and_print_lines(file_info.text, origin_file=file_info.file_name)
             except UnicodeDecodeError:
                 self.print_error(f"{file_info.file_name}: unable to read with {self.encoding}")
 
-    def print_grouped_lines_from_input(self) -> None:
+    def group_and_print_lines_from_input(self) -> None:
         """
-        Print lines from standard input until EOF using rules specified by command-line arguments.
+        Read lines from standard input until EOF and print them.
         """
-        self.print_grouped_lines(sys.stdin.read().splitlines(), origin_file="")
+        self.group_and_print_lines(sys.stdin.readlines(), origin_file="")
+
+    def group_lines_by_key(self, lines: Iterable[str]) -> dict[str, list[str]]:
+        """
+        Group all lines globally by their comparison keys.
+
+        :param lines: Lines to group.
+        :return: Mapping of string groups, where the key is the group and the value is a list of matches.
+        """
+        group_map = {}
+
+        for line in lines:
+            key = self.get_compare_key(line)
+
+            if not self.can_group_key(key):
+                continue
+
+            if key in group_map:
+                group_map[key].append(line)
+            else:
+                group_map[key] = [line]
+
+        return group_map
+
+    def main(self) -> None:
+        """
+        Run the program logic.
+        """
+        # Set --no-file-name to True if there are no files and --stdin-files=False.
+        if not self.args.files and not self.args.stdin_files:
+            self.args.no_file_name = True
+
+        if terminal.stdin_is_redirected():
+            if self.args.stdin_files:  # --stdin-files
+                self.group_and_print_lines_from_files(sys.stdin)
+            else:
+                if standard_input := sys.stdin.readlines():
+                    self.group_and_print_lines(standard_input, origin_file="")
+
+            if self.args.files:  # Process any additional files.
+                self.group_and_print_lines_from_files(self.args.files)
+        elif self.args.files:
+            self.group_and_print_lines_from_files(self.args.files)
+        else:
+            self.group_and_print_lines_from_input()
+
+    def print_file_header(self, file_name: str) -> None:
+        """
+        Print the file name, or "(standard input)" if empty, followed by a colon.
+
+        :param file_name: File name to print.
+        """
+        if not self.args.no_file_name:  # --no-file-name
+            file_name = os.path.relpath(file_name) if file_name else "(standard input)"
+
+            if self.print_color:
+                file_name = f"{Colors.FILE_NAME}{file_name}{Colors.COLON}:{ansi.RESET}"
+            else:
+                file_name = f"{file_name}:"
+
+            print(file_name)
 
     def validate_parsed_arguments(self) -> None:
         """
