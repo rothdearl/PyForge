@@ -14,15 +14,17 @@ import os
 import pathlib
 import sys
 import time
-from enum import StrEnum
 from typing import Final, final
 
 from cli import CLIProgram, Patterns, ansi, patterns, terminal
 
 
-class Colors(StrEnum):
+@final
+class Colors:
     """
     Terminal color constants.
+
+    :cvar MATCH: Color used for a match.
     """
     MATCH = ansi.Colors16.BRIGHT_RED
 

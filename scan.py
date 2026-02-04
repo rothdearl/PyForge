@@ -13,19 +13,24 @@ import argparse
 import os
 import sys
 from collections.abc import Iterable
-from enum import StrEnum
 from typing import Final, final
 
 from cli import CLIProgram, Patterns, ansi, io, patterns, terminal
 
 
-class Colors(StrEnum):
+@final
+class Colors:
     """
     Terminal color constants.
+
+    :cvar COLON: Color used for the colon following a file name.
+    :cvar FILE_NAME: Color used for a file name.
+    :cvar LINE_NUMBER: Color used for line numbers.
+    :cvar MATCH: Color used for a match.
     """
-    COLON = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME = ansi.Colors16.BRIGHT_MAGENTA
-    LINE_NUMBER = ansi.Colors16.BRIGHT_GREEN
+    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
+    LINE_NUMBER: Final[str] = ansi.Colors16.BRIGHT_GREEN
     MATCH = ansi.Colors16.BRIGHT_RED
 
 
@@ -127,9 +132,9 @@ class Scan(CLIProgram):
 
     def print_matches_in_files(self, files: Iterable[str]) -> None:
         """
-        Print matches found in files.
+        Read lines from each file and print matches.
 
-        :param files: Files to search.
+        :param files: Iterable of files to read.
         """
         for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
@@ -139,7 +144,7 @@ class Scan(CLIProgram):
 
     def print_matches_in_input(self) -> None:
         """
-        Print matches found in standard input until EOF.
+        Read lines from standard input until EOF and print matches.
         """
         eof = False
         lines = []
@@ -159,12 +164,11 @@ class Scan(CLIProgram):
         if self.is_printing_counts():
             self.print_matches_in_lines(lines, origin_file="")
 
-    def print_matches_in_lines(self, lines: Iterable[str], *, origin_file: str,
-                               reset_line_number=True) -> None:
+    def print_matches_in_lines(self, lines: Iterable[str], *, origin_file: str, reset_line_number=True) -> None:
         """
         Print matches found in lines.
 
-        :param lines: Lines to search.
+        :param lines: Iterable of lines to search.
         :param origin_file: File where the lines originated from.
         :param reset_line_number: Whether to reset the internal line number (default: ``True``).
         """
