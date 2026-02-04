@@ -13,13 +13,11 @@ import argparse
 import os
 import sys
 from collections.abc import Collection, Iterable
-from dataclasses import dataclass
-from typing import ClassVar, Final, final, override
+from typing import Final, override
 
 from cli import CLIProgram, ansi, io, terminal
 
 
-@dataclass(frozen=True, slots=True)
 class Colors:
     """
     Namespace for terminal color constants.
@@ -31,15 +29,14 @@ class Colors:
     :cvar SPACE: Color used for the space replacement.
     :cvar TAB: Color used for the tab replacement.
     """
-    COLON: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_CYAN
-    EOL: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_BLUE
-    FILE_NAME: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_MAGENTA
-    LINE_NUMBER: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_GREEN
-    SPACE: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_CYAN
-    TAB: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_CYAN
+    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    EOL: Final[str] = ansi.Colors16.BRIGHT_BLUE
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
+    LINE_NUMBER: Final[str] = ansi.Colors16.BRIGHT_GREEN
+    SPACE: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    TAB: Final[str] = ansi.Colors16.BRIGHT_CYAN
 
 
-@dataclass(frozen=True, slots=True)
 class Whitespace:
     """
     Namespace for whitespace replacement constants.
@@ -49,13 +46,12 @@ class Whitespace:
     :cvar TAB: Replacement for a tab.
     :cvar TRAILING_SPACE: Replacement for a trailing space.
     """
-    EOL: ClassVar[Final[str]] = "$"
-    SPACE: ClassVar[Final[str]] = "·"
-    TAB: ClassVar[Final[str]] = ">···"
-    TRAILING_SPACE: ClassVar[Final[str]] = "~"
+    EOL: Final[str] = "$"
+    SPACE: Final[str] = "·"
+    TAB: Final[str] = ">···"
+    TRAILING_SPACE: Final[str] = "~"
 
 
-@final
 class Show(CLIProgram):
     """
     A program to print files to standard output.
@@ -139,14 +135,14 @@ class Show(CLIProgram):
         :param file_name: File name to print.
         """
         if not self.args.no_file_name:  # --no-file-name
-            file_name = os.path.relpath(file_name) if file_name else "(standard input)"
+            file_header = os.path.relpath(file_name) if file_name else "(standard input)"
 
             if self.print_color:
-                file_name = f"{Colors.FILE_NAME}{file_name}{Colors.COLON}:{ansi.RESET}"
+                file_header = f"{Colors.FILE_NAME}{file_header}{Colors.COLON}:{ansi.RESET}"
             else:
-                file_name = f"{file_name}:"
+                file_header = f"{file_header}:"
 
-            print(file_name)
+            print(file_header)
 
     def print_lines(self, lines: Collection[str]) -> None:
         """

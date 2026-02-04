@@ -13,9 +13,8 @@ import argparse
 import re
 import sys
 from collections.abc import Iterable
-from dataclasses import dataclass
 from enum import IntEnum
-from typing import ClassVar, Final, TypeAlias, final, override
+from typing import Final, TypeAlias, override
 
 from cli import CLIProgram, ansi, io, terminal
 
@@ -23,7 +22,6 @@ from cli import CLIProgram, ansi, io, terminal
 Counts: TypeAlias = tuple[int, int, int, int]  # Indexed by CountIndex.
 
 
-@dataclass(frozen=True, slots=True)
 class Colors:
     """
     Namespace for terminal color constants.
@@ -32,9 +30,9 @@ class Colors:
     :cvar COUNT_TOTAL: Color used for a count total.
     :cvar FILE_NAME: Color used for a file name.
     """
-    COUNT: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_CYAN
-    COUNT_TOTAL: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_YELLOW
-    FILE_NAME: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_MAGENTA
+    COUNT: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    COUNT_TOTAL: Final[str] = ansi.Colors16.BRIGHT_YELLOW
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
 
 
 class CountIndex(IntEnum):
@@ -47,7 +45,6 @@ class CountIndex(IntEnum):
     MAX_LINE_LENGTH = 3
 
 
-@final
 class Tally(CLIProgram):
     """
     A program to count lines, words, and characters in files.

@@ -12,13 +12,11 @@ License: GNU GPLv3
 import argparse
 import sys
 from collections.abc import Collection, Iterable
-from dataclasses import dataclass
-from typing import ClassVar, Final, final, override
+from typing import Final, override
 
 from cli import CLIProgram, ansi, io, terminal
 
 
-@dataclass(frozen=True, slots=True)
 class Colors:
     """
     Namespace for terminal color constants.
@@ -27,12 +25,11 @@ class Colors:
     :cvar NUMBER: Color used for numbering lines.
     :cvar TAB: Color used for the tab replacement.
     """
-    EOL: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_BLUE
-    NUMBER: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_GREEN
-    TAB: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_CYAN
+    EOL: Final[str] = ansi.Colors16.BRIGHT_BLUE
+    NUMBER: Final[str] = ansi.Colors16.BRIGHT_GREEN
+    TAB: Final[str] = ansi.Colors16.BRIGHT_CYAN
 
 
-@dataclass(frozen=True, slots=True)
 class Whitespace:
     """
     Namespace for whitespace replacement constants.
@@ -40,11 +37,10 @@ class Whitespace:
     :cvar EOL: Replacement for the EOL.
     :cvar TAB: Replacement for a tab.
     """
-    EOL: ClassVar[Final[str]] = "$"
-    TAB: ClassVar[Final[str]] = ">···"
+    EOL: Final[str] = "$"
+    TAB: Final[str] = ">···"
 
 
-@final
 class Glue(CLIProgram):
     """
     A program to concatenate files and standard input to standard output.

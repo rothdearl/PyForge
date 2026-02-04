@@ -14,23 +14,20 @@ import os
 import pathlib
 import sys
 import time
-from dataclasses import dataclass
-from typing import ClassVar, Final, final, override
+from typing import Final, override
 
 from cli import CLIProgram, Patterns, ansi, patterns, terminal
 
 
-@dataclass(frozen=True, slots=True)
 class Colors:
     """
     Namespace for terminal color constants.
 
     :cvar MATCH: Color used for a match.
     """
-    MATCH: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_RED
+    MATCH: Final[str] = ansi.Colors16.BRIGHT_RED
 
 
-@final
 class Seek(CLIProgram):
     """
     A program to search for files in a directory hierarchy.

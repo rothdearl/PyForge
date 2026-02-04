@@ -14,15 +14,13 @@ import os
 import random
 import re
 import sys
-from dataclasses import dataclass
-from typing import ClassVar, Final, TextIO, final, override
+from typing import Final, TextIO, override
 
 from dateutil.parser import ParserError, parse
 
 from cli import CLIProgram, ansi, io, terminal
 
 
-@dataclass(frozen=True, slots=True)
 class Colors:
     """
     Namespace for terminal color constants.
@@ -30,11 +28,10 @@ class Colors:
     :cvar COLON: Color used for the colon following a file name.
     :cvar FILE_NAME: Color used for a file name.
     """
-    COLON: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_MAGENTA
+    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
 
 
-@final
 class Order(CLIProgram):
     """
     A program to sort and print files to standard output.
@@ -217,14 +214,14 @@ class Order(CLIProgram):
         :param file_name: File name to print.
         """
         if not self.args.no_file_name:  # --no-file-name
-            file_name = os.path.relpath(file_name) if file_name else "(standard input)"
+            file_header = os.path.relpath(file_name) if file_name else "(standard input)"
 
             if self.print_color:
-                file_name = f"{Colors.FILE_NAME}{file_name}{Colors.COLON}:{ansi.RESET}"
+                file_header = f"{Colors.FILE_NAME}{file_header}{Colors.COLON}:{ansi.RESET}"
             else:
-                file_name = f"{file_name}:"
+                file_header = f"{file_header}:"
 
-            print(file_name)
+            print(file_header)
 
     def sort_and_print_lines(self, lines: list[str]) -> None:
         """

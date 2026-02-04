@@ -13,13 +13,11 @@ import argparse
 import os
 import sys
 from collections.abc import Iterable
-from dataclasses import dataclass
-from typing import ClassVar, Final, final, override
+from typing import Final, override
 
 from cli import CLIProgram, Patterns, ansi, io, patterns, terminal
 
 
-@dataclass(frozen=True, slots=True)
 class Colors:
     """
     Namespace for terminal color constants.
@@ -29,13 +27,12 @@ class Colors:
     :cvar LINE_NUMBER: Color used for line numbers.
     :cvar MATCH: Color used for a match.
     """
-    COLON: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_MAGENTA
-    LINE_NUMBER: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_GREEN
-    MATCH: ClassVar[Final[str]] = ansi.Colors16.BRIGHT_RED
+    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
+    LINE_NUMBER: Final[str] = ansi.Colors16.BRIGHT_GREEN
+    MATCH: Final[str] = ansi.Colors16.BRIGHT_RED
 
 
-@final
 class Scan(CLIProgram):
     """
     A program to print lines that match patterns in files.

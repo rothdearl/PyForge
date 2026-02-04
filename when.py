@@ -13,7 +13,7 @@ import argparse
 import calendar
 import datetime
 import sys
-from typing import Final, NamedTuple, final
+from typing import Final, NamedTuple
 
 from cli import ansi, OS_IS_POSIX
 
@@ -186,7 +186,6 @@ def print_year(date: datetime.date) -> None:
         print(output)
 
 
-@final
 class When:
     """
     A program to display the current calendar, with optional date and time.
