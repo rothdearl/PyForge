@@ -229,20 +229,19 @@ class Order(CLIProgram):
 
         :param lines: List of lines to sort (modified in place).
         """
-        reverse = self.args.reverse  # --reverse
-
-        if self.args.date_sort:  # --date-sort
-            lines.sort(key=self.generate_date_sort_key, reverse=reverse)
-        elif self.args.dictionary_order:  # --dictionary-order
-            lines.sort(key=self.generate_dictionary_sort_key, reverse=reverse)
-        elif self.args.key_pattern:  # --key-pattern
-            lines.sort(key=self.generate_key_pattern_sort_key, reverse=reverse)
-        elif self.args.natural_sort:  # --natural-sort
-            lines.sort(key=self.generate_natural_sort_key, reverse=reverse)
-        elif self.args.random_sort:  # --random-sort
+        if self.args.random_sort:  # --random-sort
             random.shuffle(lines)
         else:
-            lines.sort(key=self.generate_default_sort_key, reverse=reverse)
+            key_function = (
+                self.generate_date_sort_key if self.args.date_sort else  # --date-sort
+                self.generate_dictionary_sort_key if self.args.dictionary_order else  # --dictionary-order
+                self.generate_key_pattern_sort_key if self.args.key_pattern else  # --key-pattern
+                self.generate_natural_sort_key if self.args.natural_sort else  # --natural-sort
+                self.generate_default_sort_key
+            )
+            reverse = self.args.reverse  # --reverse
+
+            lines.sort(key=key_function, reverse=reverse)
 
         # Print lines.
         for line in lines:
@@ -288,7 +287,7 @@ class Order(CLIProgram):
             for index, field in enumerate(re.split(field_pattern, line)):
                 if field and index >= self.args.skip_fields:
                     fields.append(field)
-        except re.error:
+        except re.error:  # re.PatternError was introduced in Python 3.13; use re.error for Python < 3.13.
             self.print_error_and_exit(f"invalid regex pattern: {field_pattern}")
 
         return fields
