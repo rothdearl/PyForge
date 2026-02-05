@@ -98,65 +98,64 @@ class Order(CLIProgram):
 
     def generate_date_sort_key(self, line: str) -> str:
         """
-        Return a sort key derived from the first parseable date in the line.
+        Return a sort key that orders fields by the first parseable date.
 
         :param line: Line to derive key from.
         :return: Date sort key.
         """
-        fields = self.split_line(line, Order.DATE_PATTERN, strip_number_separators=False)
+        fields = self.split_line(line, Order.DATE_PATTERN)
 
         try:
-            date = str(parse(fields[0])) if fields else line
+            date_key = str(parse(fields[0])) if fields else line
         except ParserError:
-            date = line
+            date_key = line
 
-        return date
+        return date_key
 
     def generate_default_sort_key(self, line: str) -> list[str]:
         """
-        Return a sort key derived from the line by splitting on whitespace.
+        Return a sort key that orders fields lexicographically.
 
         :param line: Line to derive key from.
         :return: Default sort key.
         """
-        return self.split_line(line, Order.WHITESPACE_PATTERN, strip_number_separators=False)
+        return self.split_line(line, Order.WHITESPACE_PATTERN)
 
     def generate_dictionary_sort_key(self, line: str) -> list[str]:
         """
-        Return a sort key derived from the line by splitting on whitespace and non-word characters.
+        Return a sort key that orders word-like fields lexicographically.
 
         :param line: Line to derive key from.
         :return: Dictionary sort key.
         """
-        return self.split_line(line, Order.WORD_PATTERN, strip_number_separators=False)
+        return self.split_line(line, Order.WORD_PATTERN)
 
     def generate_key_pattern_sort_key(self, line: str) -> list[str]:
         """
-        Return a sort key derived from the line by splitting on a user-defined field pattern.
+        Return a sort key that orders fields lexicographically using a user-defined pattern.
 
         :param line: Line to derive key from.
         :return: Key pattern sort key.
         """
-        return self.split_line(line, self.args.key_pattern, strip_number_separators=False)
+        return self.split_line(line, self.args.key_pattern)
 
-    def generate_natural_sort_key(self, line: str) -> list[str]:
+    def generate_natural_sort_key(self, line: str) -> list[tuple[int, str | float]]:
         """
-        Return a sort key derived from the line using natural ordering of text and numbers.
+        Return a sort key that orders text lexicographically and then numbers numerically.
 
         :param line: Line to derive key from.
-        :return: Natural sort key.
+        :return: A list of tuples containing the kind (0 = text, 1 = number) and comparison value.
         """
-        digits = []
-        pattern = Order.WHITESPACE_PATTERN
+        natural_key = []
 
-        for field in self.split_line(line, pattern, strip_number_separators=True):
-            # Zero-pad integers so they sort numerically.
-            if field.isdigit():
-                field = f"{field:0>20}"
+        for field in self.split_line(line, Order.WHITESPACE_PATTERN):
+            try:
+                number = float(field.replace(",", ""))  # Strip commas.
+                natural_key.append((1, number))
+            except ValueError:
+                natural_key.append((0, field))
 
-            digits.append(field)
-
-        return digits
+        return natural_key
 
     @override
     def main(self) -> None:
@@ -186,21 +185,17 @@ class Order(CLIProgram):
         else:
             self.sort_and_print_lines_from_input()
 
-    def normalize_line(self, line: str, *, strip_number_separators: bool) -> str:
+    def normalize_line(self, line: str) -> str:
         """
         Normalize the line for field splitting according to command-line options.
 
         :param line: The line to normalize.
-        :param strip_number_separators: Whether to strip number separators (commas and decimals).
         :return: A normalized line.
         """
         line = line.rstrip()  # Remove trailing whitespace.
 
         if self.args.ignore_leading_blanks:  # --ignore-leading-blanks
             line = line.lstrip()
-
-        if strip_number_separators:  # Strip commas and decimals.
-            line = line.replace(",", "").replace(".", "")
 
         if self.args.ignore_case:  # --ignore-case
             line = line.casefold()
@@ -269,19 +264,18 @@ class Order(CLIProgram):
         """
         self.sort_and_print_lines(sys.stdin.readlines())
 
-    def split_line(self, line: str, field_pattern: str, *, strip_number_separators: bool) -> list[str]:
+    def split_line(self, line: str, field_pattern: str) -> list[str]:
         """
         Split the line into sortable fields.
 
         :param line: Line to split.
         :param field_pattern: Pattern for getting fields.
-        :param strip_number_separators: Whether to strip number separators (commas and decimals) before splitting.
         :return: List of fields.
         """
         fields = []
 
         # Normalize the line before splitting.
-        line = self.normalize_line(line, strip_number_separators=strip_number_separators)
+        line = self.normalize_line(line)
 
         try:
             for index, field in enumerate(re.split(field_pattern, line)):
