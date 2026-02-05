@@ -26,9 +26,9 @@ class Colors:
     :cvar FILE_NAME: Color used for a file name.
     :cvar LINE_NUMBER: Color used for line numbers and number separators.
     """
-    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
-    LINE_NUMBER: Final[str] = ansi.Colors16.BRIGHT_GREEN
+    COLON: Final[str] = ansi.Colors.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors.BRIGHT_MAGENTA
+    LINE_NUMBER: Final[str] = ansi.Colors.BRIGHT_GREEN
 
 
 class Num(CLIProgram):

@@ -30,9 +30,9 @@ class Colors:
     :cvar COUNT_TOTAL: Color used for a count total.
     :cvar FILE_NAME: Color used for a file name.
     """
-    COUNT: Final[str] = ansi.Colors16.BRIGHT_CYAN
-    COUNT_TOTAL: Final[str] = ansi.Colors16.BRIGHT_YELLOW
-    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
+    COUNT: Final[str] = ansi.Colors.BRIGHT_CYAN
+    COUNT_TOTAL: Final[str] = ansi.Colors.BRIGHT_YELLOW
+    FILE_NAME: Final[str] = ansi.Colors.BRIGHT_MAGENTA
 
 
 class CountIndex(IntEnum):
@@ -123,11 +123,10 @@ class Tally(CLIProgram):
         :return: Count information.
         """
         character_count, line_count, max_line_length, words = 0, 0, 0, 0
-        display_width_offset = -1  # Account for the newline.
 
         for line in text:
             line_length = len(line)
-            max_display_width = len(line) + (line.count("\t") * self.args.tab_width) - display_width_offset
+            max_display_width = len(line) + (line.count("\t") * self.args.tab_width) + 1  # +1 for the newline.
 
             character_count += line_length
             line_count += 1

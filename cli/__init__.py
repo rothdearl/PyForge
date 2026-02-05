@@ -3,10 +3,10 @@ Initialization file for the command-line interface package.
 """
 
 from .ansi import (
-    BGColors16,
     BG_COLORS_256,
+    BgColors,
     COLORS_256,
-    Colors16,
+    Colors,
     RESET,
     TextAttributes,
 )

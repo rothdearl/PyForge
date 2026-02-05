@@ -26,8 +26,8 @@ class Colors:
     :cvar COLON: Color used for the colon following a file name.
     :cvar FILE_NAME: Color used for a file name.
     """
-    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
+    COLON: Final[str] = ansi.Colors.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors.BRIGHT_MAGENTA
 
 
 class Slice(CLIProgram):

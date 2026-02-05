@@ -60,7 +60,7 @@ def color_day_in_week_for_slice(week: str, day: str, quarter_slice: CalendarQuar
     :param quarter_slice: Immutable container for information about a calendar quarter slice.
     :return: Week with the current day colored.
     """
-    colored_text = week[quarter_slice.start:quarter_slice.end].replace(day, get_reverse_color(day))
+    colored_text = week[quarter_slice.start:quarter_slice.end].replace(day, render_day(day))
 
     return week[:quarter_slice.start] + colored_text + week[quarter_slice.end:]
 
@@ -81,16 +81,6 @@ def get_calendar_quarter_slice(date: datetime.date) -> CalendarQuarterSlice:
     return slices[(date.month - 1) % 3]
 
 
-def get_reverse_color(value: str) -> str:
-    """
-    Return a formatted color string for the value.
-
-    :param value: Value to format.
-    :return: Formatted color string.
-    """
-    return f"{ansi.TextAttributes.REVERSE}{value}{ansi.RESET}"
-
-
 def print_month(date: datetime.date) -> None:
     """
     Print the current month.
@@ -109,7 +99,7 @@ def print_month(date: datetime.date) -> None:
 
     for output in month[2:]:
         if not found_day and day in output:
-            output = output.replace(day, get_reverse_color(day))
+            output = output.replace(day, render_day(day))
             found_day = True
 
         print(output)
@@ -139,7 +129,7 @@ def print_quarter(date: datetime.date) -> None:
         quarter_start += 1
 
     # Highlight current month name.
-    year[quarter_start] = year[quarter_start].replace(month_name, get_reverse_color(month_name))
+    year[quarter_start] = year[quarter_start].replace(month_name, render_day(month_name))
 
     # Print month names and weekdays.
     print(year[quarter_start])
@@ -176,7 +166,7 @@ def print_year(date: datetime.date) -> None:
 
     for output in year:
         if not found_month and month_name in output:
-            output = output.replace(month_name, get_reverse_color(month_name))
+            output = output.replace(month_name, render_day(month_name))
             found_month = True
 
         if not found_day and found_month and day in output[quarter_slice.start:quarter_slice.end]:
@@ -184,6 +174,16 @@ def print_year(date: datetime.date) -> None:
             found_day = True
 
         print(output)
+
+
+def render_day(day: str) -> str:
+    """
+    Return a formatted color string with the day.
+
+    :param day: Day to format.
+    :return: Formatted color string.
+    """
+    return f"{ansi.TextAttributes.REVERSE}{day}{ansi.RESET}"
 
 
 class When:

@@ -27,10 +27,10 @@ class Colors:
     :cvar LINE_NUMBER: Color used for line numbers.
     :cvar MATCH: Color used for a match.
     """
-    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
-    LINE_NUMBER: Final[str] = ansi.Colors16.BRIGHT_GREEN
-    MATCH: Final[str] = ansi.Colors16.BRIGHT_RED
+    COLON: Final[str] = ansi.Colors.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors.BRIGHT_MAGENTA
+    LINE_NUMBER: Final[str] = ansi.Colors.BRIGHT_GREEN
+    MATCH: Final[str] = ansi.Colors.BRIGHT_RED
 
 
 class Scan(CLIProgram):

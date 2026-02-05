@@ -25,9 +25,9 @@ class Colors:
     :cvar NUMBER: Color used for numbering lines.
     :cvar TAB: Color used for the tab replacement.
     """
-    EOL: Final[str] = ansi.Colors16.BRIGHT_BLUE
-    NUMBER: Final[str] = ansi.Colors16.BRIGHT_GREEN
-    TAB: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    EOL: Final[str] = ansi.Colors.BRIGHT_BLUE
+    NUMBER: Final[str] = ansi.Colors.BRIGHT_GREEN
+    TAB: Final[str] = ansi.Colors.BRIGHT_CYAN
 
 
 class Whitespace:

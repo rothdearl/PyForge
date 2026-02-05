@@ -29,12 +29,12 @@ class Colors:
     :cvar SPACE: Color used for the space replacement.
     :cvar TAB: Color used for the tab replacement.
     """
-    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
-    EOL: Final[str] = ansi.Colors16.BRIGHT_BLUE
-    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
-    LINE_NUMBER: Final[str] = ansi.Colors16.BRIGHT_GREEN
-    SPACE: Final[str] = ansi.Colors16.BRIGHT_CYAN
-    TAB: Final[str] = ansi.Colors16.BRIGHT_CYAN
+    COLON: Final[str] = ansi.Colors.BRIGHT_CYAN
+    EOL: Final[str] = ansi.Colors.BRIGHT_BLUE
+    FILE_NAME: Final[str] = ansi.Colors.BRIGHT_MAGENTA
+    LINE_NUMBER: Final[str] = ansi.Colors.BRIGHT_GREEN
+    SPACE: Final[str] = ansi.Colors.BRIGHT_CYAN
+    TAB: Final[str] = ansi.Colors.BRIGHT_CYAN
 
 
 class Whitespace:
@@ -155,12 +155,20 @@ class Show(CLIProgram):
         line_min = min(self.args.print, len(lines)) if self.args.print else len(lines)
         padding = len(str(line_min))
 
-        for index, line in enumerate(lines, start=1):
-            if line_start <= index <= line_end:
-                line = self.show_spaces(line) if self.args.spaces else line  # --spaces
-                line = self.show_tabs(line) if self.args.tabs else line  # --tabs
-                line = self.show_ends(line) if self.args.ends else line  # --ends
-                line = self.show_line_number(line, index, padding) if self.args.line_numbers else line  # --line-numbers
+        for line_number, line in enumerate(lines, start=1):
+            if line_start <= line_number <= line_end:
+                if self.args.spaces:  # --spaces
+                    line = self.render_spaces(line)
+
+                if self.args.tabs:  # --tabs
+                    line = self.render_tabs(line)
+
+                if self.args.ends:  # --ends
+                    line = self.render_ends(line)
+
+                if self.args.line_numbers:  # --line-numbers
+                    line = self.render_line_number(line, line_number, padding)
+
                 io.print_line_normalized(line)
 
     def print_lines_from_files(self, files: Iterable[str]) -> None:
@@ -182,7 +190,7 @@ class Show(CLIProgram):
         """
         self.print_lines(sys.stdin)
 
-    def show_ends(self, line: str) -> str:
+    def render_ends(self, line: str) -> str:
         """
         Append a visible end-of-line marker to the line.
 
@@ -197,7 +205,7 @@ class Show(CLIProgram):
 
         return f"{line[:end_index]}{Whitespace.EOL}{newline}"
 
-    def show_line_number(self, line: str, line_number: int, padding: int) -> str:
+    def render_line_number(self, line: str, line_number: int, padding: int) -> str:
         """
         Prefix the line with a line number, right-aligned to the specified padding.
 
@@ -211,21 +219,20 @@ class Show(CLIProgram):
 
         return f"{line_number:>{padding}} {line}"
 
-    def show_spaces(self, line: str) -> str:
+    def render_spaces(self, line: str) -> str:
         """
         Replace spaces and trailing spaces with visible markers.
 
         :param line: Line to transform.
         :return: Line with spaces replaced by visible markers.
         """
-        has_newline = line.endswith("\n")
-        trailing_count = len(line) - len(line.rstrip())  # Count trailing spaces.
+        trailing_count = len(line) - len(line.rstrip(" \n"))  # Count trailing spaces, including the newline.
 
-        # Truncate trailing spaces.
+        # Truncate trailing spaces, including the newline.
         line = line[:-trailing_count] if trailing_count else line
 
-        if has_newline:
-            trailing_count -= 1
+        # -1 for the newline.
+        trailing_count -= 1
 
         if self.print_color:
             line = line.replace(" ", f"{Colors.SPACE}{Whitespace.SPACE}{ansi.RESET}")
@@ -234,9 +241,12 @@ class Show(CLIProgram):
             line = line.replace(" ", Whitespace.SPACE)
             line = line + (Whitespace.TRAILING_SPACE * trailing_count)
 
-        return line + "\n" if has_newline else line
+        # Add back the newline.
+        line = line + "\n"
 
-    def show_tabs(self, line: str) -> str:
+        return line
+
+    def render_tabs(self, line: str) -> str:
         """
         Replace tabs with visible markers.
 

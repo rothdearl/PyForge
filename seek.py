@@ -25,7 +25,7 @@ class Colors:
 
     :cvar MATCH: Color used for a match.
     """
-    MATCH: Final[str] = ansi.Colors16.BRIGHT_RED
+    MATCH: Final[str] = ansi.Colors.BRIGHT_RED
 
 
 class Seek(CLIProgram):

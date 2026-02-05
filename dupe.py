@@ -27,9 +27,9 @@ class Colors:
     :cvar FILE_NAME: Color used for a file name.
     :cvar GROUP_COUNT: Color used for group counts.
     """
-    COLON: Final[str] = ansi.Colors16.BRIGHT_CYAN
-    FILE_NAME: Final[str] = ansi.Colors16.BRIGHT_MAGENTA
-    GROUP_COUNT: Final[str] = ansi.Colors16.BRIGHT_GREEN
+    COLON: Final[str] = ansi.Colors.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ansi.Colors.BRIGHT_MAGENTA
+    GROUP_COUNT: Final[str] = ansi.Colors.BRIGHT_GREEN
 
 
 class Dupe(CLIProgram):
