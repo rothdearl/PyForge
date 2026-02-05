@@ -63,11 +63,11 @@ class Order(CLIProgram):
         sort_group = parser.add_mutually_exclusive_group()
 
         parser.add_argument("files", help="input files", metavar="FILES", nargs="*")
-        parser.add_argument("-b", "--ignore-leading-blanks", action="store_true", help="ignore leading blanks in lines")
+        parser.add_argument("-b", "--ignore-leading-blanks", action="store_true", help="ignore leading blanks")
         sort_group.add_argument("-d", "--dictionary-order", action="store_true",
                                 help="sort lines using dictionary order")
         sort_group.add_argument("-D", "--date-sort", action="store_true", help="sort lines by date")
-        sort_group.add_argument("-k", "--key-pattern", help="generate sort keys by splitting lines on regex PATTERN",
+        sort_group.add_argument("-k", "--key-pattern", help="generate sort keys by splitting on regex PATTERN",
                                 metavar="PATTERN")
         sort_group.add_argument("-n", "--natural-sort", action="store_true",
                                 help="sort alphabetically, treating numbers numerically")
@@ -269,7 +269,7 @@ class Order(CLIProgram):
         Split the line into sortable fields.
 
         :param line: Line to split.
-        :param field_pattern: Pattern for getting fields.
+        :param field_pattern: Pattern for splitting fields.
         :return: List of fields.
         """
         fields = []
@@ -279,7 +279,7 @@ class Order(CLIProgram):
 
         try:
             for index, field in enumerate(re.split(field_pattern, line)):
-                if field and index >= self.args.skip_fields:
+                if field and index >= self.args.skip_fields:  # --skip-fields
                     fields.append(field)
         except re.error:  # re.PatternError was introduced in Python 3.13; use re.error for Python < 3.13.
             self.print_error_and_exit(f"invalid regex pattern: {field_pattern}")
