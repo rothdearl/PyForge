@@ -4,8 +4,8 @@
 """
 Filename: slice.py
 Author: Roth Earl
-Version: 1.3.11
-Description: A program to split lines in files into shell-style fields.
+Version: 1.3.12
+Description: A program that splits lines in files into shell-style fields.
 License: GNU GPLv3
 """
 
@@ -32,26 +32,20 @@ class Colors:
 
 class Slice(CLIProgram):
     """
-    A program to split lines in files into shell-style fields.
+    A program that splits lines in files into shell-style fields.
 
     :ivar fields_to_print: Fields to print.
     """
 
     def __init__(self) -> None:
-        """
-        Initialize a new ``Slice`` instance.
-        """
-        super().__init__(name="slice", version="1.3.11")
+        """Initialize a new ``Slice`` instance."""
+        super().__init__(name="slice", version="1.3.12")
 
         self.fields_to_print: list[int] = []
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
-        """
-        Build and return an argument parser.
-
-        :return: An argument parser.
-        """
+        """Build and return an argument parser."""
         parser = argparse.ArgumentParser(allow_abbrev=False, description="split lines in FILES into shell-style fields",
                                          epilog="if no FILES are specified, read from standard input", prog=self.name)
 
@@ -66,7 +60,7 @@ class Slice(CLIProgram):
         parser.add_argument("--fields", action="extend",
                             help="print only the specified fields (1-based indexes; duplicates allowed)", metavar="N",
                             nargs='+', type=int)
-        parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
+        parser.add_argument("--latin1", action="store_true", help="read FILES using latin-1 (default: utf-8)")
         parser.add_argument("--literal-quotes", action="store_true",
                             help="treat quotes as ordinary characters (disable shell-style quote parsing)")
         parser.add_argument("--quotes", choices=("d", "s"),
@@ -79,15 +73,13 @@ class Slice(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """
-        Validate parsed command-line arguments.
-        """
+        """Validate parsed command-line arguments."""
         self.fields_to_print = self.args.fields or []  # --fields
 
         # Validate --fields values.
         for field in self.fields_to_print:
             if field < 1:
-                self.print_error_and_exit("'print' must contain fields >= 1")
+                self.print_error_and_exit("--print must contain fields >= 1")
 
         if self.args.unique:  # --unique
             self.fields_to_print = sorted(set(self.fields_to_print))
@@ -97,9 +89,7 @@ class Slice(CLIProgram):
 
     @override
     def main(self) -> None:
-        """
-        Run the program logic.
-        """
+        """Run the program logic."""
         # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_name = True
@@ -120,11 +110,7 @@ class Slice(CLIProgram):
             self.split_and_print_lines_from_input()
 
     def print_file_header(self, file_name: str) -> None:
-        """
-        Print the file name or "(standard input)" if empty, followed by a colon, unless ``--no-file-name`` is set.
-
-        :param file_name: File name to print.
-        """
+        """Print the file name (or "(standard input)" if empty), followed by a colon, unless ``--no-file-name`` is set."""
         if not self.args.no_file_name:  # --no-file-name
             file_header = os.path.relpath(file_name) if file_name else "(standard input)"
 
@@ -136,11 +122,7 @@ class Slice(CLIProgram):
             print(file_header)
 
     def split_and_print_lines(self, lines: Iterable[str]) -> None:
-        """
-        Split lines into fields and print.
-
-        :param lines: Lines to split.
-        """
+        """Split lines into fields and print."""
         quote = "\"" if self.args.quotes == "d" else "'" if self.args.quotes == "s" else ""  # --quotes
         separator = self.args.separator  # --separator
 
@@ -154,11 +136,7 @@ class Slice(CLIProgram):
             print(separator.join(f"{quote}{field}{quote}" for field in fields))
 
     def split_and_print_lines_from_files(self, files: Iterable[str]) -> None:
-        """
-        Split lines into fields from files and print.
-
-        :param files: Files to split lines from.
-        """
+        """Split lines into fields from files and print."""
         for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
                 self.print_file_header(file_info.file_name)
@@ -167,18 +145,11 @@ class Slice(CLIProgram):
                 self.print_error(f"{file_info.file_name}: unable to read with {self.encoding}")
 
     def split_and_print_lines_from_input(self) -> None:
-        """
-        Split lines into fields from standard input until EOF and print.
-        """
+        """Split lines into fields from standard input until EOF and print."""
         self.split_and_print_lines(sys.stdin)
 
     def split_line(self, line: str) -> list[str]:
-        """
-        Split the line into fields.
-
-        :param line: Line to split.
-        :return: List of fields.
-        """
+        """Split the line into fields."""
         lexer = shlex.shlex(line, posix=True, punctuation_chars=False)
 
         # Configure the lexer.

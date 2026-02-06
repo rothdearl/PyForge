@@ -4,8 +4,8 @@
 """
 Filename: show.py
 Author: Roth Earl
-Version: 1.3.11
-Description: A program to print files to standard output.
+Version: 1.3.12
+Description: A program that prints files to standard output.
 License: GNU GPLv3
 """
 
@@ -53,23 +53,15 @@ class Whitespace:
 
 
 class Show(CLIProgram):
-    """
-    A program to print files to standard output.
-    """
+    """A program that prints files to standard output."""
 
     def __init__(self) -> None:
-        """
-        Initialize a new ``Show`` instance.
-        """
-        super().__init__(name="show", version="1.3.11")
+        """Initialize a new ``Show`` instance."""
+        super().__init__(name="show", version="1.3.12")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
-        """
-        Build and return an argument parser.
-
-        :return: An argument parser.
-        """
+        """Build and return an argument parser."""
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print FILES to standard output",
                                          epilog="if no FILES are specified, read from standard input", prog=self.name)
 
@@ -83,7 +75,7 @@ class Show(CLIProgram):
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="use color for file names, line numbers, and whitespace (default: on)")
         parser.add_argument("--ends", action="store_true", help=f"display '{Whitespace.EOL}' at end of each line")
-        parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
+        parser.add_argument("--latin1", action="store_true", help="read FILES using latin-1 (default: utf-8)")
         parser.add_argument("--spaces", action="store_true",
                             help=f"display spaces as '{Whitespace.SPACE}' and trailing spaces as '{Whitespace.TRAILING_SPACE}'")
         parser.add_argument("--stdin-files", action="store_true",
@@ -95,20 +87,16 @@ class Show(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """
-        Validate parsed command-line arguments.
-        """
+        """Validate parsed command-line arguments."""
         if self.args.print < 1:  # --print
-            self.print_error_and_exit("'print' must be >= 1")
+            self.print_error_and_exit("--print must be >= 1")
 
         if self.args.start == 0:  # --start
-            self.print_error_and_exit("'start' cannot = 0")
+            self.print_error_and_exit("--start cannot = 0")
 
     @override
     def main(self) -> None:
-        """
-        Run the program logic.
-        """
+        """Run the program logic."""
         # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_name = True
@@ -129,11 +117,7 @@ class Show(CLIProgram):
             self.print_lines_from_input()
 
     def print_file_header(self, file_name: str) -> None:
-        """
-        Print the file name or "(standard input)" if empty, followed by a colon, unless ``--no-file-name`` is set.
-
-        :param file_name: File name to print.
-        """
+        """Print the file name (or "(standard input)" if empty), followed by a colon, unless ``--no-file-name`` is set."""
         if not self.args.no_file_name:  # --no-file-name
             file_header = os.path.relpath(file_name) if file_name else "(standard input)"
 
@@ -145,11 +129,7 @@ class Show(CLIProgram):
             print(file_header)
 
     def print_lines(self, lines: Collection[str]) -> None:
-        """
-        Print lines to standard output according to command-line arguments.
-
-        :param lines: Iterable of lines to print.
-        """
+        """Print lines to standard output according to command-line arguments."""
         line_start = len(lines) + self.args.start + 1 if self.args.start < 0 else self.args.start
         line_end = line_start + self.args.print - 1
         line_min = min(self.args.print, len(lines)) if self.args.print else len(lines)
@@ -169,14 +149,10 @@ class Show(CLIProgram):
                 if self.args.line_numbers:  # --line-numbers
                     line = self.render_line_number(line, line_number, padding)
 
-                io.print_line_normalized(line)
+                io.print_line(line)
 
     def print_lines_from_files(self, files: Iterable[str]) -> None:
-        """
-        Read lines from each file and print them.
-
-        :param files: Iterable of files to read.
-        """
+        """Read lines from each file and print them."""
         for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
                 self.print_file_header(file_info.file_name)
@@ -185,18 +161,11 @@ class Show(CLIProgram):
                 self.print_error(f"{file_info.file_name}: unable to read with {self.encoding}")
 
     def print_lines_from_input(self) -> None:
-        """
-        Read lines from standard input until EOF and print them.
-        """
+        """Read lines from standard input until EOF and print them."""
         self.print_lines(sys.stdin)
 
     def render_ends(self, line: str) -> str:
-        """
-        Append a visible end-of-line marker to the line.
-
-        :param line: Line to transform.
-        :return: Line with a visible end-of-line marker appended.
-        """
+        """Append a visible end-of-line marker to the line."""
         end_index = -1 if line.endswith("\n") else len(line)
         newline = "\n" if end_index == -1 else ""
 
@@ -206,26 +175,14 @@ class Show(CLIProgram):
         return f"{line[:end_index]}{Whitespace.EOL}{newline}"
 
     def render_line_number(self, line: str, line_number: int, padding: int) -> str:
-        """
-        Prefix the line with a line number, right-aligned to the specified padding.
-
-        :param line: Line to transform.
-        :param line_number: Line number.
-        :param padding: Width to pad the line number.
-        :return: Line prefixed with the formatted line number.
-        """
+        """Prefix the line with a line number, right-aligned to the specified padding."""
         if self.print_color:
             return f"{Colors.LINE_NUMBER}{line_number:>{padding}}{Colors.COLON}{ansi.RESET} {line}"
 
         return f"{line_number:>{padding}} {line}"
 
     def render_spaces(self, line: str) -> str:
-        """
-        Replace spaces and trailing spaces with visible markers.
-
-        :param line: Line to transform.
-        :return: Line with spaces replaced by visible markers.
-        """
+        """Replace spaces and trailing spaces with visible markers."""
         trailing_count = len(line) - len(line.rstrip(" \n"))  # Count trailing spaces, including the newline.
 
         # Truncate trailing spaces, including the newline.
@@ -247,12 +204,7 @@ class Show(CLIProgram):
         return line
 
     def render_tabs(self, line: str) -> str:
-        """
-        Replace tabs with visible markers.
-
-        :param line: Line to transform.
-        :return: Line with tabs replaced by visible markers.
-        """
+        """Replace tabs with visible markers."""
         if self.print_color:
             return line.replace("\t", f"{Colors.TAB}{Whitespace.TAB}{ansi.RESET}")
 

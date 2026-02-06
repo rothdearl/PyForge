@@ -37,7 +37,7 @@ class Scan(CLIProgram):
     """
     A program that prints lines that match patterns in files.
 
-    :cvar NO_MATCHES_EXIT_CODE:  Exit code when no matches are found.
+    :cvar NO_MATCHES_EXIT_CODE: Exit code when no matches are found.
     :ivar found_match: Whether a match was found in a file.
     :ivar line_number: Line number for tracking where matches were found.
     :ivar patterns: Compiled patterns to match.

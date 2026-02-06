@@ -32,7 +32,7 @@ class Seek(CLIProgram):
     """
     A program that searches for files in a directory hierarchy.
 
-    :cvar NO_MATCHES_EXIT_CODE:  Exit code when no matches are found.
+    :cvar NO_MATCHES_EXIT_CODE: Exit code when no matches are found.
     :ivar found_match: Whether a match was found.
     :ivar name_patterns: Compiled name patterns to match.
     :ivar path_patterns: Compiled path patterns to match.
@@ -41,7 +41,7 @@ class Seek(CLIProgram):
     NO_MATCHES_EXIT_CODE: Final[int] = 1
 
     def __init__(self) -> None:
-        """Initialize a new Seek instance."""
+        """Initialize a new ``Seek`` instance."""
         super().__init__(name="seek", version="1.3.12", error_exit_code=2)
 
         self.found_match: bool = False

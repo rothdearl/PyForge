@@ -4,8 +4,8 @@
 """
 Filename: subs.py
 Author: Roth Earl
-Version: 1.3.11
-Description: A program to replace text in files.
+Version: 1.3.12
+Description: A program that replaces text in files.
 License: GNU GPLv3
 """
 
@@ -32,26 +32,20 @@ class Colors:
 
 class Subs(CLIProgram):
     """
-    A program to replace text in files.
+    A program that replaces text in files.
 
     :ivar pattern: Compiled pattern to match.
     """
 
     def __init__(self) -> None:
-        """
-        Initialize a new Subs instance.
-        """
-        super().__init__(name="subs", version="1.3.11")
+        """Initialize a new ``Subs`` instance."""
+        super().__init__(name="subs", version="1.3.12")
 
         self.pattern: re.Pattern[str] | None = None
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
-        """
-        Build and return an argument parser.
-
-        :return: An argument parser.
-        """
+        """Build and return an argument parser."""
         parser = argparse.ArgumentParser(allow_abbrev=False, description="replace text in FILES",
                                          epilog="if no FILES are specified, read from standard input", prog=self.name)
 
@@ -66,7 +60,7 @@ class Subs(CLIProgram):
                             help="use color for file names (default: on)")
         parser.add_argument("--in-place", action="store_true",
                             help="write changes back to FILES instead of standard output")
-        parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
+        parser.add_argument("--latin1", action="store_true", help="read FILES using latin-1 (default: utf-8)")
         parser.add_argument("--max-replacements", default=sys.maxsize,
                             help="limit replacements to N per line (default: unlimited; N >= 1)", metavar="N", type=int)
         parser.add_argument("--stdin-files", action="store_true",
@@ -77,32 +71,24 @@ class Subs(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """
-        Validate parsed command-line arguments.
-        """
+        """Validate parsed command-line arguments."""
         if self.args.max_replacements < 1:  # --max-replacements
-            self.print_error_and_exit("'max-replacements' must be >= 1")
+            self.print_error_and_exit("--max-replacements must be >= 1")
 
     def iterate_replaced_lines(self, lines: Iterable[str]) -> Iterable[str]:
-        """
-        Yield lines with pattern matches replaced.
-
-        :param lines: Input lines.
-        :return: Iterator yielding transformed lines.
-        """
+        """Yield lines with pattern matches replaced."""
         for line in lines:
-            line = line.rstrip("\n")  # Remove trailing newlines so $ matches only once per line.
+            normalized = line.rstrip("\n")  # Remove the newline so $ matches only once per line.
 
             if self.pattern:
-                line = self.pattern.sub(self.args.replace, line, count=self.args.max_replacements)
+                normalized = self.pattern.sub(self.args.replace, normalized, count=self.args.max_replacements)
+                normalized = normalized + "\n"  # Add back the newline.
 
-            yield line
+            yield normalized
 
     @override
     def main(self) -> None:
-        """
-        Run the program logic.
-        """
+        """Run the program logic."""
         self.precompile_patterns()
 
         # Set --no-file-name to True if there are no files and --stdin-files=False.
@@ -125,19 +111,13 @@ class Subs(CLIProgram):
             self.print_replaced_lines_from_input()
 
     def precompile_patterns(self) -> None:
-        """
-        Pre-compile search patterns.
-        """
+        """Pre-compile search patterns."""
         if compiled := patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
                                                  on_error=self.print_error_and_exit):
             self.pattern = patterns.compile_combined_patterns(compiled, ignore_case=self.args.ignore_case)
 
     def print_file_header(self, file_name: str) -> None:
-        """
-        Print the file name or "(standard input)" if empty, followed by a colon, unless ``--no-file-name`` is set.
-
-        :param file_name: File name to print.
-        """
+        """Print the file name (or "(standard input)" if empty), followed by a colon, unless ``--no-file-name`` is set."""
         if not self.args.no_file_name:  # --no-file-name
             file_header = os.path.relpath(file_name) if file_name else "(standard input)"
 
@@ -149,26 +129,16 @@ class Subs(CLIProgram):
             print(file_header)
 
     def print_replaced_lines(self, lines: Iterable[str]) -> None:
-        """
-        Print replaced matches in lines.
-
-        :param lines: Lines to replace matches in.
-        """
+        """Print replaced matches in lines."""
         for line in self.iterate_replaced_lines(lines):
-            io.print_line_normalized(line)
+            io.print_line(line)
 
     def print_replaced_lines_from_input(self) -> None:
-        """
-        Print replaced matches in lines from standard input until EOF.
-        """
+        """Print replaced matches in lines from standard input until EOF."""
         self.print_replaced_lines(sys.stdin)
 
     def process_files(self, files: Iterable[str]) -> None:
-        """
-        Process files by replacing matches and printing results or writing changes in place.
-
-        :param files: Files to process.
-        """
+        """Process files by replacing matches and printing results or writing changes in place."""
         for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             if self.args.in_place:  # --in-place
                 io.write_text_to_file(file_info.file_name, self.iterate_replaced_lines(file_info.text.readlines()),
