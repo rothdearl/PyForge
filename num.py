@@ -5,7 +5,7 @@
 Filename: num.py
 Author: Roth Earl
 Version: 1.3.12
-Description: A program to number output lines from files to standard output.
+Description: A program that numbers output lines from files to standard output.
 License: GNU GPLv3
 """
 
@@ -33,7 +33,7 @@ class Colors:
 
 class Num(CLIProgram):
     """
-    A program to number output lines from files to standard output.
+    A program that numbers output lines from files to standard output.
 
     :cvar FORMAT_PREFIXES: Mapping of short format keys to format-spec prefixes used when formatting line numbers.
     :ivar format_prefix: Format-spec prefix used when formatting line numbers.

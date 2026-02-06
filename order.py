@@ -5,7 +5,7 @@
 Filename: order.py
 Author: Roth Earl
 Version: 1.3.12
-Description: A program to sort and print files to standard output.
+Description: A program that sorts and print files to standard output.
 License: GNU GPLv3
 """
 
@@ -35,7 +35,7 @@ class Colors:
 
 class Order(CLIProgram):
     """
-    A program to sort and print files to standard output.
+    A program that sorts and print files to standard output.
 
     :cvar DATE_PATTERN: Pattern for splitting lines on all whitespace except spaces.
     :cvar WHITESPACE_PATTERN: Pattern for splitting lines on all whitespace.

@@ -4,8 +4,8 @@
 """
 Filename: peek.py
 Author: Roth Earl
-Version: 1.3.11
-Description: A program to print the first part of files.
+Version: 1.3.12
+Description: A program that prints the first part of files.
 License: GNU GPLv3
 """
 
@@ -31,23 +31,15 @@ class Colors:
 
 
 class Peek(CLIProgram):
-    """
-    A program to print the first part of files.
-    """
+    """A program that prints the first part of files."""
 
     def __init__(self) -> None:
-        """
-        Initialize a new ``Peek`` instance.
-        """
-        super().__init__(name="peek", version="1.3.11")
+        """Initialize a new ``Peek`` instance."""
+        super().__init__(name="peek", version="1.3.12")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
-        """
-        Build and return an argument parser.
-
-        :return: An argument parser.
-        """
+        """Build and return an argument parser."""
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print the first part of FILES",
                                          epilog="if no FILES are specified, read from standard input", prog=self.name)
 
@@ -58,7 +50,7 @@ class Peek(CLIProgram):
                             metavar="N", type=int)
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="use color for file names (default: on)")
-        parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
+        parser.add_argument("--latin1", action="store_true", help="read FILES using latin-1 (default: utf-8)")
         parser.add_argument("--stdin-files", action="store_true",
                             help="treat standard input as a list of FILES (one per line)")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.version}")
@@ -67,16 +59,12 @@ class Peek(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """
-        Validate parsed command-line arguments.
-        """
+        """Validate parsed command-line arguments."""
         pass
 
     @override
     def main(self) -> None:
-        """
-        Run the program logic.
-        """
+        """Run the program logic."""
         # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_name = True
@@ -97,11 +85,7 @@ class Peek(CLIProgram):
             self.print_lines_from_input()
 
     def print_file_header(self, file_name: str) -> None:
-        """
-        Print the file name or "(standard input)" if empty, followed by a colon, unless ``--no-file-name`` is set.
-
-        :param file_name: File name to print.
-        """
+        """Print the file name (or "(standard input)" if empty), followed by a colon, unless ``--no-file-name`` is set."""
         if not self.args.no_file_name:  # --no-file-name
             file_header = os.path.relpath(file_name) if file_name else "(standard input)"
 
@@ -113,18 +97,14 @@ class Peek(CLIProgram):
             print(file_header)
 
     def print_lines(self, lines: Iterable[str]) -> None:
-        """
-        Print lines to standard output.
-
-        :param lines: Iterable of lines to print.
-        """
+        """Print lines to standard output."""
         # If --lines is positive or zero: print the first N lines.
         if self.args.lines >= 0:
             for index, line in enumerate(lines):
                 if index >= self.args.lines:
                     break
 
-                io.print_line_normalized(line)
+                io.print_line(line)
 
             return
 
@@ -133,16 +113,12 @@ class Peek(CLIProgram):
 
         for line in lines:
             if len(buffer) == buffer.maxlen:
-                io.print_line_normalized(buffer.popleft())
+                io.print_line(buffer.popleft())
 
             buffer.append(line)
 
     def print_lines_from_files(self, files: Iterable[str]) -> None:
-        """
-        Read lines from each file and print them.
-
-        :param files: Iterable of files to read.
-        """
+        """Read lines from each file and print them."""
         for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
                 self.print_file_header(file_info.file_name)
@@ -151,9 +127,7 @@ class Peek(CLIProgram):
                 self.print_error(f"{file_info.file_name}: unable to read with {self.encoding}")
 
     def print_lines_from_input(self) -> None:
-        """
-        Read lines from standard input until EOF and print them.
-        """
+        """Read lines from standard input until EOF and print them."""
         self.print_lines(sys.stdin)
 
 

@@ -5,7 +5,7 @@
 Filename: glue.py
 Author: Roth Earl
 Version: 1.3.12
-Description: A program to concatenate files and standard input to standard output.
+Description: A program that concatenates files and standard input to standard output.
 License: GNU GPLv3
 """
 
@@ -43,7 +43,7 @@ class Whitespace:
 
 class Glue(CLIProgram):
     """
-    A program to concatenate files and standard input to standard output.
+    A program that concatenates files and standard input to standard output.
 
     :ivar line_number: Line number to be printed with output lines.
     """
