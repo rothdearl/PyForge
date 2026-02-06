@@ -4,8 +4,8 @@
 """
 Filename: scan.py
 Author: Roth Earl
-Version: 1.3.11
-Description: A program to print lines that match patterns in files.
+Version: 1.3.12
+Description: A program that prints lines that match patterns in files.
 License: GNU GPLv3
 """
 
@@ -35,7 +35,7 @@ class Colors:
 
 class Scan(CLIProgram):
     """
-    A program to print lines that match patterns in files.
+    A program that prints lines that match patterns in files.
 
     :cvar NO_MATCHES_EXIT_CODE:  Exit code when no matches are found.
     :ivar found_match: Whether a match was found in a file.
@@ -46,10 +46,8 @@ class Scan(CLIProgram):
     NO_MATCHES_EXIT_CODE: Final[int] = 1
 
     def __init__(self) -> None:
-        """
-        Initialize a new ``Scan`` instance.
-        """
-        super().__init__(name="scan", version="1.3.11", error_exit_code=2)
+        """Initialize a new ``Scan`` instance."""
+        super().__init__(name="scan", version="1.3.12", error_exit_code=2)
 
         self.found_match: bool = False
         self.line_number: int = 0
@@ -57,11 +55,7 @@ class Scan(CLIProgram):
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
-        """
-        Build and return an argument parser.
-
-        :return: An argument parser.
-        """
+        """Build and return an argument parser."""
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print lines that match patterns in FILES",
                                          epilog="if no FILES are specified, read from standard input", prog=self.name)
         count_group = parser.add_mutually_exclusive_group()
@@ -81,7 +75,7 @@ class Scan(CLIProgram):
         parser.add_argument("-v", "--invert-match", action="store_true", help="print lines that do not match")
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="use color for file names, matches, and line numbers (default: on)")
-        parser.add_argument("--latin1", action="store_true", help="read FILES using iso-8859-1 (default: utf-8)")
+        parser.add_argument("--latin1", action="store_true", help="read FILES using latin-1 (default: utf-8)")
         parser.add_argument("--stdin-files", action="store_true",
                             help="treat standard input as a list of FILES (one per line)")
         parser.add_argument("--version", action="version", version=f"%(prog)s {self.version}")
@@ -90,36 +84,26 @@ class Scan(CLIProgram):
 
     @override
     def check_for_errors(self) -> None:
-        """
-        Call ``sys.exit(NO_MATCHES_EXIT_CODE)`` if a match was not found.
-        """
+        """Raise ``SystemExit(Scan.NO_MATCHES_EXIT_CODE)`` if a match was not found."""
         super().check_for_errors()
 
         if not self.found_match:
-            sys.exit(Scan.NO_MATCHES_EXIT_CODE)
+            raise SystemExit(Scan.NO_MATCHES_EXIT_CODE)
 
     @override
     def check_parsed_arguments(self) -> None:
-        """
-        Validate parsed command-line arguments.
-        """
+        """Validate parsed command-line arguments."""
         # Exit early if no --find patterns are provided.
         if not self.args.find:
             sys.exit(Scan.NO_MATCHES_EXIT_CODE)
 
     def is_printing_counts(self) -> bool:
-        """
-        Return whether count output is enabled.
-
-        :return: ``True`` if either ``--count`` or ``--count-nonzero`` is set.
-        """
+        """Return whether ``--count`` or ``--count-nonzero`` is set."""
         return self.args.count or self.args.count_nonzero  # --count or --count-nonzero
 
     @override
     def main(self) -> None:
-        """
-        Run the program logic.
-        """
+        """Run the program logic."""
         # Pre-compile --find patterns.
         if self.args.find:
             self.patterns = patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
@@ -127,54 +111,20 @@ class Scan(CLIProgram):
 
         if terminal.stdin_is_redirected():
             if self.args.stdin_files:  # --stdin-files
-                self.print_matches_in_files(sys.stdin)
+                self.print_matches_from_files(sys.stdin)
             elif standard_input := sys.stdin.readlines():
-                self.args.no_file_name = self.args.no_file_name or not self.args.files  # No file header if no files
-                self.print_matches_in_lines(standard_input, origin_file="")
+                self.args.no_file_name = self.args.no_file_name or not self.args.files  # No file header if no files.
+                self.print_matches(standard_input, origin_file="")
 
             if self.args.files:  # Process any additional files.
-                self.print_matches_in_files(self.args.files)
+                self.print_matches_from_files(self.args.files)
         elif self.args.files:
-            self.print_matches_in_files(self.args.files)
+            self.print_matches_from_files(self.args.files)
         else:
-            self.args.no_file_name = True  # No file header if no files
-            self.print_matches_in_input()
+            self.args.no_file_name = True  # No file header if no files.
+            self.print_matches_from_input()
 
-    def print_matches_in_files(self, files: Iterable[str]) -> None:
-        """
-        Read lines from each file and print matches.
-
-        :param files: Iterable of files to read.
-        """
-        for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
-            try:
-                self.print_matches_in_lines(file_info.text, origin_file=file_info.file_name)
-            except UnicodeDecodeError:
-                self.print_error(f"{file_info.file_name}: unable to read with {self.encoding}")
-
-    def print_matches_in_input(self) -> None:
-        """
-        Read lines from standard input until EOF and print matches.
-        """
-        eof = False
-        lines = []
-
-        while not eof:
-            try:
-                line = input()
-
-                # If printing counts, wait until EOF before finding matches.
-                if self.is_printing_counts():
-                    lines.append(line)
-                else:
-                    self.print_matches_in_lines([line], origin_file="", reset_line_number=False)
-            except EOFError:
-                eof = True
-
-        if self.is_printing_counts():
-            self.print_matches_in_lines(lines, origin_file="")
-
-    def print_matches_in_lines(self, lines: Iterable[str], *, origin_file: str, reset_line_number=True) -> None:
+    def print_matches(self, lines: Iterable[str], *, origin_file: str, reset_line_number=True) -> None:
         """
         Print matches found in lines.
 
@@ -232,7 +182,35 @@ class Scan(CLIProgram):
                     else:
                         print(f"{line_number:>{padding}}:", end="")
 
-                io.print_line_normalized(line)
+                io.print_line(line)
+
+    def print_matches_from_files(self, files: Iterable[str]) -> None:
+        """Read lines from each file and print matches."""
+        for file_info in io.read_text_files(files, self.encoding, on_error=self.print_error):
+            try:
+                self.print_matches(file_info.text, origin_file=file_info.file_name)
+            except UnicodeDecodeError:
+                self.print_error(f"{file_info.file_name}: unable to read with {self.encoding}")
+
+    def print_matches_from_input(self) -> None:
+        """Read lines from standard input until EOF and print matches."""
+        eof = False
+        lines = []
+
+        while not eof:
+            try:
+                line = input()
+
+                # If printing counts, wait until EOF before finding matches.
+                if self.is_printing_counts():
+                    lines.append(line)
+                else:
+                    self.print_matches([line], origin_file="", reset_line_number=False)
+            except EOFError:
+                eof = True
+
+        if self.is_printing_counts():
+            self.print_matches(lines, origin_file="")
 
 
 if __name__ == "__main__":

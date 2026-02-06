@@ -4,8 +4,8 @@
 """
 Filename: seek.py
 Author: Roth Earl
-Version: 1.3.11
-Description: A program to search for files in a directory hierarchy.
+Version: 1.3.12
+Description: A program that searches for files in a directory hierarchy.
 License: GNU GPLv3
 """
 
@@ -30,7 +30,7 @@ class Colors:
 
 class Seek(CLIProgram):
     """
-    A program to search for files in a directory hierarchy.
+    A program that searches for files in a directory hierarchy.
 
     :cvar NO_MATCHES_EXIT_CODE:  Exit code when no matches are found.
     :ivar found_match: Whether a match was found.
@@ -41,10 +41,8 @@ class Seek(CLIProgram):
     NO_MATCHES_EXIT_CODE: Final[int] = 1
 
     def __init__(self) -> None:
-        """
-        Initialize a new Seek instance.
-        """
-        super().__init__(name="seek", version="1.3.11", error_exit_code=2)
+        """Initialize a new Seek instance."""
+        super().__init__(name="seek", version="1.3.12", error_exit_code=2)
 
         self.found_match: bool = False
         self.name_patterns: Patterns = []
@@ -52,11 +50,7 @@ class Seek(CLIProgram):
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
-        """
-        Build and return an argument parser.
-
-        :return: An argument parser.
-        """
+        """Build and return an argument parser."""
         parser = argparse.ArgumentParser(allow_abbrev=False, description="search for files in a directory hierarchy",
                                          epilog="default starting point is the current directory", prog=self.name)
         modified_group = parser.add_mutually_exclusive_group()
@@ -94,29 +88,20 @@ class Seek(CLIProgram):
 
     @override
     def check_for_errors(self) -> None:
-        """
-        Call ``sys.exit(NO_MATCHES_EXIT_CODE)`` if a match was not found.
-        """
+        """Raise ``SystemExit(Seek.NO_MATCHES_EXIT_CODE)`` if a match was not found."""
         super().check_for_errors()
 
         if not self.found_match:
-            sys.exit(Seek.NO_MATCHES_EXIT_CODE)
+            SystemExit(Seek.NO_MATCHES_EXIT_CODE)
 
     @override
     def check_parsed_arguments(self) -> None:
-        """
-        Validate parsed command-line arguments.
-        """
+        """Validate parsed command-line arguments."""
         if self.args.max_depth < 1:  # --max-depth
-            self.print_error_and_exit("'max-depth' must be >= 1")
+            self.print_error_and_exit("--max-depth must be >= 1")
 
     def file_matches_filters(self, file: pathlib.Path) -> bool:
-        """
-        Check whether the file matches any of the filters.
-
-        :param file: File to check.
-        :return: ``True`` if any filter is matched.
-        """
+        """Check whether the file matches any of the filters."""
         matches_filters = True
 
         try:
@@ -156,13 +141,7 @@ class Seek(CLIProgram):
         return matches_filters
 
     def file_matches_patterns(self, file_name: str, file_path: str) -> bool:
-        """
-        Return whether the file name and file path match their patterns.
-
-        :param file_name: File name to check.
-        :param file_path: File path to check.
-        :return: ``True`` if any pattern is matched.
-        """
+        """Return whether the file name and file path match their patterns."""
         if not patterns.matches_all_patterns(file_name, self.name_patterns):  # --name
             return False
 
@@ -173,9 +152,7 @@ class Seek(CLIProgram):
 
     @override
     def main(self) -> None:
-        """
-        Run the program logic.
-        """
+        """Run the program logic."""
         self.precompile_patterns()
 
         if terminal.stdin_is_redirected():
@@ -192,9 +169,7 @@ class Seek(CLIProgram):
                 self.print_files(directory)
 
     def precompile_patterns(self) -> None:
-        """
-        Pre-compile search patterns.
-        """
+        """Pre-compile search patterns."""
         if self.args.name:  # --name
             self.name_patterns = patterns.compile_patterns(self.args.name, ignore_case=self.args.ignore_case,
                                                            on_error=self.print_error_and_exit)
@@ -204,11 +179,7 @@ class Seek(CLIProgram):
                                                            on_error=self.print_error_and_exit)
 
     def print_file(self, file: pathlib.Path) -> None:
-        """
-        Print the file if it matches the specified search criteria.
-
-        :param file: File to process.
-        """
+        """Print the file if it matches the specified search criteria."""
         file_name = file.name or os.curdir  # The dot file does not have a file name.
         file_path = str(file.parent) if len(file.parts) > 1 else ""  # Do not use the dot file in the path.
 
@@ -250,11 +221,7 @@ class Seek(CLIProgram):
         print(path)
 
     def print_files(self, directory: str) -> None:
-        """
-        Print files that match the specified search criteria in a directory hierarchy.
-
-        :param directory: Directory to traverse.
-        """
+        """Print files that match the specified search criteria in a directory hierarchy."""
         if os.path.exists(directory):
             directory_hierarchy = pathlib.Path(directory)
 
@@ -266,7 +233,7 @@ class Seek(CLIProgram):
             except PermissionError as error:
                 self.print_error(f"{error.filename}: permission denied")
         else:
-            name = directory or '""'  # Make empty file names visible in errors.
+            name = directory or '""'  # Use a visible placeholder for empty file names in messages.
             self.print_error(f"{name}: no such file or directory")
 
 
