@@ -116,7 +116,7 @@ class Glue(CLIProgram):
             if line == "\n":  # Blank line?
                 blank_line_count += 1
 
-                if self.should_skip_blank_line(blank_line_count):
+                if self.should_suppress_blank_line(blank_line_count):
                     continue
 
                 if self.args.number_nonblank:  # --number-nonblank
@@ -169,13 +169,8 @@ class Glue(CLIProgram):
 
         return line
 
-    def should_skip_blank_line(self, blank_line_count: int) -> bool:
-        """
-        Determine whether the blank line should be suppressed based on blank-line handling options.
-
-        :param blank_line_count: Number of consecutive blank lines encountered so far, including the current line.
-        :return: Return ``True`` if the current blank line should be skipped.
-        """
+    def should_suppress_blank_line(self, blank_line_count: int) -> bool:
+        """Determine whether a blank line should be suppressed based on blank-line handling options."""
         if self.args.no_blank:  # --no-blank
             return True
 

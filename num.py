@@ -5,7 +5,7 @@
 Filename: num.py
 Author: Roth Earl
 Version: 1.3.12
-Description: A program that numbers output lines from files to standard output.
+Description: A program that numbers lines from files and prints them to standard output.
 License: GNU GPLv3
 """
 
@@ -33,7 +33,7 @@ class Colors:
 
 class Num(CLIProgram):
     """
-    A program that numbers output lines from files to standard output.
+    A program that numbers lines from files and prints them to standard output.
 
     :cvar FORMAT_PREFIXES: Mapping of short format keys to format-spec prefixes used when formatting line numbers.
     :ivar format_prefix: Format-spec prefix used when formatting line numbers.
@@ -125,7 +125,7 @@ class Num(CLIProgram):
             if line == "\n":  # Blank line?
                 blank_line_count += 1
 
-                if self.should_skip_blank_line(blank_line_count):
+                if self.should_suppress_blank_line(blank_line_count):
                     continue
 
                 if self.args.number_nonblank:  # --number-nonblank
@@ -171,13 +171,8 @@ class Num(CLIProgram):
 
         return f"{line_number:{self.format_prefix}{self.args.number_width}}{self.args.number_separator}{line}"
 
-    def should_skip_blank_line(self, blank_line_count: int) -> bool:
-        """
-        Determine whether the current line should be suppressed based on blank-line handling options.
-
-        :param blank_line_count: Number of consecutive blank lines encountered so far, including the current line.
-        :return: Return ``True`` if the current blank line should be skipped.
-        """
+    def should_suppress_blank_line(self, blank_line_count: int) -> bool:
+        """Determine whether a blank line should be suppressed based on blank-line handling options."""
         if self.args.no_blank:  # --no-blank
             return True
 

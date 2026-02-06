@@ -5,7 +5,7 @@
 Filename: dupe.py
 Author: Roth Earl
 Version: 1.3.12
-Description: A program that filters duplicate or unique lines in files.
+Description: A program that filters duplicate or unique lines from files.
 License: GNU GPLv3
 """
 
@@ -34,7 +34,7 @@ class Colors:
 
 class Dupe(CLIProgram):
     """
-    A program that filters duplicate or unique lines in files.
+    A program that filters duplicate or unique lines from files.
 
     :cvar FIELD_PATTERN: Pattern for splitting lines into fields.
     :ivar max_chars: Maximum number of characters to compare.
