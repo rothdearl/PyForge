@@ -46,7 +46,7 @@ class CLIProgram(ABC):
         ...
 
     def check_for_errors(self) -> None:
-        """Raise ``SystemExit`` if the error flag is set."""
+        """Raise ``SystemExit(self.error_exit_code)`` if the error flag is set."""
         if self.has_errors:
             raise SystemExit(self.error_exit_code)
 
