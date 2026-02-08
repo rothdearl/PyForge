@@ -10,6 +10,7 @@ License: GNU GPLv3
 """
 
 import argparse
+import datetime
 import os
 import random
 import re
@@ -28,18 +29,21 @@ class Colors:
     FILE_NAME: Final[str] = ansi.Colors.BRIGHT_MAGENTA
 
 
+class FieldPatterns:
+    """
+    Namespace for field pattern constants.
+
+    :cvar NON_SPACE_WHITESPACE: Pattern for splitting fields on non-space whitespace characters.
+    :cvar WHITESPACE: Pattern for splitting fields on runs of whitespace.
+    :cvar WORDS: Pattern for splitting fields on whitespace and non-word characters.
+    """
+    NON_SPACE_WHITESPACE: Final[str] = r"[\f\r\n\t\v]"
+    WHITESPACE: Final[str] = r"\s+"
+    WORDS: Final[str] = r"\s+|\W+"
+
+
 class Order(CLIProgram):
-    """
-    A program that sorts files and prints them to standard output.
-
-    :cvar NON_SPACE_WHITESPACE_PATTERN: Pattern for splitting lines on all whitespace characters except spaces.
-    :cvar WHITESPACE_PATTERN: Pattern for splitting lines on all whitespace characters.
-    :cvar WORD_PATTERN: Pattern for splitting lines on whitespace and non-word characters.
-    """
-
-    NON_SPACE_WHITESPACE_PATTERN: Final[str] = r"[\f\r\n\t\v]"
-    WHITESPACE_PATTERN: Final[str] = r"\s+"
-    WORD_PATTERN: Final[str] = r"\s+|\W+"
+    """A program that sorts files and prints them to standard output."""
 
     def __init__(self) -> None:
         """Initialize a new ``Order`` instance."""
@@ -61,8 +65,8 @@ class Order(CLIProgram):
         sort_group.add_argument("-n", "--natural-sort", action="store_true",
                                 help="sort alphabetically, treating numbers numerically")
         sort_group.add_argument("-R", "--random-sort", action="store_true", help="sort lines in random order")
-        parser.add_argument("-f", "--skip-fields", default=0, help="skip the first N fields when sorting (N >= 0)",
-                            metavar="N", type=int)
+        parser.add_argument("-f", "--skip-fields", default=0,
+                            help="skip the first N non-empty fields when sorting (N >= 0)", metavar="N", type=int)
         parser.add_argument("-H", "--no-file-name", action="store_true", help="do not prefix output with file names")
         parser.add_argument("-i", "--ignore-case", action="store_true",
                             help="ignore differences in case when comparing")
@@ -86,46 +90,85 @@ class Order(CLIProgram):
         if self.args.skip_fields < 0:  # --skip-fields
             self.print_error_and_exit("--skip-fields must be >= 0")
 
-    def generate_currency_sort_key(self, line: str) -> list[str]:
-        """Return a sort key that orders fields by currency values, handling symbols and accounting-style negatives."""
-        return self.split_line(line, Order.NON_SPACE_WHITESPACE_PATTERN)
+    def generate_currency_sort_key(self, line: str) -> tuple[int, float | str]:
+        """
+        Return a sort key that orders currency-like values numerically when possible.
 
-    def generate_date_sort_key(self, line: str) -> str:
-        """Return a sort key that orders fields by the first parseable date."""
-        fields = self.split_line(line, Order.NON_SPACE_WHITESPACE_PATTERN)
+        :param line: Line to derive key from.
+        :return: ``(0, number)`` when the key parses as a number, otherwise ``(1, text)``.
+        """
+        sort_value = self.make_sort_key(line, default_field_pattern=FieldPatterns.NON_SPACE_WHITESPACE)
+        is_negative = sort_value.startswith("-") or sort_value.startswith("(") and sort_value.endswith(")")
+
+        # Remove non-numeric characters.
+        currency = re.sub(r"[^0-9,.]", "", sort_value)
+
+        # Remove thousands separator.
+        currency = currency.replace(",", "")
 
         try:
-            date_key = str(parse(fields[0])) if fields else line
+            return 0, float(currency) * (-1 if is_negative else 1)  # Convert to float and apply sign.
+        except ValueError:
+            return 1, sort_value
+
+    def generate_date_sort_key(self, line: str) -> tuple[int, datetime.datetime | str]:
+        """
+        Return a sort key that compares date-like values chronologically when possible.
+
+        :param line: Line to derive key from.
+        :return: ``(0, date)`` when the key parses as a date, otherwise ``(1, text)``.
+        """
+        sort_value = self.make_sort_key(line, default_field_pattern=FieldPatterns.NON_SPACE_WHITESPACE)
+
+        try:
+            return 0, parse(sort_value)
         except ParserError:
-            date_key = line
+            return 1, sort_value
 
-        return date_key
+    def generate_default_sort_key(self, line: str) -> str:
+        """Return a sort key that orders text lexicographically using whitespace-delimited fields."""
+        return self.make_sort_key(line, default_field_pattern=FieldPatterns.WHITESPACE)
 
-    def generate_default_sort_key(self, line: str) -> list[str]:
-        """Return a sort key that orders fields lexicographically."""
-        return self.split_line(line, Order.WHITESPACE_PATTERN)
+    def generate_dictionary_sort_key(self, line: str) -> str:
+        """Return a sort key that orders text lexicographically using whitespace and non-word characters."""
+        return self.make_sort_key(line, default_field_pattern=FieldPatterns.WORDS)
 
-    def generate_dictionary_sort_key(self, line: str) -> list[str]:
-        """Return a sort key that orders word-like fields lexicographically."""
-        return self.split_line(line, Order.WORD_PATTERN)
-
-    def generate_natural_sort_key(self, line: str) -> list[tuple[int, str | float]]:
+    def generate_natural_sort_key(self, line: str) -> tuple[int, float | str]:
         """
         Return a sort key that orders text lexicographically and numbers numerically.
 
         :param line: Line to derive key from.
-        :return: A list of tuples containing the kind (0 = text, 1 = number) and comparison value.
+        :return: ``(0, number)`` when the key parses as a number, otherwise ``(1, text)``.
         """
-        natural_key = []
+        sort_value = self.make_sort_key(line, default_field_pattern=FieldPatterns.WHITESPACE)
 
-        for field in self.split_line(line, Order.WHITESPACE_PATTERN):
-            try:
-                number = float(field.replace(",", ""))  # Strip commas before parsing.
-                natural_key.append((1, number))
-            except ValueError:
-                natural_key.append((0, field))
+        try:
+            return 0, float(sort_value.replace(",", ""))  # Strip commas before parsing.
+        except ValueError:
+            return 1, sort_value
 
-        return natural_key
+    def get_sort_fields(self, line: str, *, default_field_pattern: str) -> list[str]:
+        """Return the normalized fields used for sorting after skipping the first ``skip_fields`` non-empty fields."""
+        field_pattern = self.args.field_pattern or default_field_pattern
+        fields = []
+        logical_index = 0
+
+        # Normalize the line before splitting.
+        line = self.normalize_line(line)
+
+        try:
+            for field in re.split(field_pattern, line):
+                if not field:  # Skip empty fields.
+                    continue
+
+                if logical_index >= self.args.skip_fields:  # --skip-fields
+                    fields.append(field)
+
+                logical_index += 1
+        except re.error:  # re.PatternError was introduced in Python 3.13; use re.error for Python < 3.13.
+            self.print_error_and_exit(f"invalid regex pattern: {field_pattern}")
+
+        return fields
 
     @override
     def main(self) -> None:
@@ -153,8 +196,12 @@ class Order(CLIProgram):
         else:
             self.sort_and_print_lines_from_input()
 
+    def make_sort_key(self, line: str, *, default_field_pattern: str) -> str:
+        """Return a normalized sort key after skipping the first ``skip_fields`` non-empty fields."""
+        return " ".join(self.get_sort_fields(line, default_field_pattern=default_field_pattern))
+
     def normalize_line(self, line: str) -> str:
-        """Normalize the line for field splitting according to command-line options."""
+        """Return the line with trailing whitespace removed and optional leading-blank and case normalization applied."""
         line = line.rstrip()  # Remove trailing whitespace.
 
         if self.args.ignore_leading_blanks:  # --ignore-leading-blanks
@@ -166,7 +213,7 @@ class Order(CLIProgram):
         return line
 
     def print_file_header(self, file_name: str) -> None:
-        """Print the file name (or "(standard input)" if empty), followed by a colon, unless ``--no-file-name`` is set."""
+        """Print the file name (or "(standard input)" if empty), followed by a colon, unless ``args.no_file_name`` is set."""
         if not self.args.no_file_name:  # --no-file-name
             file_header = os.path.relpath(file_name) if file_name else "(standard input)"
 
@@ -201,7 +248,7 @@ class Order(CLIProgram):
             print(line)
 
     def sort_and_print_lines_from_files(self, files: Iterable[str]) -> None:
-        """Read lines from each file and print them."""
+        """Read, sort, and print lines from each file."""
         for _, file, text in io.read_text_files(files, self.encoding, on_error=self.print_error):
             try:
                 self.print_file_header(file)
@@ -210,25 +257,8 @@ class Order(CLIProgram):
                 self.print_error(f"{file}: unable to read with {self.encoding}")
 
     def sort_and_print_lines_from_input(self) -> None:
-        """Read lines from standard input until EOF and print them."""
+        """Read, sort, and print lines from standard input until EOF."""
         self.sort_and_print_lines(sys.stdin.readlines())
-
-    def split_line(self, line: str, default_field_pattern: str) -> list[str]:
-        """Split the line into fields using a regular expression pattern."""
-        field_pattern = self.args.field_pattern or default_field_pattern
-        fields = []
-
-        # Normalize the line before splitting.
-        line = self.normalize_line(line)
-
-        try:
-            for index, field in enumerate(re.split(field_pattern, line)):
-                if field and index >= self.args.skip_fields:  # --skip-fields
-                    fields.append(field)
-        except re.error:  # re.PatternError was introduced in Python 3.13; use re.error for Python < 3.13.
-            self.print_error_and_exit(f"invalid regex pattern: {field_pattern}")
-
-        return fields
 
 
 if __name__ == "__main__":
