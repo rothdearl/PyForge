@@ -97,19 +97,19 @@ class Order(CLIProgram):
         :param line: Line to derive key from.
         :return: ``(0, number)`` when the key parses as a number, otherwise ``(1, text)``.
         """
-        sort_value = self.make_sort_key(line, default_field_pattern=FieldPatterns.NON_SPACE_WHITESPACE)
-        is_negative = sort_value.startswith("-") or sort_value.startswith("(") and sort_value.endswith(")")
+        key = self.make_sort_key(line, default_field_pattern=FieldPatterns.NON_SPACE_WHITESPACE)
+        negative = key.startswith("-") or key.startswith("(") and key.endswith(")")
 
         # Remove non-numeric characters.
-        currency = re.sub(r"[^0-9,.]", "", sort_value)
+        currency = re.sub(r"[^0-9,.]", "", key)
 
         # Remove thousands separator.
         currency = currency.replace(",", "")
 
         try:
-            return 0, float(currency) * (-1 if is_negative else 1)  # Convert to float and apply sign.
+            return 0, float(currency) * (-1 if negative else 1)  # Convert to float and apply sign.
         except ValueError:
-            return 1, sort_value
+            return 1, key
 
     def generate_date_sort_key(self, line: str) -> tuple[int, datetime.datetime | str]:
         """
@@ -118,12 +118,12 @@ class Order(CLIProgram):
         :param line: Line to derive key from.
         :return: ``(0, date)`` when the key parses as a date, otherwise ``(1, text)``.
         """
-        sort_value = self.make_sort_key(line, default_field_pattern=FieldPatterns.NON_SPACE_WHITESPACE)
+        key = self.make_sort_key(line, default_field_pattern=FieldPatterns.NON_SPACE_WHITESPACE)
 
         try:
-            return 0, parse(sort_value)
+            return 0, parse(key)
         except ParserError:
-            return 1, sort_value
+            return 1, key
 
     def generate_default_sort_key(self, line: str) -> str:
         """Return a sort key that orders text lexicographically using whitespace-delimited fields."""
@@ -140,12 +140,12 @@ class Order(CLIProgram):
         :param line: Line to derive key from.
         :return: ``(0, number)`` when the key parses as a number, otherwise ``(1, text)``.
         """
-        sort_value = self.make_sort_key(line, default_field_pattern=FieldPatterns.WHITESPACE)
+        key = self.make_sort_key(line, default_field_pattern=FieldPatterns.WHITESPACE)
 
         try:
-            return 0, float(sort_value.replace(",", ""))  # Strip commas before parsing.
+            return 0, float(key.replace(",", ""))  # Strip commas before parsing.
         except ValueError:
-            return 1, sort_value
+            return 1, key
 
     def get_sort_fields(self, line: str, *, default_field_pattern: str) -> list[str]:
         """Return the normalized fields used for sorting after skipping the first ``skip_fields`` non-empty fields."""
