@@ -86,12 +86,7 @@ class Dupe(CLIProgram):
         return parser
 
     def can_group_key(self, key: str) -> bool:
-        """
-        Return whether the key can be grouped.
-
-        :param key: The key to check.
-        :return: ``True`` if the key is non-empty, or if blank keys are allowed.
-        """
+        """Return whether the key is non-empty, or if blank keys are allowed."""
         return not self.args.no_blank or key.strip()  # --no-blank
 
     @override
@@ -133,12 +128,7 @@ class Dupe(CLIProgram):
         return line
 
     def group_adjacent_matching_lines(self, lines: Iterable[str]) -> list[list[str]]:
-        """
-        Group adjacent lines whose comparison keys match.
-
-        :param lines: Lines to group.
-        :return: List of string groups, where the first element is the group and the remaining elements are matches.
-        """
+        """Return a list of groups, where the first element is the group and the remaining elements are matches."""
         group_index = 0
         group_list = []
         previous_line = None
@@ -162,12 +152,7 @@ class Dupe(CLIProgram):
         return group_list
 
     def group_and_print_lines(self, lines: Iterable[str], *, origin_file) -> None:
-        """
-        Group and print lines to standard output according to command-line arguments.
-
-        :param lines: Iterable of lines to group.
-        :param origin_file: File where the lines originated from.
-        """
+        """Group and print lines to standard output according to command-line arguments."""
         file_header_printed = False
 
         # Group matches.
@@ -229,12 +214,7 @@ class Dupe(CLIProgram):
         self.group_and_print_lines(sys.stdin, origin_file="")
 
     def group_lines_by_key(self, lines: Iterable[str]) -> dict[str, list[str]]:
-        """
-        Group all lines globally by their comparison keys.
-
-        :param lines: Lines to group.
-        :return: Mapping of string groups, where the key is the group and the value is a list of matches.
-        """
+        """Return a mapping of string groups, where the key is the group and the value is a list of matches."""
         group_map = {}
 
         for line in io.normalize_input_lines(lines):

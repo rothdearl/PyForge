@@ -86,9 +86,7 @@ class Scan(CLIProgram):
     @override
     def check_parsed_arguments(self) -> None:
         """Validate parsed command-line arguments."""
-        # Exit early if no --find patterns are provided.
-        if not self.args.find:
-            sys.exit(Scan.NO_MATCHES_EXIT_CODE)
+        pass
 
     def is_printing_counts(self) -> bool:
         """Return whether ``--count`` or ``--count-nonzero`` is set."""
@@ -97,10 +95,7 @@ class Scan(CLIProgram):
     @override
     def main(self) -> None:
         """Run the program."""
-        # Pre-compile --find patterns.
-        if self.args.find:
-            self.patterns = patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
-                                                      on_error=self.print_error_and_exit)
+        self.precompile_patterns()
 
         if terminal.stdin_is_redirected():
             if self.args.stdin_files:  # --stdin-files
@@ -117,6 +112,12 @@ class Scan(CLIProgram):
             self.args.no_file_name = True  # No file header if no files.
             self.print_matches_from_input()
 
+    def precompile_patterns(self) -> None:
+        """Pre-compile search patterns."""
+        if self.args.find:
+            self.patterns = patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
+                                                      on_error=self.print_error_and_exit)
+
     def print_matches(self, lines: Iterable[str], *, origin_file: str, reset_line_number=True) -> None:
         """
         Print matches found in lines.
@@ -125,13 +126,17 @@ class Scan(CLIProgram):
         :param origin_file: File where the lines originated from.
         :param reset_line_number: Whether to reset the internal line number (default: ``True``).
         """
+        # Return early if no --find patterns are provided.
+        if not self.args.find:
+            return
+
         matches = []
 
         if reset_line_number:
             self.line_number = 0
 
         # Find matches.
-        for line in lines:
+        for line in io.normalize_input_lines(lines):
             self.line_number += 1
 
             if patterns.matches_all_patterns(line, self.patterns) != self.args.invert_match:  # --invert-match
@@ -175,7 +180,7 @@ class Scan(CLIProgram):
                     else:
                         print(f"{line_number:>{padding}}:", end="")
 
-                io.print_line_with_newline(line)
+                print(line)
 
     def print_matches_from_files(self, files: Iterable[str]) -> None:
         """Read lines from each file and print matches."""

@@ -152,17 +152,12 @@ class Seek(CLIProgram):
         self.precompile_patterns()
 
         if terminal.stdin_is_redirected():
-            for directory in sys.stdin:
-                self.print_files(directory.rstrip())
+            self.print_files(sys.stdin)
 
             if self.args.dirs:  # Process any additional directories.
-                for directory in self.args.dirs:
-                    self.print_files(directory)
+                self.print_files(self.args.dirs)
         else:
-            dirs = self.args.dirs if self.args.dirs else [os.curdir]
-
-            for directory in dirs:
-                self.print_files(directory)
+            self.print_files(self.args.dirs or [os.curdir])
 
     def precompile_patterns(self) -> None:
         """Pre-compile search patterns."""
@@ -216,21 +211,22 @@ class Seek(CLIProgram):
 
         print(path)
 
-    def print_files(self, directory: str) -> None:
+    def print_files(self, directory_root: str) -> None:
         """Print files that match the specified search criteria in a directory hierarchy."""
-        if os.path.exists(directory):
-            directory_hierarchy = pathlib.Path(directory)
+        for directory in directory_root:
+            if os.path.exists(directory):
+                directory_hierarchy = pathlib.Path(directory)
 
-            self.print_file(directory_hierarchy)
+                self.print_file(directory_hierarchy)
 
-            try:
-                for file_name in directory_hierarchy.rglob("*"):
-                    self.print_file(file_name)
-            except PermissionError as error:
-                self.print_error(f"{error.filename}: permission denied")
-        else:
-            visible_name = directory or '""'  # Use a visible placeholder for empty file names in messages.
-            self.print_error(f"{visible_name}: no such file or directory")
+                try:
+                    for file_name in directory_hierarchy.rglob("*"):
+                        self.print_file(file_name)
+                except PermissionError as error:
+                    self.print_error(f"{error.filename}: permission denied")
+            else:
+                visible_name = directory or '""'  # Use a visible placeholder for empty file names in messages.
+                self.print_error(f"{visible_name}: no such file or directory")
 
 
 if __name__ == "__main__":
