@@ -74,7 +74,7 @@ class Slice(CLIProgram):
         # Validate --fields values.
         for field in self.fields_to_print:
             if field < 1:
-                self.print_error_and_exit("--print must contain fields >= 1")
+                self.print_error_and_exit("--fields must contain fields >= 1")
 
         if self.args.unique:  # --unique
             self.fields_to_print = sorted(set(self.fields_to_print))
