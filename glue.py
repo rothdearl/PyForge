@@ -59,8 +59,8 @@ class Glue(CLIProgram):
         parser.add_argument("files", help="read input from FILES", metavar="FILES", nargs="*")
         number_group.add_argument("-b", "--number-nonblank", action="store_true", help="number nonblank lines")
         number_group.add_argument("-n", "--number", action="store_true", help="number lines")
-        blank_group.add_argument("--no-blank", action="store_true", help="suppress blank lines")
         blank_group.add_argument("-s", "--squeeze-blank", action="store_true", help="suppress repeated blank lines")
+        blank_group.add_argument("--no-blank", action="store_true", help="suppress blank lines")
         parser.add_argument("-E", "--show-ends", action="store_true",
                             help=f"display '{Whitespace.EOL}' at end of each line")
         parser.add_argument("-T", "--show-tabs", action="store_true",

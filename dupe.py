@@ -35,8 +35,7 @@ class Dupe(CLIProgram):
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
         """Build and return an argument parser."""
-        parser = argparse.ArgumentParser(allow_abbrev=False,
-                                         description="find and filter duplicate or unique lines in FILES",
+        parser = argparse.ArgumentParser(allow_abbrev=False, description="find and filter duplicate lines in FILES",
                                          epilog="read standard input when no FILES are specified", prog=self.name)
         print_group = parser.add_mutually_exclusive_group()
 

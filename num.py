@@ -55,13 +55,13 @@ class Num(CLIProgram):
         parser.add_argument("files", help="read input from FILES", metavar="FILES", nargs="*")
         parser.add_argument("-b", "--number-nonblank", action="store_true", help="number nonblank lines")
         parser.add_argument("-H", "--no-file-name", action="store_true", help="suppress file name prefixes")
+        blank_group.add_argument("-s", "--squeeze-blank", action="store_true", help="suppress repeated blank lines")
+        blank_group.add_argument("--no-blank", action="store_true", help="suppress blank lines")
         parser.add_argument("-w", "--number-width", default=6, help="pad line numbers to width N (default: 6; N >= 1)",
                             metavar="N", type=int)
         parser.add_argument("--color", choices=("on", "off"), default="on",
                             help="use color for file names, line numbers, and number separators (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES as latin-1 (default: utf-8)")
-        blank_group.add_argument("--no-blank", action="store_true", help="suppress blank lines")
-        blank_group.add_argument("--squeeze-blank", action="store_true", help="suppress repeated blank lines")
         parser.add_argument("--number-format", choices=("ln", "rn", "rz"), default="rn",
                             help="format line numbers (ln=left, rn=right, rz=zero-padded; default: rn)")
         parser.add_argument("--number-separator", default="\t",
