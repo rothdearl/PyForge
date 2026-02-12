@@ -46,6 +46,7 @@ class Seek(CLIProgram):
                                          epilog="use the current directory as the default starting point",
                                          prog=self.name)
         modified_group = parser.add_mutually_exclusive_group()
+        path_group = parser.add_mutually_exclusive_group()
 
         parser.add_argument("directories", help="search starting points", metavar="DIRECTORIES", nargs="*")
         parser.add_argument("-i", "--ignore-case", action="store_true", help="ignore case when matching")
@@ -53,23 +54,24 @@ class Seek(CLIProgram):
                             help="print files whose names match PATTERN (repeat -n to require all patterns)",
                             metavar="PATTERN", nargs=1)
         parser.add_argument("-p", "--path", action="extend",
-                            help="print files whose names match PATTERN (repeat -p to require all patterns)",
+                            help="print files whose paths match PATTERN (repeat -p to require all patterns)",
                             metavar="PATTERN", nargs=1)
         parser.add_argument("-q", "--quiet", "--silent", action="store_true", help="suppress normal output")
         parser.add_argument("-s", "--no-messages", action="store_true", help="suppress file error messages")
         parser.add_argument("-v", "--invert-match", action="store_true", help="print files that do not match")
-        parser.add_argument("--abs", action="store_true", help="print absolute paths")
+        path_group.add_argument("--abs", action="store_true", help="print absolute paths")
+        path_group.add_argument("--dot-prefix", action="store_true",
+                                help="print relative paths with './' (print '.' for current directory)")
         parser.add_argument("--color", choices=("on", "off"), default="on", help="use color for matches (default: on)")
         parser.add_argument("--empty-only", action="store_true", help="print only empty files")
-        parser.add_argument("--include-root", action="store_true", help="include the starting directory (.) in output")
         modified_group.add_argument("--mtime-days",
                                     help="print files modified within N days or more than N days ago (use N or -N)",
                                     metavar="N", type=int)
         modified_group.add_argument("--mtime-hours",
-                                    help="print files modified within N days or more than N hours ago (use N or -N)",
+                                    help="print files modified within N hours or more than N hours ago (use N or -N)",
                                     metavar="N", type=int)
         modified_group.add_argument("--mtime-mins",
-                                    help="print files modified within N days or more than N minutes ago (use N or -N)",
+                                    help="print files modified within N minutes or more than N minutes ago (use N or -N)",
                                     metavar="N", type=int)
         parser.add_argument("--max-depth", default=sys.maxsize,
                             help="descend at most N levels below the starting points (N >= 1)", metavar="N", type=int)
@@ -168,10 +170,10 @@ class Seek(CLIProgram):
 
     def print_file(self, file: pathlib.Path) -> None:
         """Print the file if it matches the specified search criteria."""
-        file_name = file.name or os.curdir  # The root has no name component.
-        file_path = str(file.parent) if len(file.parts) > 1 else ""  # Do not use the root directory in the path.
+        file_name = file.name or os.curdir  # The dot file has no name component.
+        file_path = str(file.parent) if len(file.parts) > 1 else ""  # Do not use the dot file in the path.
 
-        if not file.name and not self.args.include_root:  # Skip the root directory if not --include-root.
+        if not file.name and not self.args.dot_prefix:  # Skip the root directory if not --dot-prefix.
             return
 
         if self.args.max_depth < len(file.parts):  # --max-depth
@@ -194,11 +196,11 @@ class Seek(CLIProgram):
             file_path = patterns.color_pattern_matches(file_path, self.path_patterns, color=Colors.MATCH)
 
         if self.args.abs:  # --abs
-            if file.name:  # Do not join the current working directory with the root directory.
+            if file.name:  # Do not join the current working directory with the dot file.
                 path = os.path.join(pathlib.Path.cwd(), file_path, file_name)
             else:
                 path = os.path.join(pathlib.Path.cwd(), file_path)
-        elif self.args.include_root and file.name:  # Do not join the current directory with the root directory.
+        elif self.args.dot_prefix and file.name:  # Do not join the current directory with the dot file.
             path = os.path.join(os.curdir, file_path, file_name)
         else:
             path = os.path.join(file_path, file_name)
@@ -209,7 +211,7 @@ class Seek(CLIProgram):
         print(path)
 
     def print_files(self, directories: Iterable[str]) -> None:
-        """Print files that match the specified search criteria in directories."""
+        """Print files that match the specified search criteria in a directory hierarchy."""
         for directory in io.normalize_input_lines(directories):
             if os.path.exists(directory):
                 directory_hierarchy = pathlib.Path(directory)
@@ -217,8 +219,8 @@ class Seek(CLIProgram):
                 self.print_file(directory_hierarchy)
 
                 try:
-                    for file_name in directory_hierarchy.rglob("*"):
-                        self.print_file(file_name)
+                    for path in directory_hierarchy.rglob("*"):
+                        self.print_file(path)
                 except PermissionError as error:
                     self.print_error(f"{error.filename}: permission denied")
             else:
