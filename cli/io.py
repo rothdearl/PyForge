@@ -13,11 +13,11 @@ class FileInfo(NamedTuple):
 
     :ivar file_index: Position of the file name in the original input sequence.
     :ivar file_name: Normalized file name.
-    :ivar text: Open text stream for the file, valid only until the next yield.
+    :ivar text_stream: Open text stream for the file, valid only until the next yield.
     """
     file_index: int
     file_name: str
-    text: TextIO
+    text_stream: TextIO
 
 
 def _remove_trailing_newline(string: str) -> str:
@@ -48,8 +48,8 @@ def read_text_files(files: Iterable[str], encoding: str, *, on_error: ErrorRepor
                 on_error(f"{file_name}: is a directory")
                 continue
 
-            with open(file_name, mode="rt", encoding=encoding) as text:
-                yield FileInfo(file_index, file_name, text)
+            with open(file_name, mode="rt", encoding=encoding) as text_stream:
+                yield FileInfo(file_index, file_name, text_stream)
         except FileNotFoundError:
             visible_name = file_name or '""'  # Use a visible placeholder for empty file names in messages.
             on_error(f"{visible_name}: no such file or directory")

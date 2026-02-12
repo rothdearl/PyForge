@@ -131,7 +131,7 @@ class Dupe(CLIProgram):
 
         return group_list
 
-    def group_and_print_lines(self, lines: Iterable[str], *, origin_file) -> None:
+    def group_and_print_lines(self, lines: Iterable[str], *, origin_file: str) -> None:
         """Group and print lines to standard output according to command-line arguments."""
         file_header_printed = False
 
