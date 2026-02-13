@@ -185,7 +185,7 @@ class When:
                 print(now.strftime(date_format))
             except ValueError:  # Raised for invalid format directives on Windows; unreachable on POSIX.
                 print(f"{When.NAME}: error: invalid datetime format", file=sys.stderr)
-                sys.exit(1)
+                raise SystemExit(1)
 
 
 if __name__ == "__main__":
