@@ -62,7 +62,7 @@ def highlight_day_within_bounds(line: str, day: str, bounds: CalendarQuarterColu
 def print_month(text_calendar: calendar.TextCalendar) -> None:
     """Print the current month."""
     date = datetime.date.today()
-    month = text_calendar.formatmonth(date.year, date.month, w=0, l=0).splitlines()  # Use defaults for consistency.
+    month = text_calendar.formatmonth(date.year, date.month, w=0, l=0).splitlines()
 
     # Print year header and the days of the week.
     print(month[0])
