@@ -54,7 +54,7 @@ class Num(CLIProgram):
         parser.add_argument("-w", "--number-width", default=6, help="pad line numbers to width N (default: 6; N >= 1)",
                             metavar="N", type=int)
         parser.add_argument("--color", choices=("on", "off"), default="on",
-                            help="use color for file names, line numbers, and number separators (default: on)")
+                            help="use color for file names and line numbers (default: on)")
         parser.add_argument("--latin1", action="store_true", help="read FILES as latin-1 (default: utf-8)")
         parser.add_argument("--number-format", choices=("ln", "rn", "rz"), default="rn",
                             help="format line numbers (ln=left, rn=right, rz=zero-padded; default: rn)")
@@ -78,6 +78,12 @@ class Num(CLIProgram):
 
         if self.args.number_width < 1:  # --number-width
             self.print_error_and_exit("--number-width must be >= 1")
+
+        # Decode escape sequences in --number-separator.
+        try:
+            self.args.number_separator = self.args.number_separator.encode().decode("unicode_escape")
+        except UnicodeDecodeError:
+            self.print_error_and_exit("--number-separator contains an invalid escape sequence")
 
         # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
@@ -154,7 +160,7 @@ class Num(CLIProgram):
     def render_line_number(self, line: str, line_number: int) -> str:
         """Prefix a formatted line number to the line."""
         if self.print_color:
-            return f"{Colors.LINE_NUMBER}{line_number:{self.format_prefix}{self.args.number_width}}{self.args.number_separator}{ansi.RESET}{line}"
+            return f"{Colors.LINE_NUMBER}{line_number:{self.format_prefix}{self.args.number_width}}{ansi.RESET}{self.args.number_separator}{line}"
 
         return f"{line_number:{self.format_prefix}{self.args.number_width}}{self.args.number_separator}{line}"
 

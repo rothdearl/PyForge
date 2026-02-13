@@ -88,14 +88,14 @@ class Peek(CLIProgram):
         # If --lines is positive or zero: print the first N lines.
         if self.args.lines >= 0:
             for index, line in enumerate(io.normalize_input_lines(lines)):
-                if index == self.args.lines:
+                if index >= self.args.lines:
                     break
 
                 print(line)
 
             return
 
-        # --lines is negative: print all but last |N| lines
+        # --lines is negative: print all but the last |N| lines.
         buffer = deque(maxlen=-self.args.lines)
 
         for line in io.normalize_input_lines(lines):
@@ -114,7 +114,8 @@ class Peek(CLIProgram):
                 self.print_error(f"{file_info.file_name}: unable to read with {self.encoding}")
 
     def print_lines_from_input(self) -> None:
-        """Read and print lines from standard input until EOF or the configured line limit is reached."""
+        """Read and print lines from standard input (negative ``args.lines`` is treated as ``|N|``)."""
+        self.args.lines = abs(self.args.lines)  # Normalize --lines before reading from standard input.
         self.print_lines(sys.stdin)
 
 

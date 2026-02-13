@@ -144,7 +144,7 @@ class Track(CLIProgram):
         if max_lines < 0:
             skip_to_line = abs(max_lines)
 
-        for index, line in enumerate(lines, start=1):
+        for index, line in enumerate(io.normalize_input_lines(lines), start=1):
             if index > skip_to_line:
                 print(line)
 
