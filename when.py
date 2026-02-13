@@ -38,11 +38,11 @@ def build_arguments() -> argparse.ArgumentParser:
 
 def get_quarter_column_bounds_for_month(month: int) -> CalendarQuarterColumnBounds:
     """Return character column bounds for a month within a quarter row of ``calendar.calendar(..., m=3)`` output."""
-    bounds_by_index = {
-        0: CalendarQuarterColumnBounds(0, 20),
-        1: CalendarQuarterColumnBounds(26, 46),
-        2: CalendarQuarterColumnBounds(52, 72)
-    }
+    bounds_by_index = (
+        CalendarQuarterColumnBounds(0, 20),
+        CalendarQuarterColumnBounds(26, 46),
+        CalendarQuarterColumnBounds(52, 72)
+    )
 
     return bounds_by_index[(month - 1) % 3]
 
@@ -59,10 +59,10 @@ def highlight_day_within_bounds(line: str, day: str, bounds: CalendarQuarterColu
     return line[:bounds.start] + colored_text + line[bounds.end:]
 
 
-def print_month() -> None:
+def print_month(text_calendar: calendar.TextCalendar) -> None:
     """Print the current month."""
     date = datetime.date.today()
-    month = calendar.month(date.year, date.month, w=0, l=0).splitlines()
+    month = text_calendar.formatmonth(date.year, date.month, w=0, l=0).splitlines()  # Use defaults for consistency.
 
     # Print year header and the days of the week.
     print(month[0])
@@ -80,12 +80,12 @@ def print_month() -> None:
         print(output)
 
 
-def print_quarter() -> None:
+def print_quarter(text_calendar: calendar.TextCalendar) -> None:
     """Print all months in the current quarter."""
     date = datetime.date.today()
     month_name = calendar.month_name[date.month]
     quarter_bounds = get_quarter_column_bounds_for_month(date.month)
-    year = calendar.calendar(date.year, w=2, l=1, c=6, m=3).splitlines()  # Deliberately use defaults for consistency.
+    year = text_calendar.formatyear(date.year, w=2, l=1, c=6, m=3).splitlines()  # Use defaults for consistency.
 
     # Print year header.
     print(year[0])
@@ -122,12 +122,12 @@ def print_quarter() -> None:
         print(output)
 
 
-def print_year() -> None:
+def print_year(text_calendar: calendar.TextCalendar) -> None:
     """Print all months in the current year."""
     date = datetime.date.today()
     month_name = calendar.month_name[date.month]
     quarter_bounds = get_quarter_column_bounds_for_month(date.month)
-    year = calendar.calendar(date.year, w=2, l=1, c=6, m=3).splitlines()  # Deliberately use defaults for consistency.
+    year = text_calendar.formatyear(date.year, w=2, l=1, c=6, m=3).splitlines()  # Use defaults for consistency.
 
     # Print months highlighting the current month and day.
     day = f"{date.day:>2}"
@@ -157,7 +157,7 @@ class When:
 
     DEFAULT_DATETIME_FORMAT: Final[str] = "%a %b %-d %-I:%M%p" if OS_IS_POSIX else "%a %b %d %I:%M%p"
     NAME: Final[str] = "when"
-    VERSION: Final[str] = "1.0.6"
+    VERSION: Final[str] = "1.0.7"
 
     def __init__(self) -> None:
         """Initialize a new ``When`` instance."""
@@ -165,16 +165,15 @@ class When:
 
     def main(self) -> None:
         """Run the program."""
-        if self.args.week_start == "sun":  # --week-start
-            calendar.setfirstweekday(calendar.SUNDAY)
+        text_calendar = calendar.TextCalendar(calendar.SUNDAY if self.args.week_start == "sun" else calendar.MONDAY)
 
         match self.args.calendar:  # --calendar
             case "m":
-                print_month()
+                print_month(text_calendar)
             case "q":
-                print_quarter()
+                print_quarter(text_calendar)
             case _:
-                print_year()
+                print_year(text_calendar)
 
         if self.args.datetime:  # --datetime
             date_format = self.args.datetime_format or When.DEFAULT_DATETIME_FORMAT  # --datetime-format

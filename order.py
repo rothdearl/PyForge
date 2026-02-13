@@ -119,11 +119,8 @@ class Order(CLIProgram):
 
             try:
                 segments.append((0, float(number) * (-1 if negative else 1)))  # Convert to float and apply sign.
-                continue
             except ValueError:
-                pass
-
-            segments.append((1, field))
+                segments.append((1, field))
 
         return segments
 
@@ -139,11 +136,8 @@ class Order(CLIProgram):
         for field in self.get_sort_fields(line):
             try:
                 segments.append((0, parse(field)))
-                continue
             except ParserError:
-                pass
-
-            segments.append((1, field))
+                segments.append((1, field))
 
         return segments
 
@@ -173,19 +167,16 @@ class Order(CLIProgram):
         for field in self.get_sort_fields(line):
             try:
                 segments.append((0, float(self.normalize_number(field))))
-                continue
             except ValueError:
-                pass
+                # Split field into chunks and check for digits.
+                for chunk in re.split(pattern=Order.DIGIT_TOKEN_REGEX, string=field):
+                    if not chunk:  # Skip empty chunks.
+                        continue
 
-            # Split field into chunks and check for digits.
-            for chunk in re.split(pattern=Order.DIGIT_TOKEN_REGEX, string=field):
-                if not chunk:  # Skip empty chunks.
-                    continue
-
-                if chunk.isdigit():
-                    segments.append((0, int(chunk)))
-                else:
-                    segments.append((1, chunk))
+                    if chunk.isdigit():
+                        segments.append((0, int(chunk)))
+                    else:
+                        segments.append((1, chunk))
 
         return segments
 
