@@ -24,7 +24,7 @@ class Peek(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Peek`` instance."""
-        super().__init__(name="peek", version="1.3.15")
+        super().__init__(name="peek", version="1.3.16")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:

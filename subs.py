@@ -28,7 +28,7 @@ class Subs(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Subs`` instance."""
-        super().__init__(name="subs", version="1.3.15")
+        super().__init__(name="subs", version="1.3.16")
 
         self.pattern: re.Pattern[str] | None = None
 

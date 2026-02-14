@@ -35,7 +35,7 @@ class Num(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Num`` instance."""
-        super().__init__(name="num", version="1.3.15")
+        super().__init__(name="num", version="1.3.16")
 
         self.format_prefix: str = ""
 

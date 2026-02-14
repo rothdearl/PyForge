@@ -41,7 +41,7 @@ class Tally(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Tally`` instance."""
-        super().__init__(name="tally", version="1.3.15")
+        super().__init__(name="tally", version="1.3.16")
 
         self.files_counted: int = 0
         self.flags: list[bool] = [False, False, False, False]  # [lines, words, characters, max_line_length]

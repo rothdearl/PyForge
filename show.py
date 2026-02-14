@@ -35,7 +35,7 @@ class Show(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Show`` instance."""
-        super().__init__(name="show", version="1.3.15")
+        super().__init__(name="show", version="1.3.16")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:

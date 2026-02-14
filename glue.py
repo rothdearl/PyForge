@@ -33,7 +33,7 @@ class Glue(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Glue`` instance."""
-        super().__init__(name="glue", version="1.3.15")
+        super().__init__(name="glue", version="1.3.16")
 
         self.line_number: int = 0
 

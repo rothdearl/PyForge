@@ -33,7 +33,7 @@ class Seek(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Seek`` instance."""
-        super().__init__(name="seek", version="1.3.15", error_exit_code=2)
+        super().__init__(name="seek", version="1.3.16", error_exit_code=2)
 
         self.found_any_match: bool = False
         self.name_patterns: CompiledPatterns = []
