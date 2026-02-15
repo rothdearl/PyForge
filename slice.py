@@ -41,13 +41,15 @@ class Slice(CLIProgram):
         parser.add_argument("-f", "--fields", action="extend",
                             help="print only the specified fields (numbered from 1; order preserved; duplicates allowed)",
                             metavar="N", nargs="+", type=int)
+        parser.add_argument("-u", "--unique", action="store_true",
+                            help="normalize field selection to unique field numbers in ascending order (use with --fields)")
         parser.add_argument("-m", "--mode", choices=("csv", "regex", "shell"), default="csv",
                             help="set field parsing mode (default: csv)")
+        parser.add_argument("--field-separator", help="split fields using SEP (default: <space>; use with --mode csv)",
+                            metavar="SEP")
         parser.add_argument("--field-pattern",
                             help="split fields using PATTERN (default: <whitespace>; use with --mode regex)",
                             metavar="PATTERN")
-        parser.add_argument("--field-separator", help="split fields using SEP (default: <space>; use with --mode csv)",
-                            metavar="SEP")
         parser.add_argument("--literal-quotes", action="store_true",
                             help="treat quotes as ordinary characters (use with --mode shell)")
         parser.add_argument("--keep-empty", action="store_true", help="keep empty fields (default: drop)")
@@ -55,8 +57,6 @@ class Slice(CLIProgram):
                             help="print empty lines when no fields are produced (default: drop)")
         parser.add_argument("-s", "--separator", default="\t", help="separate output fields with SEP (default: <tab>)",
                             metavar="SEP")
-        parser.add_argument("-u", "--unique", action="store_true",
-                            help="normalize field selection to unique field numbers in ascending order (use with --fields)")
         parser.add_argument("--quotes", choices=("d", "s"), help="wrap fields in double (d) or single (s) quotes")
         parser.add_argument("-H", "--no-file-name", action="store_true", help="suppress file name prefixes")
         parser.add_argument("--color", choices=("on", "off"), default="on",
