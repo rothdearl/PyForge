@@ -64,8 +64,8 @@ class Tally(CLIProgram):
                                          epilog="read standard input when no FILES are specified", prog=self.name)
 
         parser.add_argument("files", help="read input from FILES", metavar="FILES", nargs="*")
-        parser.add_argument("-c", "--chars", action="store_true", help="print character counts")
         parser.add_argument("-l", "--lines", action="store_true", help="print line counts")
+        parser.add_argument("-c", "--chars", action="store_true", help="print character counts")
         parser.add_argument("-w", "--words", action="store_true", help="print word counts")
         parser.add_argument("-L", "--max-line-length", action="store_true", help="print maximum line length")
         parser.add_argument("--total", choices=("auto", "on", "off"), default="auto",
