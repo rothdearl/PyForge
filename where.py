@@ -75,7 +75,7 @@ class Where:
         self.args: argparse.Namespace = build_arguments().parse_args()
 
         # Option dependencies:
-        # --cardinal requires --coordinates.
+        # --cardinal is only meaningful with --coordinates.
         if self.args.cardinal and not self.args.coordinates:
             print_error_and_exit("--cardinal is only used with --coordinates")
 

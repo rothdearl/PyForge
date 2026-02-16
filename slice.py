@@ -94,7 +94,7 @@ class Slice(CLIProgram):
         # Option dependencies:
         self.check_mode_options()
 
-        # --unique requires --fields.
+        # --unique is only meaningful with --fields.
         if self.args.unique and self.args.fields is None:
             self.print_error_and_exit("--unique is only used with --fields")
 

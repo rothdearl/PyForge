@@ -169,7 +169,7 @@ class When:
         self.args: argparse.Namespace = build_arguments().parse_args()
 
         # Option dependencies:
-        # --datetime-format requires --datetime.
+        # --datetime-format is only meaningful with --datetime.
         if self.args.datetime_format is not None and not self.args.datetime:
             print_error_and_exit("--datetime-format is only used with --datetime")
 

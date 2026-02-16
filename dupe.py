@@ -75,7 +75,7 @@ class Dupe(CLIProgram):
     def check_parsed_arguments(self) -> None:
         """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
         # Option dependencies:
-        # --field-separator requires --skip-fields.
+        # --field-separator is only meaningful with --skip-fields.
         if self.args.field_separator and self.args.skip_fields is None:
             self.print_error_and_exit("--field-separator is only used with --skip-fields")
 
