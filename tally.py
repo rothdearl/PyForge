@@ -41,7 +41,7 @@ class Tally(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Tally`` instance."""
-        super().__init__(name="tally", version="1.3.17")
+        super().__init__(name="tally", version="1.3.18")
 
         self.files_counted: int = 0
         self.flags: list[bool] = [False, False, False, False]  # [lines, words, characters, max_line_length]
@@ -101,13 +101,15 @@ class Tally(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """Validate and normalize parsed command-line arguments."""
-        if self.args.count_width < 1:  # --count-width
+        """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
+        # Ranges:
+        if self.args.count_width < 1:
             self.print_error_and_exit("--count-width must be >= 1")
 
-        if self.args.tab_width < 1:  # --tab-width
+        if self.args.tab_width < 1:
             self.print_error_and_exit("--tab-width must be >= 1")
 
+        # Derive internal state:
         # Check which count flags were provided: --lines, --words, --chars, or --max-line-length
         for index, flag in enumerate((self.args.lines, self.args.words, self.args.chars, self.args.max_line_length)):
             if flag:

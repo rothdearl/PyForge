@@ -27,7 +27,7 @@ class Slice(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Slice`` instance."""
-        super().__init__(name="slice", version="1.3.17")
+        super().__init__(name="slice", version="1.3.18")
 
         self.selected_fields: list[int] = []
 
@@ -90,17 +90,23 @@ class Slice(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """Validate and normalize parsed command-line arguments."""
+        """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
+        # Option dependencies:
         self.check_mode_options()
 
-        # Validate --fields values and optionally normalize.
+        # --unique requires --fields.
+        if self.args.unique and self.args.fields is None:
+            self.print_error_and_exit("--unique is only used with --fields")
+
+        # Ranges:
         self.selected_fields = self.args.fields or []  # --fields
 
         for field in self.selected_fields:
             if field < 1:
                 self.print_error_and_exit("--fields must contain numbers >= 1")
 
-        if self.args.unique:  # --unique
+        # Defaults:
+        if self.args.unique:
             self.selected_fields = sorted(set(self.selected_fields))
 
         # Convert one-based input to zero-based.

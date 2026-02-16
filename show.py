@@ -35,7 +35,7 @@ class Show(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Show`` instance."""
-        super().__init__(name="show", version="1.3.17")
+        super().__init__(name="show", version="1.3.18")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -66,13 +66,15 @@ class Show(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """Validate and normalize parsed command-line arguments."""
-        if self.args.max_lines < 1:  # --max-lines
+        """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
+        # Ranges:
+        if self.args.max_lines < 1:
             self.print_error_and_exit("--max-lines must be >= 1")
 
-        if self.args.start == 0:  # --start
+        if self.args.start == 0:
             self.print_error_and_exit("--start cannot be 0")
 
+        # Defaults:
         # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_name = True

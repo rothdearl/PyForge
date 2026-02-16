@@ -58,6 +58,12 @@ def highlight_day_within_bounds(line: str, day: str, bounds: CalendarQuarterColu
     return line[:bounds.start] + colored_text + line[bounds.end:]
 
 
+def print_error_and_exit(error_message: str) -> None:
+    """Print the error message to standard error and raise ``SystemExit``."""
+    print(f"{When.NAME}: error: {error_message}", file=sys.stderr)
+    raise SystemExit(1)
+
+
 def print_month(text_calendar: calendar.TextCalendar) -> None:
     """Print the current month."""
     date = datetime.date.today()
@@ -156,11 +162,16 @@ class When:
 
     DEFAULT_DATETIME_FORMAT: Final[str] = "%a %b %-d %-I:%M%p" if OS_IS_POSIX else "%a %b %d %I:%M%p"
     NAME: Final[str] = "when"
-    VERSION: Final[str] = "1.0.8"
+    VERSION: Final[str] = "1.0.9"
 
     def __init__(self) -> None:
         """Initialize a new ``When`` instance."""
         self.args: argparse.Namespace = build_arguments().parse_args()
+
+        # Option dependencies:
+        # --datetime-format requires --datetime.
+        if self.args.datetime_format is not None and not self.args.datetime:
+            print_error_and_exit("--datetime-format is only used with --datetime")
 
     def main(self) -> None:
         """Run the program."""
@@ -182,7 +193,7 @@ class When:
                 print()
                 print(now.strftime(date_format))
             except ValueError:  # Raised for invalid format directives on Windows; unreachable on POSIX.
-                print(f"{When.NAME}: error: invalid datetime format", file=sys.stderr)
+                print_error_and_exit("invalid datetime format")
                 raise SystemExit(1)
 
 

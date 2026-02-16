@@ -25,7 +25,7 @@ class Track(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Track`` instance."""
-        super().__init__(name="track", version="1.3.17")
+        super().__init__(name="track", version="1.3.18")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -51,7 +51,8 @@ class Track(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """Validate and normalize parsed command-line arguments."""
+        """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
+        # Defaults:
         # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_name = True

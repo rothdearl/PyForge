@@ -35,7 +35,7 @@ class Num(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Num`` instance."""
-        super().__init__(name="num", version="1.3.17")
+        super().__init__(name="num", version="1.3.18")
 
         self.format_prefix: str = ""
 
@@ -70,13 +70,14 @@ class Num(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """Validate and normalize parsed command-line arguments."""
+        """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
         self.format_prefix = Num.FORMAT_PREFIXES[self.args.number_format]  # --number-format
 
-        if self.args.number_start < 0:  # --number-start
+        # Ranges:
+        if self.args.number_start < 0:
             self.print_error_and_exit("--number-start must be >= 0")
 
-        if self.args.number_width < 1:  # --number-width
+        if self.args.number_width < 1:
             self.print_error_and_exit("--number-width must be >= 1")
 
         # Decode escape sequences in --number-separator.
@@ -85,6 +86,7 @@ class Num(CLIProgram):
         except UnicodeDecodeError:
             self.print_error_and_exit("--number-separator contains an invalid escape sequence")
 
+        # Defaults:
         # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_name = True

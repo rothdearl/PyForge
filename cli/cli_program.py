@@ -50,7 +50,7 @@ class CLIProgram(ABC):
 
     @abstractmethod
     def check_parsed_arguments(self) -> None:
-        """Validate and normalize parsed command-line arguments."""
+        """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
         ...
 
     @abstractmethod

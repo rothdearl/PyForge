@@ -24,7 +24,7 @@ class Dupe(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Dupe`` instance."""
-        super().__init__(name="dupe", version="1.3.17")
+        super().__init__(name="dupe", version="1.3.18")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -50,7 +50,7 @@ class Dupe(CLIProgram):
         parser.add_argument("--ignore-blank", action="store_true", help="ignore blank lines")
         parser.add_argument("-f", "--skip-fields", help="skip the first N non-empty fields when comparing (N >= 1)",
                             metavar="N", type=int)
-        parser.add_argument("--field-separator", default=" ",
+        parser.add_argument("--field-separator",
                             help="split lines into fields using SEP (default: <space>; use with --skip-fields)",
                             metavar="SEP")
         parser.add_argument("-s", "--skip-chars", help="skip the first N characters when comparing (N >= 0)",
@@ -73,19 +73,26 @@ class Dupe(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """Validate and normalize parsed command-line arguments."""
-        if self.args.count_width < 1:  # --count-width
+        """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
+        # Option dependencies:
+        # --field-separator requires --skip-fields.
+        if self.args.field_separator and self.args.skip_fields is None:
+            self.print_error_and_exit("--field-separator is only used with --skip-fields")
+
+        # Ranges:
+        if self.args.count_width < 1:
             self.print_error_and_exit("--count-width must be >= 1")
 
-        if self.args.max_chars is not None and self.args.max_chars < 1:  # --max-chars
+        if self.args.max_chars is not None and self.args.max_chars < 1:
             self.print_error_and_exit("--max-chars must be >= 1")
 
-        if self.args.skip_chars is not None and self.args.skip_chars < 0:  # --skip-chars
+        if self.args.skip_chars is not None and self.args.skip_chars < 0:
             self.print_error_and_exit("--skip-chars must be >= 0")
 
-        if self.args.skip_fields is not None and self.args.skip_fields < 1:  # --skip-fields
+        if self.args.skip_fields is not None and self.args.skip_fields < 1:
             self.print_error_and_exit("--skip-fields must be >= 1")
 
+        # Defaults:
         # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_name = True
@@ -98,7 +105,7 @@ class Dupe(CLIProgram):
             compare_key = compare_key.strip()
 
         if self.args.skip_fields:  # --skip-fields
-            separator = self.args.field_separator  # --field-separator
+            separator = self.args.field_separator or " "  # --field-separator
 
             compare_key = text.split_csv(compare_key, separator=separator, on_error=self.print_error_and_exit)
             compare_key = separator.join(compare_key[self.args.skip_fields:])

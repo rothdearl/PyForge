@@ -33,7 +33,7 @@ class Seek(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Seek`` instance."""
-        super().__init__(name="seek", version="1.3.17", error_exit_code=2)
+        super().__init__(name="seek", version="1.3.18", error_exit_code=2)
 
         self.found_any_match: bool = False
         self.name_patterns: CompiledPatterns = []
@@ -90,8 +90,9 @@ class Seek(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """Validate and normalize parsed command-line arguments."""
-        if self.args.max_depth < 1:  # --max-depth
+        """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
+        # Ranges:
+        if self.args.max_depth < 1:
             self.print_error_and_exit("--max-depth must be >= 1")
 
     def compile_patterns(self) -> None:

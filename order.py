@@ -38,7 +38,7 @@ class Order(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Order`` instance."""
-        super().__init__(name="order", version="1.3.17")
+        super().__init__(name="order", version="1.3.18")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -60,7 +60,7 @@ class Order(CLIProgram):
                             help="interpret numbers using period or comma as the decimal separator (default: period)")
         parser.add_argument("-f", "--skip-fields", help="skip the first N non-empty fields when comparing (N >= 1)",
                             metavar="N", type=int)
-        parser.add_argument("--field-separator", default=" ",
+        parser.add_argument("--field-separator",
                             help="split lines into fields using SEP (default: <space>; use with --skip-fields)",
                             metavar="SEP")
         parser.add_argument("-r", "--reverse", action="store_true", help="reverse the order of the sort")
@@ -77,10 +77,17 @@ class Order(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """Validate and normalize parsed command-line arguments."""
-        if self.args.skip_fields is not None and self.args.skip_fields < 1:  # --skip-fields
+        """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
+        # Option dependencies:
+        # --field-separator requires --skip-fields.
+        if self.args.field_separator and self.args.skip_fields is None:
+            self.print_error_and_exit("--field-separator is only used with --skip-fields")
+
+        # Ranges:
+        if self.args.skip_fields is not None and self.args.skip_fields < 1:
             self.print_error_and_exit("--skip-fields must be >= 1")
 
+        # Defaults:
         # Set --ignore-case to True if --dictionary-order=True or --natural-sort=True.
         if self.args.dictionary_order or self.args.natural_sort:
             self.args.ignore_case = True
@@ -170,7 +177,7 @@ class Order(CLIProgram):
     def get_sort_fields(self, line: str, filter_empty_fields: bool = False) -> list[str]:
         """Return normalized sort fields after optional empty-field filtering and applying ``--skip-fields``."""
         normalized = self.normalize_line(line)
-        separator = self.args.field_separator  # --field-separator
+        separator = self.args.field_separator or " "  # --field-separator
         skip = self.args.skip_fields  # --skip-fields
 
         # Split line into fields, optionally filter empty fields, and apply --skip-fields.

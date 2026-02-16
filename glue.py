@@ -33,7 +33,7 @@ class Glue(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Glue`` instance."""
-        super().__init__(name="glue", version="1.3.17")
+        super().__init__(name="glue", version="1.3.18")
 
         self.line_number: int = 0
 
@@ -67,8 +67,9 @@ class Glue(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """Validate and normalize parsed command-line arguments."""
-        if self.args.number_width < 1:  # --number-width
+        """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
+        # Ranges:
+        if self.args.number_width < 1:
             self.print_error_and_exit("--number-width must be >= 1")
 
     @override

@@ -28,7 +28,7 @@ class Subs(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Subs`` instance."""
-        super().__init__(name="subs", version="1.3.17")
+        super().__init__(name="subs", version="1.3.18")
 
         self.pattern: re.Pattern[str] | None = None
 
@@ -60,10 +60,12 @@ class Subs(CLIProgram):
 
     @override
     def check_parsed_arguments(self) -> None:
-        """Validate and normalize parsed command-line arguments."""
-        if self.args.max_replacements < 1:  # --max-replacements
+        """Enforce option dependencies, validate ranges, normalize defaults, and derive internal state."""
+        # Ranges:
+        if self.args.max_replacements < 1:
             self.print_error_and_exit("--max-replacements must be >= 1")
 
+        # Defaults:
         # Set --no-file-name to True if there are no files and --stdin-files=False.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_name = True
