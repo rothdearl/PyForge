@@ -6,8 +6,8 @@
 import argparse
 import os
 import sys
-from collections.abc import Iterable
-from typing import Final, override
+from collections.abc import Iterable, Sequence
+from typing import Final, NamedTuple, override
 
 from cli import CompiledPatterns, TextProgram, ansi, io, patterns, terminal
 
@@ -18,6 +18,12 @@ class Colors:
     FILE_NAME: Final[str] = ansi.Colors.BRIGHT_MAGENTA
     LINE_NUMBER: Final[str] = ansi.Colors.BRIGHT_GREEN
     MATCH: Final[str] = ansi.Colors.BRIGHT_RED
+
+
+class Match(NamedTuple):
+    """Immutable container representing a single pattern match."""
+    line_number: int
+    line: str
 
 
 class Scan(TextProgram):
@@ -76,6 +82,25 @@ class Scan(TextProgram):
         if not self.found_any_match:
             raise SystemExit(Scan.NO_MATCHES_EXIT_CODE)
 
+    def collect_matches(self, lines: Iterable[str]) -> list[Match]:
+        """Collect matches of (line_number, line) for lines matching the configured patterns."""
+        matches = []
+
+        for line_number, line in enumerate(io.normalize_input_lines(lines), start=1):
+            if patterns.matches_all_patterns(line, self.patterns) != self.args.invert_match:
+                self.found_any_match = True
+
+                # Exit early if --quiet.
+                if self.args.quiet:
+                    raise SystemExit(0)
+
+                if self.print_color and not self.args.invert_match:
+                    line = patterns.color_pattern_matches(line, self.patterns, color=Colors.MATCH)
+
+                matches.append(Match(line_number, line))
+
+        return matches
+
     def compile_patterns(self) -> None:
         """Compile search patterns."""
         if self.args.find:
@@ -117,33 +142,8 @@ class Scan(TextProgram):
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_name = True
 
-    def print_matches(self, lines: Iterable[str], *, origin_file: str) -> None:
-        """Search lines and print matches or counts according to command-line options."""
-        # Return early if no --find patterns are provided.
-        if not self.args.find:
-            return
-
-        matches = []
-
-        # Find matches.
-        for line_number, line in enumerate(io.normalize_input_lines(lines), start=1):
-            if patterns.matches_all_patterns(line, self.patterns) != self.args.invert_match:
-                self.found_any_match = True
-
-                # Exit early if --quiet.
-                if self.args.quiet:
-                    raise SystemExit(0)
-
-                if self.print_color and not self.args.invert_match:
-                    line = patterns.color_pattern_matches(line, self.patterns, color=Colors.MATCH)
-
-                matches.append((line_number, line))
-
-        # Return early if not printing counts for files without matches.
-        if self.args.count_nonzero and not matches:
-            return
-
-        # Determine file name and print either the counts or matches.
+    def print_match_results(self, matches: Sequence[Match], *, origin_file: str) -> None:
+        """Print match counts or matched lines according to command-line options."""
         file_name = ""
 
         if not self.args.no_file_name:
@@ -170,6 +170,20 @@ class Scan(TextProgram):
                         print(f"{line_number:>{padding}}:", end="")
 
                 print(line)
+
+    def print_matches(self, lines: Iterable[str], *, origin_file: str) -> None:
+        """Search lines and print matches or counts according to command-line options."""
+        # Return early if no --find patterns are provided.
+        if not self.args.find:
+            return
+
+        matches = self.collect_matches(lines)
+
+        # With --count-nonzero, suppress output for inputs with zero matches.
+        if self.args.count_nonzero and not matches:
+            return
+
+        self.print_match_results(matches, origin_file=origin_file)
 
     def print_matches_from_input(self) -> None:
         """Read and print matches from standard input until EOF."""
