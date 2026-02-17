@@ -48,7 +48,8 @@ class Scan(TextProgram):
     def build_arguments(self) -> argparse.ArgumentParser:
         """Build and return an argument parser."""
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print lines matching patterns in FILES",
-                                         epilog="read standard input when no FILES are specified", prog=self.name)
+                                         epilog="read standard input when no FILES are specified; use -e '' to match every line",
+                                         prog=self.name)
         count_group = parser.add_mutually_exclusive_group()
 
         parser.add_argument("files", help="read input from FILES", metavar="FILES", nargs="*")
