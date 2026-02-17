@@ -2,6 +2,7 @@
 
 from .ansi_test import ANSITest
 from .ini_test import INITest
+from .io_test import IOTest
 
 from .patterns_test import (
     TestColorPatternMatches,

@@ -70,6 +70,8 @@ def write_text_to_file(file_name: str, text: Iterable[str], encoding: str, *, on
         with open(file_name, mode="wt", encoding=encoding) as f:
             for line in text:
                 f.write(remove_trailing_newline(line) + "\n")
+    except LookupError:
+        on_error(f"{file_name}: unknown encoding {encoding}")
     except PermissionError:
         on_error(f"{file_name}: permission denied")
     except UnicodeEncodeError:

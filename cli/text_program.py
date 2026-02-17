@@ -44,12 +44,14 @@ class TextProgram(CLIProgram, ABC):
         """Process each file path, delegating stream handling to ``handle_text_stream``, and return the names of files processed successfully."""
         processed_files = []
 
-        for text_source in read_text_files(files, self.encoding, on_error=self.print_error):
+        for file_info in read_text_files(files, self.encoding, on_error=self.print_error):
             try:
-                self.handle_text_stream(text_source)
-                processed_files.append(text_source.file_name)
+                self.handle_text_stream(file_info)
+                processed_files.append(file_info.file_name)
+            except LookupError:
+                self.print_error(f"{file_info.file_name}: unknown encoding {self.encoding}")
             except UnicodeDecodeError:
-                self.print_error(f"{text_source.file_name}: unable to read with {self.encoding}")
+                self.print_error(f"{file_info.file_name}: unable to read with {self.encoding}")
 
         return processed_files
 
