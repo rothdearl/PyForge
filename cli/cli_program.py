@@ -62,7 +62,7 @@ class CLIProgram(ABC):
     def initialize_runtime_state(self) -> None:
         """Initialize internal state derived from parsed options."""
         # Disable color if standard output is redirected.
-        self.print_color = self.args.color == "on" and stdout_is_terminal()
+        self.print_color = getattr(self.args, "color", "off") == "on" and stdout_is_terminal()
 
     @abstractmethod
     def main(self) -> None:
