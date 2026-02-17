@@ -53,7 +53,6 @@ class CLIProgram(ABC):
     @final
     def check_parsed_arguments(self) -> None:
         """Check option dependencies, validate ranges, normalize options, and initialize runtime state."""
-        assert self.args is not None  # Guaranteed by run() calling parse_arguments() first.
         self.check_option_dependencies()
         self.validate_option_ranges()
         self.normalize_options()
@@ -83,6 +82,7 @@ class CLIProgram(ABC):
         """Set the error flag and print the message to standard error unless ``args.no_messages`` is present and set."""
         self.has_errors = True
 
+        # --no-messages is a Unix convention to suppress per-file diagnostics but still set the error flag.
         if not getattr(self.args, "no_messages", False):
             print(f"{self.name}: error: {error_message}", file=sys.stderr)
 
