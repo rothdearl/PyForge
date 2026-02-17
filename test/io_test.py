@@ -42,14 +42,14 @@ class IOTest(unittest.TestCase):
         for _ in io.read_text_files(files=["_init_.py"], encoding="utf-8", on_error=on_error):
             pass
         self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0], "_init_.py: no such file or directory")
+        self.assertEqual(errors[0], "'_init_.py': no such file or directory")
         errors.clear()
 
         # 4) File error: is a directory.
         for _ in io.read_text_files(files=["__pycache__"], encoding="utf-8", on_error=on_error):
             pass
         self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0], "__pycache__: is a directory")
+        self.assertEqual(errors[0], "'__pycache__': is a directory")
 
     def test_remove_trailing_newline(self) -> None:
         """Tests the remove_trailing_newline function."""
@@ -84,4 +84,4 @@ class IOTest(unittest.TestCase):
         # 3) Valid encoding.
         io.write_text_to_file("io-test-file.txt", text=["Unit testing."], encoding="invalid", on_error=on_error)
         self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0], "io-test-file.txt: unknown encoding invalid")
+        self.assertEqual(errors[0], "'io-test-file.txt': unknown encoding 'invalid'")

@@ -128,7 +128,7 @@ class TestCompilePatterns(unittest.TestCase):
         compiled = patterns.compile_patterns(test_patterns, ignore_case=False, on_error=errors.append)
 
         self.assertEqual(len(compiled), 1)
-        self.assertEqual(errors, ["invalid pattern: [a-z"])
+        self.assertEqual(errors, ["invalid pattern: '[a-z'"])
 
     def test_ignore_case_enabled(self):
         test_patterns = ["abc"]
