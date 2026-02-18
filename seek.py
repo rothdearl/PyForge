@@ -113,24 +113,24 @@ class Seek(CLIProgram):
 
     def path_matches_filters(self, path: pathlib.Path) -> bool:
         """Return whether the path matches all enabled filters."""
-        matches_all_filters = True
-
         try:
             if self.args.type:
                 is_dir = path.is_dir()
 
-                if self.args.type == "d":
-                    matches_all_filters = is_dir
-                else:
-                    matches_all_filters = not is_dir
+                if self.args.type == "d" and not is_dir:
+                    return False
+                elif self.args.type == "f" and is_dir:
+                    return False
 
-            if matches_all_filters and self.args.empty_only:
+            if self.args.empty_only:
                 if path.is_dir():
-                    matches_all_filters = not os.listdir(path)
+                    if os.listdir(path):
+                        return False
                 else:
-                    matches_all_filters = not path.lstat().st_size
+                    if path.lstat().st_size:
+                        return False
 
-            if matches_all_filters and any((self.args.mtime_days, self.args.mtime_hours, self.args.mtime_mins)):
+            if any((self.args.mtime_days, self.args.mtime_hours, self.args.mtime_mins)):
                 if self.args.mtime_days:
                     last_modified = self.args.mtime_days * 86400  # Convert days to seconds.
                 elif self.args.mtime_hours:
@@ -138,17 +138,17 @@ class Seek(CLIProgram):
                 else:
                     last_modified = self.args.mtime_mins * 60  # Convert minutes to seconds.
 
-                difference = time.time() - path.lstat().st_mtime
+                age_seconds = time.time() - path.lstat().st_mtime
 
                 if last_modified < 0:
-                    matches_all_filters = difference < abs(last_modified)
-                else:
-                    matches_all_filters = difference > last_modified
-        except PermissionError:
-            matches_all_filters = False
-            self.print_error(f"{path!r}: permission denied")
+                    return age_seconds < abs(last_modified)
 
-        return matches_all_filters
+                return age_seconds > last_modified
+        except PermissionError:
+            self.print_error(f"{path!r}: permission denied")
+            return False
+
+        return True
 
     def path_matches_patterns(self, name_part: str, path_part: str) -> bool:
         """Return whether the ``name_part`` and ``path_part`` match all provided pattern groups."""

@@ -164,7 +164,7 @@ class Order(TextProgram):
         return segments
 
     def get_sort_fields(self, line: str, filter_empty_fields: bool = False) -> list[str]:
-        """Return normalized sort fields after optional empty-field filtering and applying ``--skip-fields``."""
+        """Return normalized sort fields after optional empty-field filtering and applying ``args.skip_fields``."""
         normalized = self.normalize_line(line)
         separator = self.args.field_separator or " "
         skip = self.args.skip_fields
