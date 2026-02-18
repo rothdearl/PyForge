@@ -67,13 +67,13 @@ class Subs(TextProgram):
     def handle_text_stream(self, file_info: io.FileInfo) -> None:
         """Process the text stream contained in ``FileInfo``."""
         if self.args.in_place:
-            io.write_text_to_file(file_info.file_name, self.iterate_replaced_lines(file_info.text_stream.readlines()),
+            io.write_text_to_file(file_info.file_name, self.iter_replaced_lines(file_info.text_stream.readlines()),
                                   self.encoding, on_error=self.print_error)
         else:
             self.print_file_header(file_info.file_name)
             self.print_replaced_lines(file_info.text_stream.readlines())
 
-    def iterate_replaced_lines(self, lines: Iterable[str]) -> Iterator[str]:
+    def iter_replaced_lines(self, lines: Iterable[str]) -> Iterator[str]:
         """Yield lines with pattern matches replaced."""
         for line in io.normalize_input_lines(lines):
             if self.pattern:
@@ -115,7 +115,7 @@ class Subs(TextProgram):
 
     def print_replaced_lines(self, lines: Iterable[str]) -> None:
         """Print replaced lines."""
-        for line in self.iterate_replaced_lines(lines):
+        for line in self.iter_replaced_lines(lines):
             print(line)
 
     def print_replaced_lines_from_input(self) -> None:

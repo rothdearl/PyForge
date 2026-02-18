@@ -104,7 +104,7 @@ class Seek(CLIProgram):
         self.compile_patterns()
 
         if terminal.stdin_is_redirected():
-            self.print_paths(io.filter_empty_file_names(sys.stdin))
+            self.print_paths(io.iter_nonempty_file_names(sys.stdin))
 
             if self.args.directories:  # Process any additional directories.
                 self.print_paths(self.args.directories)
