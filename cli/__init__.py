@@ -58,6 +58,7 @@ from .terminal import (
 )
 
 from .text import (
+    decode_python_escape_sequences,
     iter_nonempty_lines,
     iter_normalized_lines,
     split_csv,

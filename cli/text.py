@@ -8,6 +8,11 @@ from collections.abc import Iterable, Iterator
 from .types import ErrorReporter
 
 
+def decode_python_escape_sequences(line: str) -> str:
+    """Decode Python-style backslash escape sequences in ``line`` (may raise ``UnicodeDecodeError``)."""
+    return line.encode("utf-8").decode("unicode_escape")
+
+
 def iter_nonempty_lines(lines: Iterable[str]) -> Iterator[str]:
     """Yield normalized, non-empty lines."""
     for file_name in iter_normalized_lines(lines):
@@ -24,12 +29,12 @@ def iter_normalized_lines(lines: Iterable[str]) -> Iterator[str]:
 def split_csv(text: str, *, separator: str = " ", on_error: ErrorReporter) -> list[str]:
     """Split text into fields using CSV parsing when possible, falling back to ``str.split``."""
     try:
-        # Decode Python-style escape sequences (e.g., "\\t").
-        decoded_separator = separator.encode("utf-8").decode("unicode_escape")
+        decoded_separator = decode_python_escape_sequences(separator)
 
         if not decoded_separator:
             raise ValueError()
 
+        # CSV requires a single non-quote, non-newline delimiter after escape decoding.
         if len(decoded_separator) == 1 and decoded_separator not in ('"', "\n", "\r"):
             return next(csv.reader([text], delimiter=decoded_separator))
     except (UnicodeDecodeError, ValueError, csv.Error):
@@ -75,6 +80,7 @@ def strip_trailing_newline(line: str) -> str:
 
 
 __all__ = [
+    "decode_python_escape_sequences",
     "iter_nonempty_lines",
     "iter_normalized_lines",
     "split_csv",
