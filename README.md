@@ -444,12 +444,12 @@ from typing import override
 from cli import CLIProgram, terminal, text
 
 
-class Rerun(CLIProgram):
+class Emit(CLIProgram):
     """A program that writes arguments to standard output."""
 
     def __init__(self) -> None:
-        """Initialize a new ``Rerun`` instance."""
-        super().__init__(name="rerun", version="1.0.0")
+        """Initialize a new ``Emit`` instance."""
+        super().__init__(name="emit", version="1.0.0")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -497,5 +497,5 @@ class Rerun(CLIProgram):
 
 
 if __name__ == "__main__":
-    Rerun().run()
+    Emit().run()
 ```
