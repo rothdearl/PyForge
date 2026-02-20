@@ -38,7 +38,7 @@ class Scan(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Scan`` instance."""
-        super().__init__(name="scan", version="1.4.3", error_exit_code=2)
+        super().__init__(name="scan", version="1.4.4", error_exit_code=2)
 
         self.found_any_match: bool = False
         self.patterns: CompiledPatterns = []
@@ -47,11 +47,10 @@ class Scan(TextProgram):
     def build_arguments(self) -> argparse.ArgumentParser:
         """Build and return an argument parser."""
         parser = argparse.ArgumentParser(allow_abbrev=False, description="print lines matching patterns in FILES",
-                                         epilog="read standard input when no FILES are specified; use -e '' to match every line",
-                                         prog=self.name)
+                                         epilog="read from standard input when no FILES are specified", prog=self.name)
         count_group = parser.add_mutually_exclusive_group()
 
-        parser.add_argument("files", help="read input from FILES", metavar="FILES", nargs="*")
+        parser.add_argument("files", help="read from FILES", metavar="FILES", nargs="*")
         parser.add_argument("-e", "--find", action="extend",
                             help="print lines that match PATTERN (repeat --find to require all patterns)",
                             metavar="PATTERN", nargs=1)
@@ -103,14 +102,24 @@ class Scan(TextProgram):
 
     def compile_patterns(self) -> None:
         """Compile search patterns."""
-        if self.args.find:
-            self.patterns = patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
-                                                      on_error=self.print_error_and_exit)
+        self.patterns = patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
+                                                  on_error=self.print_error_and_exit)
 
     @override
     def handle_text_stream(self, file_info: io.FileInfo) -> None:
         """Process the text stream contained in ``FileInfo``."""
         self.print_matches(file_info.text_stream, origin_file=file_info.file_name)
+
+    @override
+    def initialize_runtime_state(self) -> None:
+        """Initialize internal state derived from parsed options."""
+        super().initialize_runtime_state()
+
+        # Exit early if no --find patterns are provided.
+        if not self.args.find:
+            raise SystemExit(self.NO_MATCHES_EXIT_CODE)
+
+        self.compile_patterns()
 
     def is_printing_counts(self) -> bool:
         """Return whether ``args.count`` or ``args.count_nonzero`` is set."""
@@ -119,8 +128,6 @@ class Scan(TextProgram):
     @override
     def main(self) -> None:
         """Run the program."""
-        self.compile_patterns()
-
         if terminal.stdin_is_redirected():
             if self.args.stdin_files:
                 self.process_text_files_from_stdin()
@@ -167,10 +174,6 @@ class Scan(TextProgram):
 
     def print_matches(self, lines: Iterable[str], *, origin_file: str) -> None:
         """Search lines and print matches or counts according to command-line options."""
-        # Return early if no --find patterns are provided.
-        if not self.args.find:
-            return
-
         matches = self.collect_matches(lines)
 
         # With --count-nonzero, suppress output for inputs with zero matches.

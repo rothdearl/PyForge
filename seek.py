@@ -33,7 +33,7 @@ class Seek(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Seek`` instance."""
-        super().__init__(name="seek", version="1.4.3", error_exit_code=2)
+        super().__init__(name="seek", version="1.4.4", error_exit_code=2)
 
         self.found_any_match: bool = False
         self.name_patterns: CompiledPatterns = []
@@ -99,10 +99,15 @@ class Seek(CLIProgram):
                                                            on_error=self.print_error_and_exit)
 
     @override
-    def main(self) -> None:
-        """Run the program."""
+    def initialize_runtime_state(self) -> None:
+        """Initialize internal state derived from parsed options."""
+        super().initialize_runtime_state()
+
         self.compile_patterns()
 
+    @override
+    def main(self) -> None:
+        """Run the program."""
         if terminal.stdin_is_redirected():
             self.print_paths(io.iter_stdin_file_names())
 

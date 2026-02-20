@@ -27,7 +27,7 @@ class Subs(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Subs`` instance."""
-        super().__init__(name="subs", version="1.4.3")
+        super().__init__(name="subs", version="1.4.4")
 
         self.pattern: re.Pattern[str] | None = None
 
@@ -72,6 +72,13 @@ class Subs(TextProgram):
             self.print_file_header(file_info.file_name)
             self.print_replaced_lines(file_info.text_stream.readlines())
 
+    @override
+    def initialize_runtime_state(self) -> None:
+        """Initialize internal state derived from parsed options."""
+        super().initialize_runtime_state()
+
+        self.compile_patterns()
+
     def iter_replaced_lines(self, lines: Iterable[str]) -> Iterator[str]:
         """Yield lines with pattern matches replaced."""
         for line in text.iter_normalized_lines(lines):
@@ -83,8 +90,6 @@ class Subs(TextProgram):
     @override
     def main(self) -> None:
         """Run the program."""
-        self.compile_patterns()
-
         if terminal.stdin_is_redirected():
             if self.args.stdin_files:
                 self.process_text_files_from_stdin()

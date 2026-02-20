@@ -33,7 +33,7 @@ class Num(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Num`` instance."""
-        super().__init__(name="num", version="1.4.3")
+        super().__init__(name="num", version="1.4.4")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
