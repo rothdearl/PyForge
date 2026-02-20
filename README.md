@@ -111,7 +111,7 @@ Each tool performs one well-defined operation. Examples assume input from `stdin
 
 ### `dupe`
 
-dupe — a minimal, uniq-like command for filtering and reporting repeated lines.
+A minimal, uniq-like command for filtering and reporting repeated lines.
 
 ### `emit`
 
