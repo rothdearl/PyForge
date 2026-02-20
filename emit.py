@@ -38,10 +38,9 @@ class Emit(CLIProgram):
         print_newline = not self.args.no_newline
 
         if terminal.stdin_is_redirected():
-            self.write_strings(sys.stdin)
+            self.args.strings.extend(sys.stdin)
 
-        if self.args.strings:
-            self.write_strings(self.args.strings)
+        self.write_strings(self.args.strings)
 
         print(end="\n" if print_newline else "")
 

@@ -304,6 +304,25 @@ This function:
 
 ------------------------------------------------------------------------
 
+## Reading File Names from Standard Input
+
+When file names are supplied via a pipe rather than as positional arguments, text programs must use:
+
+``` python
+self.process_text_files_from_stdin()
+```
+
+This function:
+
+- Reads file names from stdin (one per line)
+- Filters empty lines
+- Delegates to process_text_files using the collected file list
+- Preserves the same error handling and return contract
+
+This ensures that piped file lists and argument-based file lists follow identical processing semantics.
+
+------------------------------------------------------------------------
+
 ## Option Validation Lifecycle
 
 All argument validation and normalization **must** be organized across these hooks:
@@ -417,6 +436,7 @@ The `run()` method guarantees:
 - Inherit from TextProgram
 - Implement `handle_text_stream`
 - Use `process_text_files` for file input
+- Use `process_text_files_from_stdin` for file-name input from standard input
 - Do not manually open text files
 
 ------------------------------------------------------------------------
@@ -475,10 +495,9 @@ class Emit(CLIProgram):
         print_newline = not self.args.no_newline
 
         if terminal.stdin_is_redirected():
-            self.write_strings(sys.stdin)
+            self.args.strings.extend(sys.stdin)
 
-        if self.args.strings:
-            self.write_strings(self.args.strings)
+        self.write_strings(self.args.strings)
 
         print(end="\n" if print_newline else "")
 
