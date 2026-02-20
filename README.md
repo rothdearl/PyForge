@@ -107,7 +107,7 @@ Unless a tool explicitly documents ordering semantics, output preserves the inpu
 
 ## Tools
 
-Each tool performs one well-defined operation. Examples assume input from `stdin` unless a file is specified.
+Each tool performs one well-defined operation.
 
 ### `dupe`
 
