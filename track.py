@@ -24,7 +24,7 @@ class Track(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Track`` instance."""
-        super().__init__(name="track", version="1.4.4")
+        super().__init__(name="track", version="1.4.5")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -162,4 +162,4 @@ class Track(TextProgram):
 
 
 if __name__ == "__main__":
-    Track().run()
+    Track().run_program()

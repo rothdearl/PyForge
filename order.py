@@ -36,7 +36,7 @@ class Order(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Order`` instance."""
-        super().__init__(name="order", version="1.4.4")
+        super().__init__(name="order", version="1.4.5")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -275,4 +275,4 @@ class Order(TextProgram):
 
 
 if __name__ == "__main__":
-    Order().run()
+    Order().run_program()

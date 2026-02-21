@@ -23,7 +23,7 @@ class Peek(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Peek`` instance."""
-        super().__init__(name="peek", version="1.4.4")
+        super().__init__(name="peek", version="1.4.5")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -108,4 +108,4 @@ class Peek(TextProgram):
 
 
 if __name__ == "__main__":
-    Peek().run()
+    Peek().run_program()

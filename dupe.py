@@ -23,7 +23,7 @@ class Dupe(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Dupe`` instance."""
-        super().__init__(name="dupe", version="1.4.4")
+        super().__init__(name="dupe", version="1.4.5")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -242,4 +242,4 @@ class Dupe(TextProgram):
 
 
 if __name__ == "__main__":
-    Dupe().run()
+    Dupe().run_program()

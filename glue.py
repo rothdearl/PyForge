@@ -33,7 +33,7 @@ class Glue(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Glue`` instance."""
-        super().__init__(name="glue", version="1.4.4")
+        super().__init__(name="glue", version="1.4.5")
 
         self.line_number: int = 0
 
@@ -159,4 +159,4 @@ class Glue(TextProgram):
 
 
 if __name__ == "__main__":
-    Glue().run()
+    Glue().run_program()

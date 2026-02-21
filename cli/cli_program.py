@@ -93,7 +93,7 @@ class CLIProgram(ABC):
         raise SystemExit(self.error_exit_code)
 
     @final
-    def run(self) -> None:
+    def run_program(self) -> None:
         """
         Run the full program lifecycle and normalize process termination and exit codes.
 

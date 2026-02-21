@@ -22,7 +22,7 @@ class Where(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Where`` instance."""
-        super().__init__(name="where", version="1.1.0")
+        super().__init__(name="where", version="1.1.1")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -105,4 +105,4 @@ class Where(CLIProgram):
 
 
 if __name__ == "__main__":
-    Where().run()
+    Where().run_program()

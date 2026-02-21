@@ -58,8 +58,8 @@ class TestIO(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         errors.clear()
 
-        # 3) Valid encoding.
+        # 3) Invalid encoding.
         io.write_text_to_file(test_file_path, lines=["Unit testing."], encoding="invalid", on_error=on_error)
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0], f"'{test_file_path}': unknown encoding 'invalid'")
-        print(errors)
+        errors.clear()

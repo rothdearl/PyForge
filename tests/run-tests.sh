@@ -17,6 +17,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# Run tests.
 if [ "$CODE_COVERAGE" = true ]; then
     # Install required packages: use --break-system-packages on externally managed environments.
     pip3 install coverage --upgrade --user
@@ -27,3 +28,6 @@ if [ "$CODE_COVERAGE" = true ]; then
 else
     python3 -m unittest discover -t ../ "tests" -q
 fi
+
+# Remove the __pycache__ folder.
+rm -r __pycache__

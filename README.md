@@ -404,10 +404,10 @@ All programs **must** use the standardized lifecycle:
 
 ``` python
 if __name__ == "__main__":
-    MyProgram().run()
+    MyProgram().run_program()
 ```
 
-The `run()` method guarantees:
+The `run_program()` method guarantees:
 
 1. ANSI setup (Windows compatibility)
 2. SIGPIPE handling (POSIX)
@@ -429,7 +429,7 @@ The `run()` method guarantees:
 - Implement `main`
 - Use validation hooks appropriately
 - Use `print_error` / `print_error_and_exit`
-- Use `run()` in the entry point
+- Use `run_program()` in the entry point
 
 ### For text programs
 
@@ -443,7 +443,7 @@ The `run()` method guarantees:
 
 ## Design Principles
 
-- Follow the standard lifecycle; do not bypass `run()`
+- Follow the standard lifecycle; do not bypass `run_program()`
 - Separate dependency checks, range validation, normalization, and runtime initialization
 - Comments should explain intent, not mechanics
 - Functions should read clearly, behave predictably, and have documentation that matches reality
@@ -474,7 +474,7 @@ class Emit(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Emit`` instance."""
-        super().__init__(name="emit", version="1.1.0")
+        super().__init__(name="emit", version="1.1.1")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -544,5 +544,5 @@ class Emit(CLIProgram):
 
 
 if __name__ == "__main__":
-    Emit().run()
+    Emit().run_program()
 ```

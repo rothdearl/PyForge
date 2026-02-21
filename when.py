@@ -28,7 +28,7 @@ class When(CLIProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``When`` instance."""
-        super().__init__(name="when", version="1.1.1")
+        super().__init__(name="when", version="1.1.2")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -184,4 +184,4 @@ class When(CLIProgram):
 
 
 if __name__ == "__main__":
-    When().run()
+    When().run_program()

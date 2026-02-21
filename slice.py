@@ -26,7 +26,7 @@ class Slice(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Slice`` instance."""
-        super().__init__(name="slice", version="1.4.4")
+        super().__init__(name="slice", version="1.4.5")
 
         self.selected_fields: list[int] = []
 
@@ -191,4 +191,4 @@ class Slice(TextProgram):
 
 
 if __name__ == "__main__":
-    Slice().run()
+    Slice().run_program()

@@ -34,7 +34,7 @@ class Show(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new ``Show`` instance."""
-        super().__init__(name="show", version="1.4.4")
+        super().__init__(name="show", version="1.4.5")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -175,4 +175,4 @@ class Show(TextProgram):
 
 
 if __name__ == "__main__":
-    Show().run()
+    Show().run_program()
