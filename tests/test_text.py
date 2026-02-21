@@ -5,7 +5,7 @@ from cli import text
 
 
 @final
-class TextTest(unittest.TestCase):
+class TestText(unittest.TestCase):
     """Tests the text module."""
 
     def test_iter_normalized_lines(self) -> None:

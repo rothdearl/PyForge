@@ -5,7 +5,7 @@ from cli import terminal
 
 
 @final
-class TerminalTest(unittest.TestCase):
+class TestTerminal(unittest.TestCase):
     """Tests the terminal module."""
 
     def test_terminal_predicates(self) -> None:

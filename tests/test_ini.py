@@ -5,7 +5,7 @@ from cli import ini
 
 
 @final
-class INITest(unittest.TestCase):
+class TestINI(unittest.TestCase):
     """Tests the ini module."""
 
     def test_read(self) -> None:
@@ -13,7 +13,7 @@ class INITest(unittest.TestCase):
         self.assertFalse(ini.read_options("", clear_previous=False, on_error=print))
 
         # File is invalid.
-        self.assertFalse(ini.read_options("ini-test-invalid.ini", clear_previous=False, on_error=print))
+        self.assertFalse(ini.read_options("invalid.ini", clear_previous=False, on_error=print))
 
         # No options.
         self.assertTrue(ini.is_empty())
@@ -21,7 +21,7 @@ class INITest(unittest.TestCase):
         self.assertFalse(ini.has_sections())
 
         # Valid file with options.
-        self.assertTrue(ini.read_options("ini-test.ini", clear_previous=True, on_error=print))
+        self.assertTrue(ini.read_options("valid-ini-file.ini", clear_previous=True, on_error=print))
 
         # Has options.
         self.assertFalse(ini.is_empty())

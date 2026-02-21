@@ -5,7 +5,7 @@ from cli import ansi
 
 
 @final
-class ANSITest(unittest.TestCase):
+class TestANSI(unittest.TestCase):
     """Tests the ansi module."""
 
     def test_16_color_palette(self) -> None:

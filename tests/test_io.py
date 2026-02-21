@@ -5,7 +5,7 @@ from cli import io
 
 
 @final
-class IOTest(unittest.TestCase):
+class TestIO(unittest.TestCase):
     """Tests the io module."""
 
     def test_read_text_files(self) -> None:
@@ -21,8 +21,8 @@ class IOTest(unittest.TestCase):
         self.assertEqual(errors, [])
 
         # 2) Valid file.
-        for file_info in io.read_text_files(files=["__init__.py"], encoding="utf-8", on_error=on_error):
-            self.assertEqual(file_info.file_name, "__init__.py")
+        for file_info in io.read_text_files(files=["io-test-file.txt"], encoding="utf-8", on_error=on_error):
+            self.assertEqual(file_info.file_name, "io-test-file.txt")
         self.assertEqual(errors, [])
 
         # 3) File error: no such file or directory.
