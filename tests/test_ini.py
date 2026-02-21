@@ -1,3 +1,4 @@
+import os
 import unittest
 from typing import final
 
@@ -13,7 +14,8 @@ class TestINI(unittest.TestCase):
         self.assertFalse(ini.read_options("", clear_previous=False, on_error=print))
 
         # File is invalid.
-        self.assertFalse(ini.read_options("invalid.ini", clear_previous=False, on_error=print))
+        self.assertFalse(
+            ini.read_options(os.path.join("test_data", "invalid-ini-file.ini"), clear_previous=False, on_error=print))
 
         # No options.
         self.assertTrue(ini.is_empty())
@@ -21,7 +23,8 @@ class TestINI(unittest.TestCase):
         self.assertFalse(ini.has_sections())
 
         # Valid file with options.
-        self.assertTrue(ini.read_options("valid-ini-file.ini", clear_previous=True, on_error=print))
+        self.assertTrue(
+            ini.read_options(os.path.join("test_data", "valid-ini-file.ini"), clear_previous=True, on_error=print))
 
         # Has options.
         self.assertFalse(ini.is_empty())

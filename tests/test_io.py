@@ -1,3 +1,4 @@
+import os
 import unittest
 from typing import final
 
@@ -11,6 +12,7 @@ class TestIO(unittest.TestCase):
     def test_read_text_files(self) -> None:
         """Tests the read_text_files function."""
         errors = []
+        test_file_path = os.path.join("test_data", "io-test-file.txt")
 
         def on_error(error_message: str) -> None:
             """Callback for on_error."""
@@ -21,8 +23,8 @@ class TestIO(unittest.TestCase):
         self.assertEqual(errors, [])
 
         # 2) Valid file.
-        for file_info in io.read_text_files(files=["io-test-file.txt"], encoding="utf-8", on_error=on_error):
-            self.assertEqual(file_info.file_name, "io-test-file.txt")
+        for file_info in io.read_text_files(files=[test_file_path], encoding="utf-8", on_error=on_error):
+            self.assertEqual(file_info.file_name, test_file_path)
         self.assertEqual(errors, [])
 
         # 3) File error: no such file or directory.
@@ -41,13 +43,14 @@ class TestIO(unittest.TestCase):
     def test_write_text_to_file(self) -> None:
         """Tests the write_text_to_file function."""
         errors = []
+        test_file_path = os.path.join("test_data", "io-test-file.txt")
 
         def on_error(error_message: str) -> None:
             """Callback for on_error."""
             errors.append(error_message)
 
         # 1) Valid file.
-        io.write_text_to_file("io-test-file.txt", lines=["Unit testing."], encoding="utf-8", on_error=on_error)
+        io.write_text_to_file(test_file_path, lines=["Unit testing."], encoding="utf-8", on_error=on_error)
         self.assertEqual(errors, [])
 
         # 2) Empty file name.
@@ -56,6 +59,7 @@ class TestIO(unittest.TestCase):
         errors.clear()
 
         # 3) Valid encoding.
-        io.write_text_to_file("io-test-file.txt", lines=["Unit testing."], encoding="invalid", on_error=on_error)
+        io.write_text_to_file(test_file_path, lines=["Unit testing."], encoding="invalid", on_error=on_error)
         self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0], "'io-test-file.txt': unknown encoding 'invalid'")
+        self.assertEqual(errors[0], f"'{test_file_path}': unknown encoding 'invalid'")
+        print(errors)
