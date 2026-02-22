@@ -3,7 +3,7 @@
 import os
 import sys
 from collections.abc import Iterable, Iterator
-from typing import NamedTuple, TextIO
+from typing import Final, NamedTuple, TextIO
 
 from .text import iter_nonempty_lines, iter_normalized_lines, strip_trailing_newline
 from .types import ErrorReporter
@@ -75,9 +75,9 @@ def write_text_to_file(file_name: str, lines: Iterable[str], encoding: str, *, o
         on_error(f"{file_name!r}: unable to write")
 
 
-__all__: list[str] = [
+__all__: Final[tuple[str, ...]] = (
     "FileInfo",
     "iter_stdin_file_names",
     "read_text_files",
     "write_text_to_file",
-]
+)

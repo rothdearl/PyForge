@@ -3,7 +3,7 @@
 import os
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
-from typing import final, override
+from typing import Final, final, override
 
 from .ansi import RESET
 from .cli_program import CLIProgram
@@ -80,4 +80,4 @@ class TextProgram(CLIProgram, ABC):
         return not getattr(self.args, "no_file_name", False)
 
 
-__all__: list[str] = ["TextProgram"]
+__all__: Final[tuple[str, ...]] = ("TextProgram",)

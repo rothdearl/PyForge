@@ -1,6 +1,7 @@
 """Predicates describing whether standard input and output are attached to a terminal."""
 
 import sys
+from typing import Final
 
 
 def stdin_is_redirected() -> bool:
@@ -23,9 +24,9 @@ def stdout_is_terminal() -> bool:
     return sys.stdout.isatty()
 
 
-__all__: list[str] = [
+__all__: Final[tuple[str, ...]] = (
     "stdin_is_redirected",
     "stdin_is_terminal",
     "stdout_is_redirected",
     "stdout_is_terminal",
-]
+)

@@ -4,5 +4,5 @@
 pip3 install ../ --user
 
 # Remove build files.
-rm -r ../pyforge.egg-info/
-rm -r ../build/
+#rm -r ../pyforge.egg-info/
+#rm -r ../build/

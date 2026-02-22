@@ -2,6 +2,7 @@
 
 import re
 from collections.abc import Iterable
+from typing import Final
 
 from .types import CompiledPatterns, ErrorReporter
 
@@ -49,8 +50,8 @@ def matches_all_patterns(text: str, patterns: Iterable[re.Pattern[str]]) -> bool
     return all(group.search(text) for group in patterns)
 
 
-__all__: list[str] = [
+__all__: Final[tuple[str, ...]] = (
     "compile_combined_patterns",
     "compile_patterns",
     "matches_all_patterns",
-]
+)

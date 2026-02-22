@@ -68,11 +68,11 @@ class TextAttributes:
     STRIKETHROUGH: Final[str] = f"{_CSI}9m"
 
 
-__all__: list[str] = [
+__all__: Final[tuple[str, ...]] = (
     "BG_COLORS_256",
     "BgColors",
     "COLORS_256",
     "Colors",
     "RESET",
     "TextAttributes",
-]
+)

@@ -2,6 +2,7 @@
 
 import re
 from collections.abc import Collection
+from typing import Final
 
 from .ansi import RESET, TextAttributes
 
@@ -57,7 +58,7 @@ def reverse_video(text: str) -> str:
     return f"{TextAttributes.REVERSE}{text}{RESET}"
 
 
-__all__: list[str] = [
+__all__: Final[tuple[str, ...]] = (
     "color_pattern_matches",
     "reverse_video",
-]
+)

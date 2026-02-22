@@ -2,6 +2,6 @@
 
 from typing import Final
 
-__version__: Final[str] = "1.0.0"
+from .__about__ import __version__
 
-__all__: list[str] = [__version__]
+__all__: Final[tuple[str, ...]] = ("__version__",)

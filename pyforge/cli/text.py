@@ -4,6 +4,7 @@ import csv
 import re
 import shlex
 from collections.abc import Iterable, Iterator
+from typing import Final
 
 from .types import ErrorReporter
 
@@ -79,7 +80,7 @@ def strip_trailing_newline(line: str) -> str:
     return line.removesuffix("\n")
 
 
-__all__: list[str] = [
+__all__: Final[tuple[str, ...]] = (
     "decode_python_escape_sequences",
     "iter_nonempty_lines",
     "iter_normalized_lines",
@@ -87,4 +88,4 @@ __all__: list[str] = [
     "split_regex",
     "split_shell_style",
     "strip_trailing_newline",
-]
+)

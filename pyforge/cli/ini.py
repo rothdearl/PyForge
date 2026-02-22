@@ -171,7 +171,7 @@ def read_options(path: str, *, clear_previous: bool = True, on_error: ErrorRepor
     return True
 
 
-__all__: list[str] = [
+__all__: Final[tuple[str, ...]] = (
     "get_bool_option",
     "get_float_option",
     "get_int_option",
@@ -183,4 +183,4 @@ __all__: list[str] = [
     "has_sections",
     "is_empty",
     "read_options",
-]
+)
