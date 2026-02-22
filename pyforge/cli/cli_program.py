@@ -32,9 +32,9 @@ class CLIProgram(ABC):
         self.args: argparse.Namespace | None = None
         self.error_exit_code: int = error_exit_code
         self.has_errors: bool = False
-        self.name: str = name
+        self.name: Final[str] = name
         self.print_color: bool = False
-        self.version: str = __version__
+        self.version: Final[str] = __version__
 
     @abstractmethod
     def build_arguments(self) -> argparse.ArgumentParser:

@@ -10,6 +10,8 @@ external state.
 The project is intentionally **pedantic but practical**: behavior is specified precisely where it affects correct usage,
 and kept simple where it does not.
 
+All PyForge commands report a single, project-wide version sourced from `pyproject.toml`.
+
 ------------------------------------------------------------------------
 
 ## Design Philosophy
@@ -479,6 +481,34 @@ The `run_program()` method guarantees:
 - Separate dependency checks, range validation, normalization, and runtime initialization
 - Comments should explain intent, not mechanics
 - Functions should read clearly, behave predictably, and have documentation that matches reality
+
+------------------------------------------------------------------------
+
+## Versioning (Project-Wide)
+
+PyForge uses a **single, project-wide version number**. Individual command-line programs **must not** define or hardcode
+their own version values.
+
+### Source of Truth
+
+- The canonical version is stored in `pyforge.__about__.__version__`.
+- The base class (`CLIProgram`) assigns this value to `self.version` during initialization.
+- Command implementations **must treat** `self.version` as **read-only**.
+
+### Usage in Programs
+
+- Do not import `__version__` in individual program modules.
+- Use the `self.version` attribute provided by the base class.
+- This ensures all commands report a consistent PyForge version and eliminates per-program version duplication.
+- Programs that expose a `--version` flag must implement it using `version=f"%(prog)s {self.version}`".
+
+### Rationale
+
+This design provides:
+
+- A single source of truth for versioning
+- Zero boilerplate in command implementations
+- Consistent CLI behavior across all PyForge programs
 
 ------------------------------------------------------------------------
 
