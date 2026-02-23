@@ -1,6 +1,6 @@
 @echo off
 
-:: Install PyForge.
-pip3 install ..\
+:: Install Pyr-CLI.
+pip3 install ..\ --user %*
 
 :: Remove build files.
