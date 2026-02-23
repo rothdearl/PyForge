@@ -8,7 +8,7 @@ import time
 from collections.abc import Iterable
 from typing import Final, override
 
-from fyrcli.cli import CLIProgram, CompiledPatterns, ansi, io, patterns, render, terminal, text
+from pyrcli.cli import CLIProgram, CompiledPatterns, ansi, io, patterns, render, terminal, text
 
 
 class Colors:

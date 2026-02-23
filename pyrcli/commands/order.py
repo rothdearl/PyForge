@@ -9,7 +9,7 @@ from typing import Final, override
 
 from dateutil.parser import ParserError, parse
 
-from fyrcli.cli import TextProgram, ansi, io, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, terminal, text
 
 
 class Colors:

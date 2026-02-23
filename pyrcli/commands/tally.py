@@ -6,7 +6,7 @@ import sys
 from collections.abc import Iterable
 from typing import Final, NamedTuple, override
 
-from fyrcli.cli import TextProgram, ansi, io, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, terminal, text
 
 
 class Colors:

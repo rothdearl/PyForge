@@ -5,7 +5,7 @@ import calendar
 import datetime
 from typing import Final, NamedTuple, override
 
-from fyrcli.cli import CLIProgram, constants, render
+from pyrcli.cli import CLIProgram, constants, render
 
 
 class CalendarQuarterColumnBounds(NamedTuple):

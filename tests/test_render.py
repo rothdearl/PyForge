@@ -1,7 +1,7 @@
 import re
 import unittest
 
-from fyrcli.cli import ansi, render
+from pyrcli.cli import ansi, render
 
 
 class TestRender(unittest.TestCase):

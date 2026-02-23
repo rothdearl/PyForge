@@ -5,7 +5,7 @@ import sys
 from abc import ABC, abstractmethod
 from typing import Final, final
 
-from fyrcli import __version__
+from pyrcli import __version__
 from .constants import OS_IS_WINDOWS
 from .terminal import stdout_is_terminal
 

@@ -6,7 +6,7 @@ from collections import deque
 from collections.abc import Iterable
 from typing import Final, override
 
-from fyrcli.cli import TextProgram, ansi, io, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, terminal, text
 
 
 class Colors:

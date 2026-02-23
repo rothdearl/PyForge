@@ -1,13 +1,13 @@
-"""Runtime distribution metadata for Fyr-cli."""
+"""Runtime distribution metadata for Pyr-CLI."""
 
 from importlib.metadata import PackageNotFoundError, version
 from typing import Final
 
 
 def _get_version() -> str:
-    """Return the installed distribution version for pyforge."""
+    """Return the installed distribution version for pyr-cli."""
     try:
-        return version("fyrcli")
+        return version("pyr-cli")
     except PackageNotFoundError:
         return "0+unknown"
 

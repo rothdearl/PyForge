@@ -1,4 +1,4 @@
-"""Framework for the Fyr-cli toolkit."""
+"""Framework for the Pyr-CLI toolkit."""
 
 from .ansi import (
     BG_COLORS_256,

@@ -5,7 +5,7 @@ from typing import Final, override
 
 import requests
 
-from fyrcli.cli import CLIProgram, JsonObject
+from pyrcli.cli import CLIProgram, JsonObject
 
 
 class Where(CLIProgram):

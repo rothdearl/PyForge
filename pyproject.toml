@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fyrcli"
+name = "pyr-cli"
 version = "1.0.0"
 description = "A CLI toolkit of small, composable programs designed for deterministic pipelines."
 readme = "README.md"
@@ -27,25 +27,25 @@ dependencies = [
 ]
 
 [project.scripts]
-dupe = "fyrcli.commands.dupe:main"
-emit = "fyrcli.commands.emit:main"
-glue = "fyrcli.commands.glue:main"
-num = "fyrcli.commands.num:main"
-order = "fyrcli.commands.order:main"
-peek = "fyrcli.commands.peek:main"
-scan = "fyrcli.commands.scan:main"
-seek = "fyrcli.commands.seek:main"
-show = "fyrcli.commands.show:main"
-slice = "fyrcli.commands.slice:main"
-subs = "fyrcli.commands.subs:main"
-tally = "fyrcli.commands.tally:main"
-track = "fyrcli.commands.track:main"
-when = "fyrcli.commands.when:main"
-where = "fyrcli.commands.where:main"
+dupe = "pyrcli.commands.dupe:main"
+emit = "pyrcli.commands.emit:main"
+glue = "pyrcli.commands.glue:main"
+num = "pyrcli.commands.num:main"
+order = "pyrcli.commands.order:main"
+peek = "pyrcli.commands.peek:main"
+scan = "pyrcli.commands.scan:main"
+seek = "pyrcli.commands.seek:main"
+show = "pyrcli.commands.show:main"
+slice = "pyrcli.commands.slice:main"
+subs = "pyrcli.commands.subs:main"
+tally = "pyrcli.commands.tally:main"
+track = "pyrcli.commands.track:main"
+when = "pyrcli.commands.when:main"
+where = "pyrcli.commands.where:main"
 
 [tool.setuptools]
 include-package-data = false
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["fyrcli*"]
+include = ["pyrcli*"]

@@ -2,7 +2,7 @@ import os
 import unittest
 from typing import final
 
-from fyrcli.cli import ini
+from pyrcli.cli import ini
 
 
 @final

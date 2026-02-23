@@ -1,7 +1,7 @@
 import unittest
 from typing import final
 
-from fyrcli.cli import text
+from pyrcli.cli import text
 
 
 @final

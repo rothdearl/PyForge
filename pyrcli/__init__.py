@@ -1,4 +1,4 @@
-"""Top-level namespace for the Fyr-cli toolkit."""
+"""Top-level namespace for the Pyr-CLI toolkit."""
 
 from typing import Final
 

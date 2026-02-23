@@ -1,7 +1,7 @@
 import re
 import unittest
 
-from fyrcli.cli import patterns
+from pyrcli.cli import patterns
 
 
 class TestCompileCombinedPatterns(unittest.TestCase):
