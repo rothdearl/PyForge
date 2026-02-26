@@ -30,7 +30,7 @@ class Spinner(_ProgressIndicator):
 
     def __post_init__(self) -> None:
         """Initialize and normalize configuration."""
-        super().__post_init__()
+        super(Spinner, self).__post_init__()  # Python ≤ 3.12: explicit super() required with dataclass(slots=True).
 
         self.frames = tuple(self.frames) or _DEFAULT_SPINNER_FRAMES
 
