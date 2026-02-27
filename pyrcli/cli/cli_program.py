@@ -109,7 +109,7 @@ class CLIProgram(ABC):
         sigpipe_exit_code = 141
 
         try:
-            if OS_IS_WINDOWS:  # Fix ANSI escape sequences on Windows.
+            if OS_IS_WINDOWS:  # Enable ANSI color support on Windows (via colorama).
                 from colorama import just_fix_windows_console
 
                 just_fix_windows_console()

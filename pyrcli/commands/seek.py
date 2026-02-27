@@ -177,11 +177,10 @@ class Seek(CLIProgram):
         if matches == self.args.invert_match:
             return
 
-        self.found_any_match = True
-
-        # Exit early if --quiet.
-        if self.args.quiet:
+        if self.args.quiet:  # Exit early if --quiet.
             raise SystemExit(0)
+
+        self.found_any_match = True
 
         if self.print_color and not self.args.invert_match:
             name_part = render.color_pattern_matches(name_part, self.name_patterns, color=Colors.MATCH)

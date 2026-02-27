@@ -80,11 +80,12 @@ class ProgressBar(_ProgressIndicator):
         """Render the final indicator state and terminate the line when appropriate."""
         if self.clear_on_finish:
             self._finalize_with_message(message=message)
-        else:
-            bar = self._render_bar(self._fraction_completed(self._completed))
+            return
 
-            self._writer.write_composed(indicator=bar, message=message, position=self.message_position)
-            self._writer.newline()
+        bar = self._render_bar(self._fraction_completed(self._completed))
+
+        self._writer.write_composed(indicator=bar, message=message, position=self.message_position)
+        self._writer.newline()
 
     def advance(self, step: int = 1, *, message: ProgressMessage = None) -> None:
         """Increment progress by ``step`` units and redraw the bar."""

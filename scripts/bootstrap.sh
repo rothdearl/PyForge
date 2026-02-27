@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Install Pyr-CLI in a virtual environment.
-python3 -m venv .venv
-source .venv/bin/activate
-python3 -m pip install -e ../
+# Install Pyr-CLI: system-wide
+python3 -m pip install ../ "$@"
+
+# Remove build files.
+rm -r ../build/
+rm -r ../pyr_cli.egg-info/
