@@ -21,9 +21,9 @@ def _compose_line(*, indicator: str, message: ProgressMessage, position: Progres
     return f"{indicator} {message}"
 
 
-def _strip_ansi(message: str) -> str:
-    """Return ``message`` with ANSI CSI escape sequences removed."""
-    return _ANSI_RE.sub("", message)
+def _strip_ansi(text: str) -> str:
+    """Return ``text`` with ANSI CSI escape sequences removed."""
+    return _ANSI_RE.sub(repl="", string=text)
 
 
 def _visible_width(message: str) -> int:

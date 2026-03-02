@@ -106,7 +106,7 @@ class Subs(TextProgram):
         """Yield lines with pattern matches replaced."""
         for line in text.iter_normalized_lines(lines):
             if self.pattern:
-                yield self.pattern.sub(self.args.replace, line, count=self.args.max_replacements)
+                yield self.pattern.sub(repl=self.args.replace, string=line, count=self.args.max_replacements)
             else:
                 yield line
 
