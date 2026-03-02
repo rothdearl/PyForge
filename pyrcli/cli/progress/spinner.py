@@ -30,7 +30,8 @@ class Spinner(_ProgressIndicator):
 
     def __post_init__(self) -> None:
         """Initialize and normalize configuration."""
-        super(Spinner, self).__post_init__()  # Python ≤ 3.12: explicit super() required with dataclass(slots=True).
+        # Explicit super() call required for slotted dataclass inheritance on Python ≤ 3.12.
+        super(Spinner, self).__post_init__()
 
         self.frames = tuple(self.frames) or _DEFAULT_SPINNER_FRAMES
 

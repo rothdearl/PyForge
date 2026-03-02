@@ -42,7 +42,7 @@ class ProgressBar(_ProgressIndicator):
 
     - Displays a horizontal progress bar for work with a known total.
     - Updates the rendered bar when progress advances.
-    - Clamps progress to the range ``[0, total]``.
+    - Clamps progress to ``[0, total]`` when total > 0; otherwise clamps to ``[0, ∞]`` while rendering as permanently 100%.
     - Treats non-positive totals as permanently 100%.
     - Finalizes by either retaining or clearing the bar according to ``clear_on_finish``.
     - Writes a final message followed by a newline when a message is provided, even when the indicator is not visible.
@@ -104,7 +104,11 @@ class ProgressBar(_ProgressIndicator):
         if self._finished:
             return
 
-        clamped = max(0, min(self.total, completed))
+        if self.total <= 0:
+            clamped = max(0, completed)
+        else:
+            clamped = max(0, min(self.total, completed))
+
         bar = self._render_bar(self._fraction_completed(clamped))
 
         self._writer.write_composed(indicator=bar, message=message, position=self.message_position)
