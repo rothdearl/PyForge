@@ -65,14 +65,19 @@ class TextProgram(CLIProgram, ABC):
         return self.process_text_files(iter_stdin_file_names())
 
     @final
-    def render_file_header(self, file_name: str, *, file_name_color: str, colon_color: str) -> str:
-        """Return a ``file_name:`` header (or ``"(standard input):"``), colorized when enabled."""
-        rendered = os.path.relpath(file_name) if file_name else "(standard input)"
+    def render_file_header(self, file_name: str, *, file_name_style: str, colon_style: str) -> str:
+        """Return a ``file_name:`` header (or ``"(standard input):"``), styled when enabled."""
+        display_name = os.path.relpath(file_name) if file_name else "(standard input)"
 
         if self.print_color:
-            return f"{file_name_color}{rendered}{colon_color}:{RESET}"
+            return (
+                f"{file_name_style}"
+                f"{display_name}"
+                f"{colon_style}:"
+                f"{RESET}"
+            )
 
-        return f"{rendered}:"
+        return f"{display_name}:"
 
     @final
     def should_print_file_header(self) -> bool:

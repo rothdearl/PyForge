@@ -25,16 +25,15 @@ def iter_stdin_file_names() -> Iterator[str]:
     yield from iter_nonempty_lines(sys.stdin)
 
 
-def read_text_files(files: Iterable[str], *, encoding: str, on_error: ErrorReporter) -> Iterator[FileInfo]:
+def read_text_files(file_names: Iterable[str], *, encoding: str, on_error: ErrorReporter) -> Iterator[FileInfo]:
     """
     Open files for reading in text mode and yield ``FileInfo`` objects.
 
-    :param files: Iterable of file names (e.g., command-line arguments or lines read from standard input).
-    :param encoding: Text encoding.
-    :param on_error: Callback invoked with an error message for file-related errors.
-    :return: Iterator yielding ``FileInfo`` objects, where the text stream is only valid until the next yield.
+    - Each yielded ``FileInfo.text_stream`` is valid only until the next iteration.
+    - ``on_error(message)`` is invoked for file-related errors; processing continues with the next file.
+    - Errors reported: directory path, missing file, unknown encoding, permission denied, other OS read errors.
     """
-    for file_name in iter_normalized_lines(files):
+    for file_name in iter_normalized_lines(file_names):
         try:
             if os.path.isdir(file_name):
                 on_error(f"{file_name!r}: is a directory")
@@ -56,10 +55,8 @@ def write_text_to_file(file_name: str, *, lines: Iterable[str], encoding: str, o
     """
     Write text lines to a file, ensuring exactly one trailing newline is written for each input line.
 
-    :param file_name: File name.
-    :param lines: Iterable of lines (e.g., list, generator, or text stream).
-    :param encoding: Text encoding.
-    :param on_error: Callback invoked with an error message for file-related errors.
+    - ``on_error(message)`` is invoked for file-related errors; iteration continues.
+    - Errors reported: unknown encoding, permission denied, encoding failures, other OS write errors.
     """
     try:
         with open(file_name, mode="wt", encoding=encoding) as f:
