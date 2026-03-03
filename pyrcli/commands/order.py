@@ -104,7 +104,7 @@ class Order(TextProgram):
 
         - Returns a list of tuples used for comparison.
         - Each tuple is ``(0, number)`` when the text parses as a number.
-        - Otherwise returns ``(1, text)`` to fall back to lexicographic ordering.
+        - Otherwise returns ``(1, text)`` to fall back to lexicographic comparison.
         """
         segments = []
 
@@ -127,7 +127,7 @@ class Order(TextProgram):
 
         - Returns a list of tuples used for comparison.
         - Each tuple is ``(0, date)`` when the text parses as a date.
-        - Otherwise returns ``(1, text)`` to fall back to lexicographic ordering.
+        - Otherwise returns ``(1, text)`` to fall back to lexicographic comparison.
         """
         segments = []
 
@@ -159,7 +159,7 @@ class Order(TextProgram):
 
         - Returns a list of tuples used for comparison.
         - Each tuple is ``(0, number)`` when the text parses as a number.
-        - Otherwise returns ``(1, text)`` to fall back to lexicographic ordering.
+        - Otherwise returns ``(1, text)`` to fall back to lexicographic comparison.
         """
         segments = []
 
