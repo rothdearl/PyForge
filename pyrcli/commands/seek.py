@@ -183,8 +183,8 @@ class Seek(CLIProgram):
         self.found_any_match = True
 
         if self.print_color and not self.args.invert_match:
-            name_part = render.color_pattern_matches(name_part, patterns=self.name_patterns, color=Colors.MATCH)
-            path_part = render.color_pattern_matches(path_part, patterns=self.path_patterns, color=Colors.MATCH)
+            name_part = render.style_pattern_matches(name_part, patterns=self.name_patterns, ansi_style=Colors.MATCH)
+            path_part = render.style_pattern_matches(path_part, patterns=self.path_patterns, ansi_style=Colors.MATCH)
 
         if self.args.abs:
             if is_current_directory:  # Do not join the current working directory with '.'.

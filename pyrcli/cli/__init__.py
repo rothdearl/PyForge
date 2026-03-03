@@ -43,10 +43,10 @@ from .patterns import (
 )
 from .render import (
     bold,
-    color_pattern_matches,
     dim,
     reverse_video,
     style,
+    style_pattern_matches,
 )
 from .terminal import (
     stderr_is_redirected,
@@ -120,9 +120,10 @@ __all__: Final[tuple[str, ...]] = (
 
     # render
     "bold",
-    "color_pattern_matches",
     "dim",
     "reverse_video",
+    "style",
+    "style_pattern_matches",
 
     # terminal
     "stderr_is_redirected",

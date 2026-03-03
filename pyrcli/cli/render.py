@@ -1,26 +1,34 @@
 """Rendering utilities for presentation-formatted text."""
 
 import re
-from collections.abc import Collection
+from collections.abc import Iterable
 from typing import Final
 
 from .ansi import RESET, TextAttributes
 
 
 def bold(text: str) -> str:
-    """Return the text wrapped in bold ANSI escape codes."""
+    """Return the text wrapped in bold ANSI SGR escape codes."""
     return style(text, ansi_style=TextAttributes.BOLD)
 
 
-def color_pattern_matches(text: str, *, patterns: Collection[re.Pattern[str]], color: str) -> str:
-    """
-    Color all regions of the text that match any of the given patterns.
+def dim(text: str) -> str:
+    """Return the text wrapped in dim ANSI SGR escape codes."""
+    return style(text, ansi_style=TextAttributes.DIM)
 
-    :param text: Text to color.
-    :param patterns: Patterns to match.
-    :param color: Color to use.
-    :return: Text with all matched regions wrapped in color codes.
-    """
+
+def reverse_video(text: str) -> str:
+    """Return the text wrapped in reverse-video ANSI SGR escape codes."""
+    return style(text, ansi_style=TextAttributes.REVERSE)
+
+
+def style(text: str, *, ansi_style: str) -> str:
+    """Return the text wrapped in ANSI SGR escape codes."""
+    return f"{ansi_style}{text}{RESET}"
+
+
+def style_pattern_matches(text: str, *, patterns: Iterable[re.Pattern[str]], ansi_style: str) -> str:
+    """Return the text with all pattern matches wrapped in ANSI SGR escape codes."""
     # Return early if no patterns are provided.
     if not patterns:
         return text
@@ -41,42 +49,27 @@ def color_pattern_matches(text: str, *, patterns: Collection[re.Pattern[str]], c
         else:
             merged_ranges.append((start, end))
 
-    # Color ranges.
-    colored_text = []
+    # Style ranges.
+    styled_text = []
     prev_end = 0
 
     for start, end in merged_ranges:
         if prev_end < start:
-            colored_text.append(text[prev_end:start])
+            styled_text.append(text[prev_end:start])
 
-        colored_text.extend([color, text[start:end], RESET])
+        styled_text.extend([ansi_style, text[start:end], RESET])
         prev_end = end
 
     if prev_end < len(text):
-        colored_text.append(text[prev_end:])
+        styled_text.append(text[prev_end:])
 
-    return "".join(colored_text)
-
-
-def dim(text: str) -> str:
-    """Return the text wrapped in dim ANSI escape codes."""
-    return style(text, ansi_style=TextAttributes.DIM)
-
-
-def reverse_video(text: str) -> str:
-    """Return the text wrapped in reverse-video ANSI escape codes."""
-    return style(text, ansi_style=TextAttributes.REVERSE)
-
-
-def style(text: str, *, ansi_style: str) -> str:
-    """Return the text wrapped in ANSI escape codes."""
-    return f"{ansi_style}{text}{RESET}"
+    return "".join(styled_text)
 
 
 __all__: Final[tuple[str, ...]] = (
     "bold",
-    "color_pattern_matches",
     "dim",
     "reverse_video",
-    "style"
+    "style",
+    "style_pattern_matches",
 )

@@ -90,7 +90,7 @@ class Scan(TextProgram):
                 self.found_any_match = True
 
                 if self.print_color and not self.args.invert_match:
-                    line = render.color_pattern_matches(line, patterns=self.patterns, color=Colors.MATCH)
+                    line = render.style_pattern_matches(line, patterns=self.patterns, ansi_style=Colors.MATCH)
 
                 matches.append(Match(line_number, line))
 
