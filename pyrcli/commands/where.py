@@ -1,4 +1,4 @@
-"""A program that displays current IP-based location information."""
+"""Displays current IP-based location information."""
 
 import argparse
 from typing import Final, NoReturn, override
@@ -10,7 +10,7 @@ from pyrcli.cli import CLIProgram, JsonObject
 
 class Where(CLIProgram):
     """
-    A program that displays current IP-based location information.
+    Displays current IP-based location information.
 
     :cvar IPINFO_URL: Endpoint returning public IP geolocation data in JSON.
     """

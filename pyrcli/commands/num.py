@@ -1,4 +1,4 @@
-"""A program that numbers lines from files and prints them to standard output."""
+"""Numbers lines from files and prints them to standard output."""
 
 import argparse
 import sys
@@ -17,7 +17,7 @@ class Styles:
 
 class Num(TextProgram):
     """
-    A program that numbers lines from files and prints them to standard output.
+    Numbers lines from files and prints them to standard output.
 
     :cvar FORMAT_PREFIXES: Mapping of short format keys to format-spec prefixes used when formatting line numbers.
     """

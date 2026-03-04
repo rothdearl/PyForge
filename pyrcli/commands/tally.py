@@ -1,4 +1,4 @@
-"""A program that counts lines, words, and characters in files."""
+"""Counts lines, words, and characters in files."""
 
 import argparse
 import re
@@ -26,7 +26,7 @@ class Styles:
 
 class Tally(TextProgram):
     """
-    A program that counts lines, words, and characters in files.
+    Counts lines, words, and characters in files.
 
     :cvar WORD_PATTERN: Matches a whole word token.
     :ivar files_counted: Number of files counted.

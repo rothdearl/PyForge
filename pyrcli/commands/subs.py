@@ -1,4 +1,4 @@
-"""A program that replaces matching text in files."""
+"""Replaces matching text in files."""
 
 import argparse
 import re
@@ -17,7 +17,7 @@ class Styles:
 
 class Subs(TextProgram):
     """
-    A program that replaces matching text in files.
+    Replaces matching text in files.
 
     :ivar pattern: Compiled pattern to match.
     """

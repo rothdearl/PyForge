@@ -1,4 +1,4 @@
-"""A program that displays the current calendar, with optional date and time."""
+"""Displays the current calendar, with optional date and time."""
 
 import argparse
 import calendar
@@ -16,7 +16,7 @@ class CalendarQuarterColumnBounds(NamedTuple):
 
 class When(CLIProgram):
     """
-    A program that displays the current calendar, with optional date and time.
+    Displays the current calendar, with optional date and time.
 
     :cvar DEFAULT_DATETIME_FORMAT: Default format for printing the date and time.
     """

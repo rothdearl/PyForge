@@ -1,4 +1,4 @@
-"""A program that prints files to standard output."""
+"""Prints files to standard output."""
 
 import argparse
 import sys
@@ -27,7 +27,7 @@ class Whitespace:
 
 
 class Show(TextProgram):
-    """A program that prints files to standard output."""
+    """Prints files to standard output."""
 
     def __init__(self) -> None:
         """Initialize the instance."""

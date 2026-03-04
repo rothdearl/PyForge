@@ -1,4 +1,4 @@
-"""A program that concatenates files and standard input to standard output."""
+"""Concatenates files and standard input to standard output."""
 
 import argparse
 import sys
@@ -23,7 +23,7 @@ class Whitespace:
 
 class Glue(TextProgram):
     """
-    A program that concatenates files and standard input to standard output.
+    Concatenates files and standard input to standard output.
 
     :ivar line_number: Line number to be printed with output lines.
     """

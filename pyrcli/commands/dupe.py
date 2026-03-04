@@ -1,4 +1,4 @@
-"""A program that filters duplicate or unique lines from files."""
+"""Filters duplicate or unique lines from files."""
 
 import argparse
 import sys
@@ -16,7 +16,7 @@ class Styles:
 
 
 class Dupe(TextProgram):
-    """A program that filters duplicate or unique lines from files."""
+    """Filters duplicate or unique lines from files."""
 
     def __init__(self) -> None:
         """Initialize the instance."""

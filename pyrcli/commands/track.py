@@ -1,4 +1,4 @@
-"""A program that prints the last part of files, optionally following new lines."""
+"""Prints the last part of files, optionally following new lines."""
 
 import argparse
 import sys
@@ -17,7 +17,7 @@ class Styles:
 
 
 class Track(TextProgram):
-    """A program that prints the last part of files, optionally following new lines."""
+    """Prints the last part of files, optionally following new lines."""
 
     def __init__(self) -> None:
         """Initialize the instance."""

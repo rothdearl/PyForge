@@ -1,4 +1,4 @@
-"""A program that sorts files and prints them to standard output."""
+"""Sorts files and prints them to standard output."""
 
 import argparse
 import datetime
@@ -20,7 +20,7 @@ class Styles:
 
 class Order(TextProgram):
     """
-    A program that sorts files and prints them to standard output.
+    Sorts files and prints them to standard output.
 
     :cvar CURRENCY_SANITIZE_REGEX: Matches one or more consecutive characters that are not digits, commas, or periods.
     :cvar DIGIT_TOKEN_REGEX: Matches (and captures) one or more decimal digits.

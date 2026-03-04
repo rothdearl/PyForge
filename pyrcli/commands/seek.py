@@ -1,4 +1,4 @@
-"""A program that searches for files in a directory hierarchy."""
+"""Searches for files in a directory hierarchy."""
 
 import argparse
 import os
@@ -18,7 +18,7 @@ class Styles:
 
 class Seek(CLIProgram):
     """
-    A program that searches for files in a directory hierarchy.
+    Searches for files in a directory hierarchy.
 
     :cvar NO_MATCHES_EXIT_CODE: Exit code when no matches are found.
     :ivar found_any_match: Whether any match was found.
@@ -56,13 +56,13 @@ class Seek(CLIProgram):
         parser.add_argument("--type", choices=("d", "f"), help="print only directories (d) or regular files (f)")
         parser.add_argument("--empty-only", action="store_true", help="print only empty files")
         modified_group.add_argument("--mtime-days",
-                                    help="print files modified within N days or older than N days ago (use N or -N)",
+                                    help="print files by modification time (+N: older than N days; -N: within last N days)",
                                     metavar="N", type=int)
         modified_group.add_argument("--mtime-hours",
-                                    help="print files modified within N hours or older than N hours ago (use N or -N)",
+                                    help="print files by modification time (+N: older than N hours; -N: within last N hours)",
                                     metavar="N", type=int)
         modified_group.add_argument("--mtime-mins",
-                                    help="print files modified within N minutes or older than N minutes ago (use N or -N)",
+                                    help="print files by modification time (+N: older than N minutes; -N: within last N minutes)",
                                     metavar="N", type=int)
         parser.add_argument("--max-depth", default=sys.maxsize,
                             help="descend at most N levels below the starting points (N >= 1)", metavar="N", type=int)
@@ -134,18 +134,18 @@ class Seek(CLIProgram):
 
             if any((self.args.mtime_days, self.args.mtime_hours, self.args.mtime_mins)):
                 if self.args.mtime_days:
-                    last_modified = self.args.mtime_days * 86400  # Convert days to seconds.
+                    threshold_seconds = self.args.mtime_days * 86400
                 elif self.args.mtime_hours:
-                    last_modified = self.args.mtime_hours * 3600  # Convert hours to seconds.
+                    threshold_seconds = self.args.mtime_hours * 3600
                 else:
-                    last_modified = self.args.mtime_mins * 60  # Convert minutes to seconds.
+                    threshold_seconds = self.args.mtime_mins * 60
 
                 age_seconds = time.time() - path.lstat().st_mtime
 
-                if last_modified < 0:
-                    return age_seconds < abs(last_modified)
+                if threshold_seconds < 0:
+                    return age_seconds < abs(threshold_seconds)
 
-                return age_seconds > last_modified
+                return age_seconds > threshold_seconds
         except PermissionError:
             self.print_error(f"{path!r}: permission denied")
             return False
