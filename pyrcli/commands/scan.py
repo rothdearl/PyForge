@@ -70,14 +70,6 @@ class Scan(TextProgram):
 
         return parser
 
-    @override
-    def check_for_errors(self) -> None:
-        """Raise ``SystemExit(NO_MATCHES_EXIT_CODE)`` if a match was not found."""
-        super().check_for_errors()
-
-        if not self.found_any_match:
-            raise SystemExit(self.NO_MATCHES_EXIT_CODE)
-
     def collect_matches(self, lines: Iterable[str]) -> list[Match]:
         """Return a list of ``Match`` objects for lines matching the configured patterns."""
         matches = []
@@ -116,6 +108,14 @@ class Scan(TextProgram):
             self.process_text_files(self.args.files)
         else:
             self.print_matches_from_input()
+
+    @override
+    def exit_if_errors(self) -> None:
+        """Raise ``SystemExit(NO_MATCHES_EXIT_CODE)`` if a match was not found."""
+        super().exit_if_errors()
+
+        if not self.found_any_match:
+            raise SystemExit(self.NO_MATCHES_EXIT_CODE)
 
     @override
     def handle_text_stream(self, file_info: io.FileInfo) -> None:

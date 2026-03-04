@@ -77,14 +77,6 @@ class Seek(CLIProgram):
 
         return parser
 
-    @override
-    def check_for_errors(self) -> None:
-        """Raise ``SystemExit(NO_MATCHES_EXIT_CODE)`` if a match was not found."""
-        super().check_for_errors()
-
-        if not self.found_any_match:
-            raise SystemExit(self.NO_MATCHES_EXIT_CODE)
-
     def compile_patterns(self) -> None:
         """Compile search patterns."""
         if self.args.name:
@@ -105,6 +97,14 @@ class Seek(CLIProgram):
                 self.print_paths(self.args.directories)
         else:
             self.print_paths(self.args.directories or [os.curdir])
+
+    @override
+    def exit_if_errors(self) -> None:
+        """Raise ``SystemExit(NO_MATCHES_EXIT_CODE)`` if a match was not found."""
+        super().exit_if_errors()
+
+        if not self.found_any_match:
+            raise SystemExit(self.NO_MATCHES_EXIT_CODE)
 
     @override
     def initialize_runtime_state(self) -> None:

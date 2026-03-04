@@ -36,14 +36,14 @@ class CLIProgram(ABC):
         """Build and return an argument parser."""
         ...
 
-    def check_for_errors(self) -> None:
-        """Raise ``SystemExit(error_exit_code)`` if the error flag is set."""
-        if self.has_errors:
-            raise SystemExit(self.error_exit_code)
-
     def check_option_dependencies(self) -> None:
         """Enforce relationships and mutual constraints between command-line options."""
         pass  # Optional hook; no action by default.
+
+    def exit_if_errors(self) -> None:
+        """Raise ``SystemExit(error_exit_code)`` if the error flag is set."""
+        if self.has_errors:
+            raise SystemExit(self.error_exit_code)
 
     @final
     def check_parsed_arguments(self) -> None:
@@ -116,7 +116,7 @@ class CLIProgram(ABC):
             self.parse_arguments()
             self.check_parsed_arguments()
             self.execute()
-            self.check_for_errors()
+            self.exit_if_errors()
         except BrokenPipeError:
             raise SystemExit(self.error_exit_code if OS_IS_WINDOWS else sigpipe_exit_code)
         except KeyboardInterrupt:
