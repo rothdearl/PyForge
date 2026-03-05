@@ -63,12 +63,12 @@ class _LineWriter:
             return
 
         # Pad with spaces to fully overwrite any leftover characters from the previous render.
-        visible_column_width = _visible_width(text)
-        pad = max(0, self._last_visible_width - visible_column_width)
+        visible_width = _visible_width(text)
+        pad = max(0, self._last_visible_width - visible_width)
 
         self.text_stream.write("\r" + text + (" " * pad))
         self.text_stream.flush()
-        self._last_visible_width = visible_column_width
+        self._last_visible_width = visible_width
 
     def write_composed(self, *, indicator: str, message: ProgressMessage, position: ProgressMessagePosition) -> None:
         """Write an indicator line with an optional message placed to the left or right."""

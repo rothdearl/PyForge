@@ -1,4 +1,4 @@
-"""Provides an abstract base class (ABC) for terminal progress indicators that update a single line in place and emit an optional final message."""
+"""Abstract base class (ABC) for terminal progress indicators that update a single line in place and emit an optional final message."""
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -28,12 +28,12 @@ class _ProgressIndicator(ABC):
     _writer: _LineWriter = field(init=False, repr=False)
 
     def __enter__(self) -> Self:
-        """Return the indicator instance for use within a context block."""
+        """Return the indicator for use in a context manager."""
         return self
 
     def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None,
                  traceback: TracebackType | None) -> bool:
-        """Finalize the indicator instance on context exit."""
+        """Finalize the indicator on context exit."""
         self.finalize()
         return False
 
