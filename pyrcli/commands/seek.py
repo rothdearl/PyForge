@@ -2,10 +2,10 @@
 
 import argparse
 import os
-import pathlib
 import sys
 import time
 from collections.abc import Iterable
+from pathlib import Path
 from typing import Final, NoReturn, override
 
 from pyrcli.cli import CLIProgram, CompiledPatterns, ansi, io, patterns, render, terminal, text
@@ -113,7 +113,7 @@ class Seek(CLIProgram):
 
         self.compile_patterns()
 
-    def path_matches_filters(self, path: pathlib.Path) -> bool:
+    def path_matches_filters(self, path: Path) -> bool:
         """Return ``True`` if the path matches all enabled filters."""
         try:
             if self.args.type:
@@ -162,7 +162,7 @@ class Seek(CLIProgram):
 
         return True
 
-    def print_path(self, path: pathlib.Path) -> None:
+    def print_path(self, path: Path) -> None:
         """Print the path if it matches the specified search criteria."""
         is_current_directory = path.name == ""
         name_part = path.name or os.curdir  # The current directory has no name component.
@@ -188,9 +188,9 @@ class Seek(CLIProgram):
 
         if self.args.abs:
             if is_current_directory:  # Do not join the current working directory with '.'.
-                display_path = os.path.join(pathlib.Path.cwd(), path_part)
+                display_path = os.path.join(Path.cwd(), path_part)
             else:
-                display_path = os.path.join(pathlib.Path.cwd(), path_part, name_part)
+                display_path = os.path.join(Path.cwd(), path_part, name_part)
         else:
             if self.args.dot_prefix and not is_current_directory:  # Do not join the current directory with '.'.
                 display_path = os.path.join(os.curdir, path_part, name_part)
@@ -206,7 +206,7 @@ class Seek(CLIProgram):
         """Traverse each starting directory up to ``args.max_depth`` and print paths that match the search criteria."""
         for directory in text.iter_normalized_lines(directories):
             if os.path.exists(directory):
-                root = pathlib.Path(directory)
+                root = Path(directory)
 
                 self.print_path(root)
 

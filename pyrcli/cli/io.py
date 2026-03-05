@@ -1,9 +1,9 @@
 """Utilities for reading and writing text files and streams."""
 
 import os
-import pathlib
 import sys
 from collections.abc import Iterable, Iterator
+from pathlib import Path
 from typing import Final, NamedTuple, TextIO
 
 from .text import iter_nonempty_lines, iter_normalized_lines, strip_trailing_newline
@@ -21,7 +21,7 @@ class FileInfo(NamedTuple):
     text_stream: TextIO
 
 
-def iter_descendant_paths(root: pathlib.Path, max_depth: int = sys.maxsize) -> Iterable[pathlib.Path]:
+def iter_descendant_paths(root: Path, max_depth: int = sys.maxsize) -> Iterable[Path]:
     """
     Yield descendant paths under ``root`` whose depth is less than or equal to ``max_depth``.
 
@@ -32,7 +32,7 @@ def iter_descendant_paths(root: pathlib.Path, max_depth: int = sys.maxsize) -> I
     root_depth = len(root.parts)
 
     for dir_path, dir_names, file_names in os.walk(top=root, topdown=True, followlinks=False):
-        current = pathlib.Path(dir_path)
+        current = Path(dir_path)
         depth = len(current.parts) - root_depth
 
         # Enforce --max-depth: prevent descent and suppress deeper children.
