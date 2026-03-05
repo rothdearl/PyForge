@@ -1,4 +1,4 @@
-"""Provides utilities for compiling and matching regular expression patterns in text."""
+"""Utilities for compiling and matching regular expression patterns in text."""
 
 import re
 from collections.abc import Iterable
@@ -9,7 +9,7 @@ from .types import CompiledPatterns, ErrorReporter
 
 def compile_combined_patterns(compiled_patterns: Iterable[re.Pattern[str]], *, ignore_case: bool) -> re.Pattern[str]:
     """
-    Return a compiled pattern that matches any of the provided patterns.
+    Return a compiled pattern that matches any provided pattern.
 
     - Wraps each pattern as a non-capturing group before combining.
     - Case-insensitive when ``ignore_case`` is ``True``.
@@ -22,7 +22,7 @@ def compile_combined_patterns(compiled_patterns: Iterable[re.Pattern[str]], *, i
 
 def compile_patterns(patterns: Iterable[str], *, ignore_case: bool, on_error: ErrorReporter) -> CompiledPatterns:
     """
-    Return compiled regular expression patterns suitable for AND-style matching.
+    Return compiled patterns suitable for AND-style matching.
 
     - Skips empty patterns.
     - Case-insensitive when ``ignore_case`` is ``True``.
@@ -46,7 +46,7 @@ def compile_patterns(patterns: Iterable[str], *, ignore_case: bool, on_error: Er
 
 def matches_all_patterns(text: str, *, compiled_patterns: Iterable[re.Pattern[str]]) -> bool:
     """Return ``True`` if the text matches every pattern."""
-    return all(group.search(text) for group in compiled_patterns)
+    return all(pattern.search(text) for pattern in compiled_patterns)
 
 
 __all__: Final[tuple[str, ...]] = (

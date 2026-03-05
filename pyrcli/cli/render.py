@@ -1,4 +1,4 @@
-"""Rendering utilities for presentation-formatted text."""
+"""Utilities for styling text with ANSI escape sequences."""
 
 import re
 from collections.abc import Iterable
@@ -8,27 +8,27 @@ from .ansi import RESET, TextAttributes
 
 
 def bold(text: str) -> str:
-    """Return the text wrapped in bold ANSI SGR escape codes."""
+    """Return ``text`` wrapped with bold ANSI SGR escape codes."""
     return style(text, ansi_style=TextAttributes.BOLD)
 
 
 def dim(text: str) -> str:
-    """Return the text wrapped in dim ANSI SGR escape codes."""
+    """Return ``text`` wrapped with dim ANSI SGR escape codes."""
     return style(text, ansi_style=TextAttributes.DIM)
 
 
 def reverse_video(text: str) -> str:
-    """Return the text wrapped in reverse-video ANSI SGR escape codes."""
+    """Return ``text`` wrapped with reverse-video ANSI SGR escape codes."""
     return style(text, ansi_style=TextAttributes.REVERSE)
 
 
 def style(text: str, *, ansi_style: str) -> str:
-    """Return the text wrapped in ANSI SGR escape codes."""
+    """Return ``text`` wrapped with ANSI SGR escape codes."""
     return f"{ansi_style}{text}{RESET}"
 
 
 def style_pattern_matches(text: str, *, patterns: Iterable[re.Pattern[str]], ansi_style: str) -> str:
-    """Return the text with all pattern matches wrapped in ANSI SGR escape codes."""
+    """Return ``text`` with all pattern matches wrapped in ANSI SGR escape codes."""
     if not patterns:  # Return early if no patterns are provided.
         return text
 
