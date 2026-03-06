@@ -52,9 +52,11 @@ class ProgressBar(_ProgressIndicator):
     - Updates the rendered bar when progress advances.
     - Clamps progress to ``[0, total]`` when ``total > 0``; otherwise renders as permanently 100%.
     - On finalization:
-        - Retains or clears the bar according to ``clear_on_finish``.
-        - Prints a terminating newline when visible and not cleared.
-        - Writes a non-empty final message followed by a newline (even when not visible).
+
+      - Retains or clears the bar according to ``clear_on_finish``.
+      - Prints a terminating newline when visible and not cleared.
+      - Writes a non-empty final message followed by a newline (even when not visible).
+
     - Treats empty messages as no message.
 
     Attributes:
