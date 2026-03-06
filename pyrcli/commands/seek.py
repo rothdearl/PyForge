@@ -18,7 +18,7 @@ class Styles:
 
 class Seek(CLIProgram):
     """
-    Searches for files in a directory hierarchy.
+    Command implementation for searching for files in a directory hierarchy.
 
     Attributes:
         NO_MATCHES_EXIT_CODE: Exit code when no matches are found.
@@ -79,7 +79,7 @@ class Seek(CLIProgram):
         return parser
 
     def compile_patterns(self) -> None:
-        """Compile search patterns."""
+        """Compile ``--name`` and ``--path`` patterns for file matching."""
         if self.args.name:
             self.name_patterns = patterns.compile_patterns(self.args.name, ignore_case=self.args.ignore_case,
                                                            on_error=self.print_error_and_exit)
@@ -134,6 +134,7 @@ class Seek(CLIProgram):
                     if path.lstat().st_size:
                         return False
 
+            # --mtime options are mutually exclusive; at most one is set when any() is True.
             if any((self.args.mtime_days, self.args.mtime_hours, self.args.mtime_mins)):
                 if self.args.mtime_days:
                     threshold_seconds = self.args.mtime_days * 86400
@@ -174,7 +175,6 @@ class Seek(CLIProgram):
         if is_current_directory and not self.args.dot_prefix:
             return
 
-        # Check if the path matches the search criteria and whether to invert the result.
         matches = self.path_matches_patterns(name_part, path_part) and self.path_matches_filters(path)
 
         if matches == self.args.invert_match:

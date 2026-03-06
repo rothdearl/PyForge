@@ -24,7 +24,7 @@ class Styles:
 
 class Scan(TextProgram):
     """
-    Prints lines matching patterns in files.
+    Command implementation for printing lines matching patterns in files.
 
     Attributes:
         NO_MATCHES_EXIT_CODE: Exit code when no matches are found.
@@ -91,7 +91,7 @@ class Scan(TextProgram):
         return matches
 
     def compile_patterns(self) -> None:
-        """Compile search patterns."""
+        """Compile ``--find`` patterns for line matching."""
         self.patterns = patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
                                                   on_error=self.print_error_and_exit)
 
@@ -143,7 +143,7 @@ class Scan(TextProgram):
     @override
     def normalize_options(self) -> None:
         """Apply derived defaults and adjust option values for consistent internal use."""
-        # Set --no-file-name to True if there are no files and --stdin-files=False.
+        # Suppress file headers when standard input is the only source.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_name = True
 

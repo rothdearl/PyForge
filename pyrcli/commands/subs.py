@@ -17,7 +17,7 @@ class Styles:
 
 class Subs(TextProgram):
     """
-    Replaces matching text in files.
+    Command implementation for replacing matching text in files.
 
     Attributes:
         pattern: Compiled pattern to match.
@@ -104,7 +104,11 @@ class Subs(TextProgram):
         self.compile_patterns()
 
     def iter_replaced_lines(self, lines: Iterable[str]) -> Iterator[str]:
-        """Yield lines with pattern matches replaced."""
+        """
+        Yield lines with pattern matches replaced.
+
+        - Yields lines unchanged when no pattern is compiled (e.g., empty ``--find``).
+        """
         for line in text.iter_normalized_lines(lines):
             if self.pattern:
                 yield self.pattern.sub(repl=self.args.replace, string=line, count=self.args.max_replacements)
@@ -114,7 +118,7 @@ class Subs(TextProgram):
     @override
     def normalize_options(self) -> None:
         """Apply derived defaults and adjust option values for consistent internal use."""
-        # Set --no-file-name to True if there are no files and --stdin-files=False.
+        # Suppress file headers when standard input is the only source.
         if not self.args.files and not self.args.stdin_files:
             self.args.no_file_name = True
 
@@ -124,7 +128,7 @@ class Subs(TextProgram):
             print(self.render_file_header(file_name, file_name_style=Styles.FILE_NAME, colon_style=Styles.COLON))
 
     def print_replaced_lines(self, lines: Iterable[str]) -> None:
-        """Print replaced lines."""
+        """Print lines with pattern matches replaced."""
         for line in self.iter_replaced_lines(lines):
             print(line)
 
