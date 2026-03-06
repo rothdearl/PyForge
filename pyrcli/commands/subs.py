@@ -109,10 +109,11 @@ class Subs(TextProgram):
 
         - Yields lines unchanged when no pattern is compiled (e.g., empty ``--find``).
         """
-        for line in text.iter_normalized_lines(lines):
-            if self.pattern:
+        if self.pattern:
+            for line in text.iter_normalized_lines(lines):
                 yield self.pattern.sub(repl=self.args.replace, string=line, count=self.args.max_replacements)
-            else:
+        else:
+            for line in text.iter_normalized_lines(lines):
                 yield line
 
     @override
