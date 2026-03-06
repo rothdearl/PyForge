@@ -110,7 +110,8 @@ class Tally(TextProgram):
                     self.add_counts_to_totals(counts)
                     self.print_counts(counts, origin_file="(standard input)" if self.args.files else "")
 
-            if self.args.files:  # Process any additional files.
+            # Process any additional file arguments.
+            if self.args.files:
                 self.process_text_files(self.args.files)
         elif self.args.files:
             self.process_text_files(self.args.files)

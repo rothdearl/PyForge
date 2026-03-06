@@ -94,7 +94,8 @@ class Seek(CLIProgram):
         if terminal.stdin_is_redirected():
             self.print_paths(io.iter_stdin_file_names())
 
-            if self.args.directories:  # Process any additional directories.
+            # Process any additional directories.
+            if self.args.directories:
                 self.print_paths(self.args.directories)
         else:
             self.print_paths(self.args.directories or [os.curdir])
@@ -169,7 +170,8 @@ class Seek(CLIProgram):
         name_part = path.name or os.curdir  # The current directory has no name component.
         path_part = str(path.parent) if len(path.parts) > 1 else ""  # Do not include '.' in the path part.
 
-        if is_current_directory and not self.args.dot_prefix:  # Skip the current directory unless --dot-prefix is enabled.
+        # Skip the current directory unless --dot-prefix is enabled.
+        if is_current_directory and not self.args.dot_prefix:
             return
 
         # Check if the path matches the search criteria and whether to invert the result.
@@ -178,7 +180,8 @@ class Seek(CLIProgram):
         if matches == self.args.invert_match:
             return
 
-        if self.args.quiet:  # Exit early if --quiet.
+        # Exit early if --quiet.
+        if self.args.quiet:
             raise SystemExit(0)
 
         self.found_any_match = True
@@ -188,12 +191,14 @@ class Seek(CLIProgram):
             path_part = render.style_pattern_matches(path_part, patterns=self.path_patterns, ansi_style=Styles.MATCH)
 
         if self.args.abs:
-            if is_current_directory:  # Do not join the current working directory with '.'.
+            # Do not join the current working directory with '.'.
+            if is_current_directory:
                 display_path = os.path.join(Path.cwd(), path_part)
             else:
                 display_path = os.path.join(Path.cwd(), path_part, name_part)
         else:
-            if self.args.dot_prefix and not is_current_directory:  # Do not join the current directory with '.'.
+            # Do not join the current directory with '.'.
+            if self.args.dot_prefix and not is_current_directory:
                 display_path = os.path.join(os.curdir, path_part, name_part)
             else:
                 display_path = os.path.join(path_part, name_part)

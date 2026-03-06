@@ -57,7 +57,8 @@ class Track(TextProgram):
                     self.print_file_header(file_name="")
                     self.print_lines(standard_input)
 
-            if self.args.files:  # Process any additional files.
+            # Process any additional file arguments.
+            if self.args.files:
                 printed_files.extend(self.process_text_files(self.args.files))
         elif self.args.files:
             printed_files.extend(self.process_text_files(self.args.files))
@@ -146,7 +147,8 @@ class Track(TextProgram):
         while True:
             self.print_lines(sys.stdin.readlines())
 
-            if not self.args.follow:  # --follow on standard input is an infinite loop until Ctrl-C.
+            # --follow on standard input is an infinite loop until Ctrl-C.
+            if not self.args.follow:
                 return
 
     def start_following_threads(self, files: Iterable[str], *, print_file_name_on_update: bool) -> list[Thread]:

@@ -109,11 +109,13 @@ class CLIProgram(ABC):
         - Raises ``SystemExit`` with a non-zero code on failure.
         """
         try:
-            if IS_WINDOWS:  # Enable ANSI color support on Windows (via colorama).
+            # Enable ANSI color support on Windows (via colorama).
+            if IS_WINDOWS:
                 from colorama import just_fix_windows_console
 
                 just_fix_windows_console()
-            else:  # Prevent broken pipe errors (not supported on Windows).
+            else:
+                # Prevent broken pipe errors (not supported on Windows).
                 from signal import SIG_DFL, SIGPIPE, signal
 
                 signal(SIGPIPE, SIG_DFL)

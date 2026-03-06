@@ -92,7 +92,8 @@ class Order(TextProgram):
                     self.print_file_header(file_name="")
                     self.sort_and_print_lines(standard_input)
 
-            if self.args.files:  # Process any additional files.
+            # Process any additional file arguments.
+            if self.args.files:
                 self.process_text_files(self.args.files)
         elif self.args.files:
             self.process_text_files(self.args.files)
@@ -116,7 +117,8 @@ class Order(TextProgram):
             number = self.normalize_number(re.sub(pattern=self.CURRENCY_SANITIZE_REGEX, repl="", string=field))
 
             try:
-                segments.append((0, float(number) * (-1 if negative else 1)))  # Convert to float and apply sign.
+                # Convert to float and apply sign.
+                segments.append((0, float(number) * (-1 if negative else 1)))
             except ValueError:
                 segments.append((1, field))
 
@@ -206,7 +208,7 @@ class Order(TextProgram):
 
     def normalize_line(self, line: str) -> str:
         """Return the line with trailing whitespace removed and optional leading-blank and case normalization applied."""
-        normalized = line.rstrip()  # Remove trailing whitespace.
+        normalized = line.rstrip()
 
         if self.args.ignore_leading_blanks:
             normalized = normalized.lstrip()

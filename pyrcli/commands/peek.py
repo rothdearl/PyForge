@@ -52,7 +52,8 @@ class Peek(TextProgram):
                     self.print_file_header(file_name="")
                     self.print_lines(standard_input)
 
-            if self.args.files:  # Process any additional files.
+            # Process any additional file arguments.
+            if self.args.files:
                 self.process_text_files(self.args.files)
         elif self.args.files:
             self.process_text_files(self.args.files)

@@ -150,7 +150,8 @@ class When(CLIProgram):
         found_day = False
 
         for output in year[quarter_header_index + 2:]:
-            if not output:  # End of quarter?
+            # End of quarter?
+            if not output:
                 break
 
             if not found_day and day in output[quarter_bounds.start:quarter_bounds.end]:

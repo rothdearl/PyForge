@@ -70,7 +70,8 @@ class Show(TextProgram):
                     self.print_file_header(file_name="")
                     self.print_lines(standard_input)
 
-            if self.args.files:  # Process any additional files.
+            # Process any additional file arguments.
+            if self.args.files:
                 self.process_text_files(self.args.files)
         elif self.args.files:
             self.process_text_files(self.args.files)
@@ -150,7 +151,7 @@ class Show(TextProgram):
     def render_spaces(self, line: str) -> str:
         """Replace spaces and trailing spaces with visible markers."""
         rendered = line
-        trailing_count = len(rendered) - len(rendered.rstrip(" "))  # Count trailing spaces.
+        trailing_count = len(rendered) - len(rendered.rstrip(" "))
 
         # Truncate trailing spaces.
         rendered = rendered[:-trailing_count] if trailing_count else rendered

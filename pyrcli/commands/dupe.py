@@ -83,7 +83,8 @@ class Dupe(TextProgram):
                 if standard_input := sys.stdin.readlines():
                     self.group_and_print_lines(standard_input, origin_file="")
 
-            if self.args.files:  # Process any additional files.
+            # Process any additional file arguments.
+            if self.args.files:
                 self.process_text_files(self.args.files)
         elif self.args.files:
             self.process_text_files(self.args.files)

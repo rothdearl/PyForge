@@ -77,7 +77,8 @@ class Scan(TextProgram):
 
         for line_number, line in enumerate(text.iter_normalized_lines(lines), start=1):
             if patterns.matches_all_patterns(line, compiled_patterns=self.patterns) != self.args.invert_match:
-                if self.args.quiet:  # Exit early if --quiet.
+                # Exit early if --quiet.
+                if self.args.quiet:
                     raise SystemExit(0)
 
                 self.found_any_match = True
@@ -103,7 +104,8 @@ class Scan(TextProgram):
             elif standard_input := sys.stdin.readlines():
                 self.print_matches(standard_input, origin_file="")
 
-            if self.args.files:  # Process any additional files.
+            # Process any additional file arguments.
+            if self.args.files:
                 self.process_text_files(self.args.files)
         elif self.args.files:
             self.process_text_files(self.args.files)
@@ -155,7 +157,7 @@ class Scan(TextProgram):
         if self.is_printing_counts():
             print(f"{file_name}{len(matches)}")
         elif matches:
-            padding = len(str(matches[-1][0]))  # Use the line number from the last match to determine pad width.
+            padding = len(str(matches[-1][0]))  # Line number from the last match determines pad width.
 
             if file_name:
                 print(file_name)

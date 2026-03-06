@@ -53,10 +53,9 @@ class Where(CLIProgram):
             # Ensure a successful response.
             response.raise_for_status()
 
-            # Get JSON data.
+            # Get and validate JSON data.
             data = response.json()
 
-            # Ensure response data is JSON.
             if not isinstance(data, dict):
                 raise ValueError()
 

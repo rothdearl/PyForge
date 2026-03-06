@@ -71,7 +71,8 @@ class Glue(TextProgram):
             else:
                 self.print_lines(sys.stdin)
 
-            if self.args.files:  # Process any additional files.
+            # Process any additional file arguments.
+            if self.args.files:
                 self.process_text_files(self.args.files)
         elif self.args.files:
             self.process_text_files(self.args.files)
@@ -91,7 +92,7 @@ class Glue(TextProgram):
         for line in text.iter_normalized_lines(lines):
             print_number = number_lines
 
-            if not line:  # Blank line?
+            if not line:
                 blank_line_count += 1
 
                 if self.should_suppress_blank_line(blank_line_count):
