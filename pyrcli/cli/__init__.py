@@ -48,7 +48,10 @@ from .render import (
     style,
     style_pattern_matches,
 )
-from .reporters import raises
+from .reporters import (
+    raises,
+    suppress,
+)
 from .terminal import (
     stderr_is_redirected,
     stderr_is_terminal,
@@ -128,6 +131,7 @@ __all__: Final[tuple[str, ...]] = (
 
     # reporters
     "raises",
+    "suppress",
 
     # terminal
     "stderr_is_redirected",
