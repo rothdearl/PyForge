@@ -1,4 +1,4 @@
-"""Abstract base class for command-line programs with a standard parse–configure–execute lifecycle."""
+"""Base class for command-line programs with a standard parse–configure–execute lifecycle."""
 
 import argparse
 import sys
@@ -9,7 +9,7 @@ from pyrcli import __version__
 from .os_info import IS_WINDOWS
 from .terminal import stdout_is_terminal
 
-# Unix exit codes for errors and signal termination.
+# Standard Unix exit codes for errors and signal termination.
 _DEFAULT_ERROR_EXIT_CODE: Final[int] = 1
 _KEYBOARD_INTERRUPT_EXIT_CODE: Final[int] = 130
 _SIGPIPE_EXIT_CODE: Final[int] = 141
@@ -20,7 +20,7 @@ class CLIProgram(ABC):
     Base class for command-line programs with a standard parse–configure–execute lifecycle.
 
     Attributes:
-        args: Parsed command-line arguments.
+        args: Parsed command-line arguments (``argparse.Namespace``).
         error_exit_code: Exit code when an error occurs (default: ``1``).
         has_errors: Whether the program has encountered errors.
         name: Name of the program.
@@ -42,7 +42,7 @@ class CLIProgram(ABC):
         self.args = self.build_arguments().parse_args()
 
     def _prepare_runtime_state(self) -> None:
-        """Prepare the runtime state by running the option lifecycle hooks in order."""
+        """Run the option lifecycle hooks that prepare runtime state."""
         self.check_option_dependencies()
         self.validate_option_ranges()
         self.normalize_options()
@@ -78,7 +78,7 @@ class CLIProgram(ABC):
 
     @final
     def print_error(self, error_message: str) -> None:
-        """Set the error flag and print to standard error unless ``args.no_messages`` is enabled."""
+        """Set the error flag and print the message to standard error unless ``--no-messages`` is enabled."""
         self.has_errors = True
 
         # --no-messages is a Unix convention to suppress per-file diagnostics but still set the error flag.
@@ -93,18 +93,19 @@ class CLIProgram(ABC):
 
     @final
     def run_program(self) -> int:
+
         """
         Run the full program lifecycle and normalize process termination.
 
-        - Configures the environment.
-        - Parses arguments and prepares runtime state by running the option lifecycle hooks in order:
+        - Configures the runtime environment.
+        - Parses arguments and prepares runtime state by running the option lifecycle hooks:
 
           - ``check_option_dependencies()``
           - ``validate_option_ranges()``
           - ``normalize_options()``
           - ``initialize_runtime_state()``
         - Executes the command.
-        - Handles errors.
+        - Handles runtime errors and signals.
         - Returns ``0`` on success.
         - Raises ``SystemExit`` with a non-zero code on failure.
         """
