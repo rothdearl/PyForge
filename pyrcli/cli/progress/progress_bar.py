@@ -20,7 +20,7 @@ class ProgressBarLayout:
         empty: Glyph used to represent remaining progress.
         left: Left delimiter placed before the bar body.
         right: Right delimiter placed after the bar body.
-        show_percent: Whether to append a percentage suffix (value + ``%``).
+        show_percent: Whether to append a percentage suffix (value followed by ``%``).
         percent_style: ANSI SGR prefix applied to the percent value (empty disables styling).
         percent_symbol_style: ANSI SGR prefix applied to the percent symbol (empty disables styling).
         percent_reset: ANSI reset sequence appended after the percent suffix; empty disables automatic reset.
@@ -116,7 +116,11 @@ class ProgressBar(_ProgressIndicator):
         self.update(self.total)
 
     def start(self, *, message: ProgressMessage = None) -> None:
-        """Render the initial 0% progress state with an optional message."""
+        """
+        Render the initial 0% progress state with an optional message.
+
+        - Does not advance the progress value.
+        """
         self.update(0, message=message)
 
     def update(self, completed: int, *, message: ProgressMessage = None) -> None:

@@ -596,7 +596,7 @@ class CLIProgramDemo(CLIProgram):
 
             for file_index, _ in enumerate(files, start=1):
                 time.sleep(.5)  # Simulate downloading a file.
-                bar.advance(message=f"Downloaded{file_index:>2} of {files_to_update}")
+                bar.advance(message=f"Downloaded {file_index:>2} of {files_to_update}")
 
         # Apply updates.
         with ProgressBar(total=files_to_update, text_stream=sys.stdout, clear_on_finish=True,

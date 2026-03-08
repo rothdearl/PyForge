@@ -1,4 +1,4 @@
-"""Abstract base class for terminal progress indicators that update a single line in place and emit an optional final message."""
+"""Base class for terminal progress indicators that update a single line in place and emit an optional final message."""
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field

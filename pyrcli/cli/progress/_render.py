@@ -11,7 +11,7 @@ _ANSI_RE: Final[re.Pattern[str]] = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]")
 
 
 def _compose_line(*, indicator: str, message: ProgressMessage, position: ProgressMessagePosition) -> str:
-    """Return a rendered line by placing ``message`` to the left or right of ``indicator``."""
+    """Return a rendered line with ``message`` placed to the left or right of ``indicator``."""
     if not message:
         return indicator
 
@@ -62,7 +62,7 @@ class _LineWriter:
         self._last_visible_width = 0
 
     def write(self, text: str) -> None:
-        """Overwrite the current line with ``text`` (no trailing newline), if enabled."""
+        """Overwrite the current terminal line with ``text`` (no trailing newline), if enabled."""
         if not self.enabled:
             return
 
