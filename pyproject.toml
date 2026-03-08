@@ -46,6 +46,7 @@ when = "pyrcli.commands.when:main"
 where = "pyrcli.commands.where:main"
 
 [project.urls]
+Homepage = "https://github.com/rothdearl/Pyr-CLI"
 Repository = "https://github.com/rothdearl/Pyr-CLI"
 Issues = "https://github.com/rothdearl/Pyr-CLI/issues"
 
