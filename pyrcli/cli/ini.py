@@ -78,14 +78,14 @@ def get_json_option(section: str, option: str) -> JsonObject | None:
     value = get_str_option_with_fallback(section, option, fallback="{}")
 
     try:
-        decoded_json = json.loads(value)
+        json_value = json.loads(value)
     except json.JSONDecodeError:
         return None
 
-    if not isinstance(decoded_json, dict):
+    if not isinstance(json_value, dict):
         return None
 
-    return decoded_json
+    return json_value
 
 
 def get_str_option(section: str, option: str) -> str:
