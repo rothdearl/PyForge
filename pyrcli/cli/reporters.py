@@ -4,18 +4,20 @@ from typing import Final
 
 from .types import ErrorReporter
 
-#: An ``ErrorReporter`` that silently suppresses all error messages.
-suppress: Final[ErrorReporter] = lambda _: None
-
 
 def raises(exception_type: type[Exception]) -> ErrorReporter:
-    """Return an ``ErrorReporter`` that raises ``exception_type`` with the error message."""
+    """Return an ``ErrorReporter`` that raises ``exception_type`` with the message."""
 
     def reporter(message: str) -> None:
         """Raise ``exception_type`` with ``message``."""
         raise exception_type(message)
 
     return reporter
+
+
+def suppress(_: str) -> None:
+    """Silently suppress the error message."""
+    return None
 
 
 __all__: Final[tuple[str, ...]] = (
