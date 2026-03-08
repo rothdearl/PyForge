@@ -137,7 +137,7 @@ class Scan(TextProgram):
         self.compile_patterns()
 
     def is_printing_counts(self) -> bool:
-        """Return ``True`` if either ``args.count`` or ``args.count_nonzero`` is enabled."""
+        """Return ``True`` if either ``--count`` or ``--count-nonzero`` is enabled."""
         return self.args.count or self.args.count_nonzero
 
     @override
