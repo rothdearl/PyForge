@@ -7,7 +7,7 @@ from typing import Final
 IS_LINUX: Final[bool] = sys.platform.startswith("linux")
 IS_MACOS: Final[bool] = sys.platform == "darwin"
 IS_POSIX: Final[bool] = os.name == "posix"  # Covers BSD, Linux, and macOS.
-IS_WINDOWS: Final[bool] = sys.platform == "win32"
+IS_WINDOWS: Final[bool] = os.name == "nt"
 
 __all__: Final[tuple[str, ...]] = (
     "IS_LINUX",
