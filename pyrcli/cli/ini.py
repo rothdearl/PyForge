@@ -99,7 +99,7 @@ def get_str_option_with_fallback(section: str, option: str, *, fallback: str) ->
 
 
 def get_str_options(section: str, option: str, *, separator: str = ",") -> list[str]:
-    """Return string values split on a separator, ignoring empty entries."""
+    """Return string values split on a separator, trimming whitespace and ignoring empty entries."""
     value = get_str_option_with_fallback(section, option, fallback="")
 
     return [entry for part in value.split(separator) if (entry := part.strip())]
@@ -128,7 +128,7 @@ def read_options(path: str, *, clear_previous: bool = True, on_error: ErrorRepor
     - Invokes ``on_error(message)`` if the file cannot be read or parsed.
     - Errors reported: missing file, permission denied, invalid configuration file, other OS read errors.
     - Returns ``True`` on success.
-    - A failed read after clearing leaves the configuration empty.
+    - If reading fails after clearing, the configuration remains empty.
     """
     try:
         with open(path, mode="rt", encoding="utf-8") as f:
