@@ -1,4 +1,4 @@
-"""Utilities for generating HTTP multipart upload file mappings."""
+"""Utilities for generating multipart file mappings for HTTP uploads."""
 
 from collections.abc import Iterator
 from contextlib import contextmanager
