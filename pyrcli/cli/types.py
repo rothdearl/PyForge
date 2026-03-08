@@ -4,16 +4,16 @@ import re
 from collections.abc import Callable, Mapping, Sequence
 from typing import Any, BinaryIO, Final
 
-#: List of compiled regular expression patterns.
+#: Sequence of compiled regular expression patterns.
 type CompiledPatterns = Sequence[re.Pattern[str]]
 
 #: Callback for reporting error messages.
 type ErrorReporter = Callable[[str], None]
 
-#: A decoded JSON array represented as a list.
+#: Decoded JSON array.
 type JsonArray = list[Any]
 
-#: A decoded JSON object represented as a dictionary.
+#: Decoded JSON object.
 type JsonObject = dict[str, Any]
 
 #: String-to-string mappings used for HTTP headers.

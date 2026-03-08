@@ -1,4 +1,4 @@
-"""ANSI SGR escape sequence constants for terminal text attributes and color."""
+"""ANSI SGR escape sequence constants for terminal text attributes and colors."""
 
 from typing import Final, final
 
@@ -15,7 +15,7 @@ FOREGROUND_COLORS_256: Final[tuple[str, ...]] = tuple(f"{_CSI}38;5;{code}m" for 
 
 @final
 class BackgroundColors:
-    """Constants for background colors from the standard 16-color palette"""
+    """Background color constants from the standard 16-color palette."""
     BLACK: Final[str] = f"{_CSI}40m"
     RED: Final[str] = f"{_CSI}41m"
     GREEN: Final[str] = f"{_CSI}42m"
@@ -36,7 +36,7 @@ class BackgroundColors:
 
 @final
 class ForegroundColors:
-    """Constants for foreground colors from the standard 16-color palette."""
+    """Foreground color constants from the standard 16-color palette."""
     BLACK: Final[str] = f"{_CSI}30m"
     RED: Final[str] = f"{_CSI}31m"
     GREEN: Final[str] = f"{_CSI}32m"
@@ -57,7 +57,7 @@ class ForegroundColors:
 
 @final
 class TextAttributes:
-    """Text attribute constants for bold, italic, underline, and related SGR styles."""
+    """Text attribute constants for common SGR styles."""
     BOLD: Final[str] = f"{_CSI}1m"
     DIM: Final[str] = f"{_CSI}2m"
     ITALIC: Final[str] = f"{_CSI}3m"
