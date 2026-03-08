@@ -8,6 +8,7 @@ from .client import (
     post,
     put,
     put_file,
+    set_timeout,
 )
 from .responses import parse_json_body
 from .upload import multipart_file
@@ -19,6 +20,7 @@ __all__: Final[tuple[str, ...]] = (
     "post",
     "put",
     "put_file",
+    "set_timeout",
 
     # response
     "parse_json_body",
