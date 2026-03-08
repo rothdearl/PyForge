@@ -9,7 +9,7 @@ from .types import CompiledPatterns, ErrorReporter
 
 def compile_combined_patterns(patterns: Iterable[re.Pattern[str]], *, ignore_case: bool) -> re.Pattern[str]:
     """
-    Return a compiled pattern that matches any provided pattern.
+    Return a compiled pattern that matches any of the provided patterns.
 
     - Wraps each pattern as a non-capturing group before combining.
     - Case-insensitive when ``ignore_case`` is ``True``.
@@ -24,7 +24,7 @@ def compile_patterns(patterns: Iterable[str], *, ignore_case: bool, on_error: Er
     """
     Return compiled patterns suitable for AND-style matching.
 
-    - Skips empty patterns.
+    - Skips empty pattern strings.
     - Case-insensitive when ``ignore_case`` is ``True``.
     - Invokes ``on_error(message)`` for invalid patterns and continues.
     - Returns only successfully compiled patterns.
@@ -45,7 +45,7 @@ def compile_patterns(patterns: Iterable[str], *, ignore_case: bool, on_error: Er
 
 
 def matches_all_patterns(text: str, *, compiled_patterns: Iterable[re.Pattern[str]]) -> bool:
-    """Return ``True`` if the text matches every pattern."""
+    """Return ``True`` if ``text`` matches every pattern."""
     return all(pattern.search(text) for pattern in compiled_patterns)
 
 

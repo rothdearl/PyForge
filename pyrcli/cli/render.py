@@ -8,7 +8,7 @@ from .ansi import RESET, TextAttributes
 
 
 def _collect_merged_match_ranges(text: str, *, patterns: Collection[re.Pattern[str]]) -> list[tuple[int, int]]:
-    """Return merged, non-overlapping match ranges for all patterns in ``text``."""
+    """Return merged, non-overlapping match ranges for all pattern matches in ``text``."""
     ranges = []
 
     for pattern in patterns:
@@ -43,12 +43,17 @@ def reverse_video(text: str) -> str:
 
 
 def style(text: str, *, ansi_style: str) -> str:
-    """Return ``text`` rendered with the given ANSI style, reset afterward."""
+    """Return ``text`` rendered with the given ANSI style, resetting afterward."""
     return f"{ansi_style}{text}{RESET}"
 
 
 def style_pattern_matches(text: str, *, patterns: Collection[re.Pattern[str]], ansi_style: str) -> str:
-    """Return ``text`` rendered with the given ANSI style, reset afterward."""
+    """
+    Return ``text`` with pattern matches rendered using the given ANSI style, resetting after each match.
+
+    - Only matched ranges are styled.
+    - Overlapping matches are merged before styling.
+    """
     # Avoid allocation and iteration for the empty case.
     if not patterns:
         return text
