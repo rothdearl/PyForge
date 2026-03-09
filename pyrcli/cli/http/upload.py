@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Final
 
-from pyrcli.cli import MultipartFiles
+from .types import MultipartFiles
 
 
 @contextmanager
