@@ -13,8 +13,10 @@ def parse_json_body(response: requests.Response, *, allowed_types: tuple[type[Js
     """
     Return the decoded JSON body from ``response``.
 
-    - Invokes ``on_error(message)`` if the body cannot be decoded as JSON.
-    - Returns ``None`` if the decoded value is not one of ``allowed_types``.
+    - Invokes ``on_error(message)`` and returns ``None`` if:
+
+      - The body cannot be decoded as JSON.
+      - The decoded value is not one of ``allowed_types``.
     """
     try:
         json_value = response.json()

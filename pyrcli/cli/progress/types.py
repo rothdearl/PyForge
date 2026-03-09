@@ -1,4 +1,4 @@
-"""Type aliases used throughout the progress package."""
+"""Type aliases for the progress package."""
 
 from typing import Final, Literal
 

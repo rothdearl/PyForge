@@ -1,4 +1,4 @@
-"""Type aliases used throughout the HTTP client package."""
+"""Type aliases for the HTTP client package."""
 
 from collections.abc import Mapping
 from typing import Any, BinaryIO, Final
@@ -9,7 +9,7 @@ type JsonArray = list[Any]
 #: Decoded JSON object.
 type JsonObject = dict[str, Any]
 
-#: JSON scalar value.
+#: Decoded JSON scalar value (string, number, boolean, or null).
 type JsonScalar = str | int | float | bool | None
 
 #: Any decoded JSON value.
