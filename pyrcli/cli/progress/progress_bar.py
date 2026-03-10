@@ -39,7 +39,8 @@ class ProgressBarLayout:
 
     def __post_init__(self) -> None:
         """Initialize and normalize configuration."""
-        self.width = self.width if self.width > 0 else self._DEFAULT_WIDTH
+        if self.width <= 0:
+            self.width = self._DEFAULT_WIDTH
 
 
 @final
@@ -74,7 +75,7 @@ class ProgressBar(_ProgressIndicator):
         if self.total <= 0:
             return 1.0
 
-        return float(completed / self.total)
+        return completed / self.total
 
     def _render_bar(self, fraction: float) -> str:
         """Return a rendered progress bar for a completion fraction in ``[0, 1]``."""
