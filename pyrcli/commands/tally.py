@@ -141,7 +141,7 @@ class Tally(TextProgram):
                 self.flags[index] = True
 
         # If no count flags, default to lines (0), words (1), and characters (2).
-        if not sum(self.flags):
+        if not any(self.flags):
             for index in (0, 1, 2):
                 self.flags[index] = True
 
@@ -155,6 +155,7 @@ class Tally(TextProgram):
         if sum(self.flags) == 1 and not source_file:
             padding = 0
 
+        # _Counts is iterable in field order.
         for index, count in enumerate(counts):
             if self.flags[index]:
                 if self.print_color:

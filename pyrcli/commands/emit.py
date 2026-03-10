@@ -63,11 +63,11 @@ class Emit(CLIProgram):
             print()
 
     def write_strings(self, strings: Iterable[str]) -> None:
-        """Write strings to standard output, separated by spaces."""
+        """Write strings to standard output separated by spaces."""
         needs_space = False
 
         for raw_string in strings:
-            string = text.strip_trailing_newline(raw_string)
+            string = text.strip_trailing_newline(raw_string)  # Normalize stdin lines by stripping the trailing newline.
 
             if needs_space:
                 sys.stdout.write(" ")
