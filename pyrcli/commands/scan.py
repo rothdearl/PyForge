@@ -12,7 +12,7 @@ _NO_MATCHES_EXIT_CODE: Final[int] = 1
 
 
 class _Match(NamedTuple):
-    """Immutable container representing a matched line."""
+    """Information about a matched line."""
     line_number: int
     line: str
 

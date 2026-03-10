@@ -12,7 +12,7 @@ from .types import ErrorReporter
 
 class FileInfo(NamedTuple):
     """
-    Immutable container for information about a file being read.
+    Information about a file being read.
 
     Attributes:
         file_name: File name (normalized by the caller).

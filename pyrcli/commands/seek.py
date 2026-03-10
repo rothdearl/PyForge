@@ -134,7 +134,7 @@ class Seek(CLIProgram):
                     if path.lstat().st_size:
                         return False
 
-            # --mtime options are mutually exclusive; at most one is set.
+            # --mtime options are mutually exclusive; only one may be provided.
             if self.args.mtime_days or self.args.mtime_hours or self.args.mtime_mins:
                 if self.args.mtime_days:
                     threshold_seconds = self.args.mtime_days * 86400

@@ -13,7 +13,7 @@ _WORD_PATTERN: Final[re.Pattern[str]] = re.compile(r"\b\w+\b")
 
 
 class _Counts(NamedTuple):
-    """Immutable container for line, word, character, and maximum line length counts."""
+    """Line, word, character, and maximum line length counts."""
     lines: int
     words: int
     characters: int
