@@ -148,7 +148,7 @@ class Dupe(TextProgram):
         self.group_and_print_lines(sys.stdin, source_file="")
 
     def group_lines_by_key(self, lines: Iterable[str]) -> dict[str, list[str]]:
-        """Return a mapping from comparison key to the lines that match that key."""
+        """Return a mapping from comparison keys to matching lines."""
         group_map = {}
 
         for line in text.iter_normalized_lines(lines):

@@ -109,7 +109,7 @@ class Order(TextProgram):
         segments = []
 
         for field in self.get_sort_fields(line, filter_empty_fields=True):
-            negative = "-" in field or "(" in field and ")" in field
+            negative = "-" in field or ("(" in field and ")" in field)
             number = self.normalize_number(re.sub(pattern=_CURRENCY_SANITIZE_REGEX, repl="", string=field))
 
             try:
