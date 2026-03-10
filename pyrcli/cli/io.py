@@ -16,7 +16,7 @@ class FileInfo(NamedTuple):
 
     Attributes:
         file_name: File name (normalized by the caller).
-        text_stream: Open text stream for the file, valid only until the next yield.
+        text_stream: Open text stream for the file, valid only until the next iteration.
     """
     file_name: str
     text_stream: TextIO
@@ -33,8 +33,8 @@ def iter_descendant_paths(root: Path, max_depth: int = sys.maxsize) -> Iterator[
     root_depth = len(root.parts)
 
     for dir_path, dir_names, file_names in os.walk(top=root, topdown=True, followlinks=False):
-        current = Path(dir_path)
-        depth = len(current.parts) - root_depth
+        current_path = Path(dir_path)
+        depth = len(current_path.parts) - root_depth
 
         # Prune subdirectories to prevent descent beyond max_depth.
         if depth >= max_depth:
@@ -42,10 +42,10 @@ def iter_descendant_paths(root: Path, max_depth: int = sys.maxsize) -> Iterator[
             continue
 
         for name in dir_names:
-            yield current / name
+            yield current_path / name
 
         for name in file_names:
-            yield current / name
+            yield current_path / name
 
 
 def iter_stdin_file_names() -> Iterator[str]:
