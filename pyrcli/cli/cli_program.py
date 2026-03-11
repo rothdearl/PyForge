@@ -68,8 +68,11 @@ class CLIProgram(ABC):
             raise SystemExit(self.error_exit_code)
 
     def initialize_runtime_state(self) -> None:
-        """Initialize internal state derived from parsed options."""
-        # Disable color if standard output is redirected.
+        """
+        Initialize runtime state.
+
+        - Disables ``print_color`` if standard output is not connected to a terminal.
+        """
         self.print_color = getattr(self.args, "color", "off") == "on" and stdout_is_terminal()
 
     def normalize_options(self) -> None:
