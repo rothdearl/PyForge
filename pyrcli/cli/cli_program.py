@@ -42,7 +42,7 @@ class CLIProgram(ABC):
         self.args = self.build_arguments().parse_args()
 
     def _prepare_runtime_state(self) -> None:
-        """Run the option lifecycle hooks that prepare runtime state."""
+        """Prepare runtime state by running the option lifecycle hooks in order."""
         self.check_option_dependencies()
         self.validate_option_ranges()
         self.normalize_options()
