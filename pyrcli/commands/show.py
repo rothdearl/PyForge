@@ -2,10 +2,10 @@
 
 import argparse
 import sys
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, text
 
 
 class _Styles:
@@ -31,7 +31,7 @@ class Show(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="show")
+        super().__init__(name="show", buffer_stdin=True)
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -60,29 +60,17 @@ class Show(TextProgram):
         return parser
 
     @override
-    def execute(self) -> None:
-        """Execute the command using the prepared runtime state."""
-        if terminal.stdin_is_redirected():
-            if self.args.stdin_files:
-                self.process_text_files_from_stdin()
-            else:
-                if standard_input := sys.stdin.readlines():
-                    self.print_file_header(file_name="")
-                    self.print_lines(standard_input)
+    def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
+        """Process input received from redirected standard input."""
+        lines = list(input_lines)  # Convert to a list; print_lines requires a Sequence to compute line bounds.
 
-            # Process any additional file arguments.
-            if self.args.files:
-                self.process_text_files(self.args.files)
-        elif self.args.files:
-            self.process_text_files(self.args.files)
-        else:
-            self.print_lines_from_input()
+        self.print_file_header(file_name="")
+        self.print_lines(lines)
 
     @override
-    def handle_text_stream(self, file_info: io.FileInfo) -> None:
-        """Process the text stream for a single input file."""
-        self.print_file_header(file_info.file_name)
-        self.print_lines(file_info.text_stream.readlines())
+    def handle_terminal_input(self) -> None:
+        """Read and process input interactively from the terminal."""
+        self.print_lines(sys.stdin.readlines())
 
     @override
     def normalize_options(self) -> None:
@@ -93,8 +81,8 @@ class Show(TextProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """Print the file header for ``file_name``."""
-        if self.can_print_file_header():
-            print(self.render_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
+        if self.should_print_file_header():
+            print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
 
     def print_lines(self, lines: Sequence[str]) -> None:
         """Print lines to standard output, applying numbering and whitespace rendering."""
@@ -120,9 +108,11 @@ class Show(TextProgram):
 
                 print(rendered)
 
-    def print_lines_from_input(self) -> None:
-        """Read and print lines from standard input until EOF."""
-        self.print_lines(sys.stdin.readlines())
+    @override
+    def process_text_stream(self, file_info: io.FileInfo) -> None:
+        """Process the text stream for a single input file."""
+        self.print_file_header(file_info.file_name)
+        self.print_lines(file_info.text_stream.readlines())
 
     def render_ends(self, line: str) -> str:
         """Append a visible end-of-line marker to the line."""
@@ -153,8 +143,9 @@ class Show(TextProgram):
         rendered = line
         trailing_count = len(rendered) - len(rendered.rstrip(" "))
 
-        # Truncate trailing spaces.
-        rendered = rendered[:-trailing_count] if trailing_count else rendered
+        # Remove trailing spaces before replacing them with markers.
+        if trailing_count:
+            rendered = rendered[:-trailing_count]
 
         if self.print_color:
             space_marker = f"{_Styles.SPACE_MARKER}{_Whitespace.SPACE_MARKER}{ansi.RESET}"

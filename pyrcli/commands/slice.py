@@ -5,7 +5,7 @@ import sys
 from collections.abc import Iterable
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, text
 
 
 class _Styles:
@@ -24,7 +24,7 @@ class Slice(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="slice")
+        super().__init__(name="slice", buffer_stdin=True)
 
         self.selected_fields: list[int] = []
 
@@ -94,25 +94,6 @@ class Slice(TextProgram):
         # Initialize selected_fields before validate_option_ranges() checks its contents.
         self.selected_fields = self.args.fields or []
 
-    @override
-    def execute(self) -> None:
-        """Execute the command using the prepared runtime state."""
-        if terminal.stdin_is_redirected():
-            if self.args.stdin_files:
-                self.process_text_files_from_stdin()
-            else:
-                if standard_input := sys.stdin.readlines():
-                    self.print_file_header(file_name="")
-                    self.split_and_print_lines(standard_input)
-
-            # Process any additional file arguments.
-            if self.args.files:
-                self.process_text_files(self.args.files)
-        elif self.args.files:
-            self.process_text_files(self.args.files)
-        else:
-            self.split_and_print_lines_from_input()
-
     def get_field_quote(self) -> str:
         """Return the quote character for wrapping output fields, or an empty string when quoting is disabled."""
         match self.args.quotes:
@@ -124,10 +105,15 @@ class Slice(TextProgram):
                 return ""
 
     @override
-    def handle_text_stream(self, file_info: io.FileInfo) -> None:
-        """Process the text stream for a single input file."""
-        self.print_file_header(file_info.file_name)
-        self.split_and_print_lines(file_info.text_stream)
+    def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
+        """Process input received from redirected standard input."""
+        self.print_file_header(file_name="")
+        self.split_and_print_lines(input_lines)
+
+    @override
+    def handle_terminal_input(self) -> None:
+        """Read and process input interactively from the terminal."""
+        self.split_and_print_lines(sys.stdin)
 
     @override
     def normalize_options(self) -> None:
@@ -145,8 +131,14 @@ class Slice(TextProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """Print the file header for ``file_name``."""
-        if self.can_print_file_header():
-            print(self.render_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
+        if self.should_print_file_header():
+            print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
+
+    @override
+    def process_text_stream(self, file_info: io.FileInfo) -> None:
+        """Process the text stream for a single input file."""
+        self.print_file_header(file_info.file_name)
+        self.split_and_print_lines(file_info.text_stream)
 
     def split_and_print_lines(self, lines: Iterable[str]) -> None:
         """Split lines into fields and print them."""
@@ -160,10 +152,6 @@ class Slice(TextProgram):
                 continue
 
             print(self.args.separator.join(f"{quote}{field}{quote}" for field in fields))
-
-    def split_and_print_lines_from_input(self) -> None:
-        """Read, split, and print lines from standard input until EOF."""
-        self.split_and_print_lines(sys.stdin)
 
     def split_line(self, line: str) -> list[str]:
         """Split a line into fields and apply configured filtering and selection."""

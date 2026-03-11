@@ -5,7 +5,7 @@ import sys
 from collections.abc import Iterable, Sequence
 from typing import Final, NamedTuple, NoReturn, override
 
-from pyrcli.cli import CompiledPatterns, TextProgram, ansi, io, patterns, render, terminal, text
+from pyrcli.cli import CompiledPatterns, TextProgram, ansi, io, patterns, render, text
 
 # Exit code when no matches are found.
 _NO_MATCHES_EXIT_CODE: Final[int] = 1
@@ -36,7 +36,7 @@ class Scan(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="scan", error_exit_code=2)
+        super().__init__(name="scan", buffer_stdin=True, error_exit_code=2)
 
         self.match_found: bool = False
         self.patterns: CompiledPatterns = []
@@ -90,40 +90,26 @@ class Scan(TextProgram):
 
         return matches
 
-    def compile_patterns(self) -> None:
-        """Compile ``--find`` patterns for line matching."""
-        self.patterns = patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
-                                                  on_error=self.print_error_and_exit)
-
-    @override
-    def execute(self) -> None:
-        """Execute the command using the prepared runtime state."""
-        if terminal.stdin_is_redirected():
-            if self.args.stdin_files:
-                self.process_text_files_from_stdin()
-            elif standard_input := sys.stdin.readlines():
-                self.print_matches(standard_input, source_file="")
-
-            # Process any additional file arguments.
-            if self.args.files:
-                self.process_text_files(self.args.files)
-        elif self.args.files:
-            self.process_text_files(self.args.files)
-        else:
-            self.print_matches_from_input()
-
     @override
     def exit_if_errors(self) -> None:
-        """Raise ``SystemExit(NO_MATCHES_EXIT_CODE)`` if a match was not found."""
+        """Raise ``SystemExit(1)`` if a match was not found."""
         super().exit_if_errors()
 
         if not self.match_found:
             raise SystemExit(_NO_MATCHES_EXIT_CODE)
 
     @override
-    def handle_text_stream(self, file_info: io.FileInfo) -> None:
-        """Process the text stream for a single input file."""
-        self.print_matches(file_info.text_stream, source_file=file_info.file_name)
+    def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
+        """Process input received from redirected standard input."""
+        self.print_matches(input_lines, source_file="")
+
+    @override
+    def handle_terminal_input(self) -> None:
+        """Read and process input interactively from the terminal."""
+        if self.is_printing_counts():
+            self.print_matches(sys.stdin.readlines(), source_file="")
+        else:
+            self.print_matches(sys.stdin, source_file="")
 
     @override
     def initialize_runtime_state(self) -> None:
@@ -134,7 +120,9 @@ class Scan(TextProgram):
         if not self.args.find:
             raise SystemExit(_NO_MATCHES_EXIT_CODE)
 
-        self.compile_patterns()
+        # Compile patterns for line matching.
+        self.patterns = patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
+                                                  on_error=self.print_error_and_exit)
 
     def is_printing_counts(self) -> bool:
         """Return ``True`` if line counts will be printed."""
@@ -151,8 +139,8 @@ class Scan(TextProgram):
         """Print match counts or matched lines according to command-line options."""
         file_name = ""
 
-        if self.can_print_file_header():
-            file_name = self.render_file_header(source_file, file_name_style=_Styles.FILE_NAME,
+        if self.should_print_file_header():
+            file_name = self.format_file_header(source_file, file_name_style=_Styles.FILE_NAME,
                                                 colon_style=_Styles.COLON)
 
         if self.is_printing_counts():
@@ -188,12 +176,10 @@ class Scan(TextProgram):
 
         self.print_match_results(matches, source_file=source_file)
 
-    def print_matches_from_input(self) -> None:
-        """Read and print matches from standard input until EOF."""
-        if self.is_printing_counts():
-            self.print_matches(sys.stdin.readlines(), source_file="")
-        else:
-            self.print_matches(sys.stdin, source_file="")
+    @override
+    def process_text_stream(self, file_info: io.FileInfo) -> None:
+        """Process the text stream for a single input file."""
+        self.print_matches(file_info.text_stream, source_file=file_info.file_name)
 
 
 def main() -> int | NoReturn:

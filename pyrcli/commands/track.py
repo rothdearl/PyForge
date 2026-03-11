@@ -7,7 +7,7 @@ from collections.abc import Iterable, Sequence
 from threading import Thread
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, text
 
 # Interval in seconds between file content polls when following.
 _POLLING_INTERVAL: Final[float] = 0.5
@@ -24,7 +24,7 @@ class Track(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="track")
+        super().__init__(name="track", buffer_stdin=True)
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -48,28 +48,12 @@ class Track(TextProgram):
         return parser
 
     @override
-    def execute(self) -> None:
-        """Execute the command using the prepared runtime state."""
-        printed_files = []
+    def post_execute(self, processed_files: Sequence[str]) -> None:
+        """Run post-execution logic after all input has been processed."""
+        file_count = len(processed_files)
 
-        if terminal.stdin_is_redirected():
-            if self.args.stdin_files:
-                printed_files.extend(self.process_text_files_from_stdin())
-            else:
-                if standard_input := sys.stdin.readlines():
-                    self.print_file_header(file_name="")
-                    self.print_lines(standard_input)
-
-            # Process any additional file arguments.
-            if self.args.files:
-                printed_files.extend(self.process_text_files(self.args.files))
-        elif self.args.files:
-            printed_files.extend(self.process_text_files(self.args.files))
-        else:
-            self.print_lines_from_input()
-
-        if self.args.follow and printed_files:
-            for thread in self.start_following_threads(printed_files, print_file_name_on_update=len(printed_files) > 1):
+        if self.args.follow and processed_files:
+            for thread in self.start_following_threads(processed_files, print_file_name_on_update=file_count > 1):
                 thread.join()
 
     def follow_file(self, file_name: str, print_file_name_on_update: bool) -> None:
@@ -112,10 +96,20 @@ class Track(TextProgram):
             self.print_error(f"{file_name!r} is no longer accessible")
 
     @override
-    def handle_text_stream(self, file_info: io.FileInfo) -> None:
-        """Process the text stream for a single input file."""
-        self.print_file_header(file_info.file_name)
-        self.print_lines(file_info.text_stream.readlines())
+    def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
+        """Process input received from redirected standard input."""
+        self.print_file_header(file_name="")
+        self.print_lines(list(input_lines))
+
+    @override
+    def handle_terminal_input(self) -> None:
+        """Read and process input interactively from the terminal."""
+        while True:
+            self.print_lines(sys.stdin.readlines())
+
+            # --follow on standard input is an infinite loop until Ctrl-C.
+            if not self.args.follow:
+                return
 
     @override
     def normalize_options(self) -> None:
@@ -126,8 +120,8 @@ class Track(TextProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """Print the file header for ``file_name``."""
-        if self.can_print_file_header():
-            print(self.render_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
+        if self.should_print_file_header():
+            print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
 
     def print_lines(self, lines: Sequence[str]) -> None:
         """Print lines to standard output."""
@@ -142,14 +136,11 @@ class Track(TextProgram):
             if index > start_index:
                 print(line)
 
-    def print_lines_from_input(self) -> None:
-        """Read and print lines from standard input until EOF."""
-        while True:
-            self.print_lines(sys.stdin.readlines())
-
-            # --follow on standard input is an infinite loop until Ctrl-C.
-            if not self.args.follow:
-                return
+    @override
+    def process_text_stream(self, file_info: io.FileInfo) -> None:
+        """Process the text stream for a single input file."""
+        self.print_file_header(file_info.file_name)
+        self.print_lines(file_info.text_stream.readlines())
 
     def start_following_threads(self, files: Iterable[str], *, print_file_name_on_update: bool) -> list[Thread]:
         """Start a thread for each file and return the started ``Thread`` objects."""

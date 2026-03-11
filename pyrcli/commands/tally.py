@@ -3,10 +3,10 @@
 import argparse
 import re
 import sys
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from typing import Final, NamedTuple, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, text
 
 # Matches sequences of word characters bounded by word boundaries.
 _WORD_PATTERN: Final[re.Pattern[str]] = re.compile(r"\b\w+\b")
@@ -32,17 +32,17 @@ class Tally(TextProgram):
     Command implementation for counting lines, words, and characters in files.
 
     Attributes:
-        files_counted: Number of files counted.
         flags: Flags for determining if a count attribute will be printed.
+        received_stdin: Whether input was received from redirected standard input.
         totals: Total counts across all files.
     """
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="tally")
+        super().__init__(name="tally", buffer_stdin=True)
 
-        self.files_counted: int = 0
         self.flags: list[bool] = [False, False, False, False]  # [lines, words, characters, max_line_length]
+        self.received_stdin: bool = False
         self.totals: _Counts = _Counts(0, 0, 0, 0)
 
     def accumulate_counts(self, counts: _Counts) -> None:
@@ -97,38 +97,21 @@ class Tally(TextProgram):
         return _Counts(line_count, word_count, character_count, max_line_length)
 
     @override
-    def execute(self) -> None:
-        """Execute the command using the prepared runtime state."""
-        if terminal.stdin_is_redirected():
-            if self.args.stdin_files:
-                self.process_text_files_from_stdin()
-            else:
-                if standard_input := sys.stdin.readlines():
-                    counts = self.calculate_counts(standard_input)
+    def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
+        """Process input received from redirected standard input."""
+        counts = self.calculate_counts(input_lines)
 
-                    self.files_counted += 1
-                    self.accumulate_counts(counts)
-                    self.print_counts(counts, source_file="(standard input)" if self.args.files else "", is_total=False)
-
-            # Process any additional file arguments.
-            if self.args.files:
-                self.process_text_files(self.args.files)
-        elif self.args.files:
-            self.process_text_files(self.args.files)
-        else:
-            self.print_counts_from_input()
-
-        if self.args.total == "on" or (self.args.total == "auto" and self.files_counted > 1):
-            self.print_counts(self.totals, source_file="total", is_total=True)
+        self.accumulate_counts(counts)
+        self.print_counts(counts, source_file="(standard input)" if self.args.files else "", is_total=False)
+        self.received_stdin = True
 
     @override
-    def handle_text_stream(self, file_info: io.FileInfo) -> None:
-        """Process the text stream for a single input file."""
-        counts = self.calculate_counts(file_info.text_stream)
+    def handle_terminal_input(self) -> None:
+        """Read and process input interactively from the terminal."""
+        counts = self.calculate_counts(sys.stdin)
 
-        self.files_counted += 1
         self.accumulate_counts(counts)
-        self.print_counts(counts, source_file=file_info.file_name, is_total=False)
+        self.print_counts(counts, source_file="", is_total=False)
 
     @override
     def initialize_runtime_state(self) -> None:
@@ -140,10 +123,18 @@ class Tally(TextProgram):
             if flag:
                 self.flags[index] = True
 
-        # If no count flags, default to lines (0), words (1), and characters (2).
+        # If no count flags, default to lines, words, and characters.
         if not any(self.flags):
             for index in (0, 1, 2):
                 self.flags[index] = True
+
+    @override
+    def post_execute(self, processed_files: Sequence[str]) -> None:
+        """Run post-execution logic after all input has been processed."""
+        file_count = len(processed_files) + 1 if self.received_stdin else 0
+
+        if self.args.total == "on" or (self.args.total == "auto" and file_count > 1):
+            self.print_counts(self.totals, source_file="total", is_total=True)
 
     def print_counts(self, counts: _Counts, *, source_file: str, is_total: bool) -> None:
         """Print counts for a file, applying total styling when ``is_total`` is ``True``."""
@@ -176,16 +167,13 @@ class Tally(TextProgram):
         else:
             print()
 
-    def print_counts_from_input(self) -> None:
-        """
-        Read, count, and print from standard input until EOF.
-
-        - ``files_counted`` is not incremented; totals are suppressed for single stdin input.
-        """
-        counts = self.calculate_counts(sys.stdin)
+    @override
+    def process_text_stream(self, file_info: io.FileInfo) -> None:
+        """Process the text stream for a single input file."""
+        counts = self.calculate_counts(file_info.text_stream)
 
         self.accumulate_counts(counts)
-        self.print_counts(counts, source_file="", is_total=False)
+        self.print_counts(counts, source_file=file_info.file_name, is_total=False)
 
     @override
     def validate_option_ranges(self) -> None:

@@ -6,7 +6,7 @@ import sys
 from collections.abc import Iterable, Iterator
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, patterns, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, patterns, text
 
 
 class _Styles:
@@ -25,7 +25,7 @@ class Subs(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="subs")
+        super().__init__(name="subs", buffer_stdin=True)
 
         self.pattern: re.Pattern[str] | None = None
 
@@ -61,53 +61,32 @@ class Subs(TextProgram):
         if self.args.in_place and not self.args.files and not self.args.stdin_files:
             self.print_error_and_exit("--in-place requires FILES")
 
-    def compile_patterns(self) -> None:
-        """Compile search patterns into a single OR-pattern."""
-        if compiled := patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
-                                                 on_error=self.print_error_and_exit):
-            self.pattern = patterns.compile_combined_patterns(compiled, ignore_case=self.args.ignore_case)
+    @override
+    def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
+        """Process input received from redirected standard input."""
+        self.print_file_header(file_name="")
+        self.print_replaced_lines(input_lines)
 
     @override
-    def execute(self) -> None:
-        """Execute the command using the prepared runtime state."""
-        if terminal.stdin_is_redirected():
-            if self.args.stdin_files:
-                self.process_text_files_from_stdin()
-            else:
-                if standard_input := sys.stdin.readlines():
-                    self.print_file_header(file_name="")
-                    self.print_replaced_lines(standard_input)
-
-            # Process any additional file arguments.
-            if self.args.files:
-                self.process_text_files(self.args.files)
-        elif self.args.files:
-            self.process_text_files(self.args.files)
-        else:
-            self.print_replaced_lines_from_input()
-
-    @override
-    def handle_text_stream(self, file_info: io.FileInfo) -> None:
-        """Process the text stream for a single input file."""
-        if self.args.in_place:
-            io.write_text_file(file_info.file_name, lines=self.iter_replaced_lines(file_info.text_stream.readlines()),
-                               encoding=self.encoding, on_error=self.print_error)
-        else:
-            self.print_file_header(file_info.file_name)
-            self.print_replaced_lines(file_info.text_stream.readlines())
+    def handle_terminal_input(self) -> None:
+        """Read and process input interactively from the terminal."""
+        self.print_replaced_lines(sys.stdin)
 
     @override
     def initialize_runtime_state(self) -> None:
         """Initialize internal state derived from parsed options."""
         super().initialize_runtime_state()
 
-        self.compile_patterns()
+        # Compile search patterns into a single OR-pattern.
+        if compiled := patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
+                                                 on_error=self.print_error_and_exit):
+            self.pattern = patterns.compile_combined_patterns(compiled, ignore_case=self.args.ignore_case)
 
     def iter_replaced_lines(self, lines: Iterable[str]) -> Iterator[str]:
         """
         Yield lines with pattern matches replaced.
 
-        - Yields lines unchanged when no pattern is compiled (e.g., empty ``--find``).
+        - Yields lines unchanged when no pattern is compiled.
         """
         if self.pattern:
             for line in text.iter_normalized_lines(lines):
@@ -125,17 +104,26 @@ class Subs(TextProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """Print the file header for ``file_name``."""
-        if self.can_print_file_header():
-            print(self.render_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
+        if self.should_print_file_header():
+            print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
 
     def print_replaced_lines(self, lines: Iterable[str]) -> None:
         """Print lines with pattern matches replaced."""
         for line in self.iter_replaced_lines(lines):
             print(line)
 
-    def print_replaced_lines_from_input(self) -> None:
-        """Read, replace, and print lines from standard input until EOF."""
-        self.print_replaced_lines(sys.stdin)
+    @override
+    def process_text_stream(self, file_info: io.FileInfo) -> None:
+        """Process the text stream for a single input file."""
+        if self.args.in_place:
+            # Buffer before writing to avoid reading and writing the same file simultaneously.
+            lines = file_info.text_stream.readlines()
+
+            io.write_text_file(file_info.file_name, lines=self.iter_replaced_lines(lines), encoding=self.encoding,
+                               on_error=self.print_error)
+        else:
+            self.print_file_header(file_info.file_name)
+            self.print_replaced_lines(file_info.text_stream.readlines())
 
     @override
     def validate_option_ranges(self) -> None:

@@ -5,11 +5,12 @@ import datetime
 import random
 import re
 import sys
+from collections.abc import Iterable
 from typing import Final, NoReturn, override
 
 from dateutil.parser import ParserError, parse
 
-from pyrcli.cli import TextProgram, ansi, io, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, text
 
 # Matches one or more consecutive characters that are not digits, commas, or periods.
 _CURRENCY_SANITIZE_REGEX: Final[str] = r"[^0-9,.]+"
@@ -28,11 +29,11 @@ class _Styles:
 
 
 class Order(TextProgram):
-    """Command implementation for sorting files and prints them to standard output."""
+    """Command implementation for sorting files and printing them to standard output."""
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="order")
+        super().__init__(name="order", buffer_stdin=True)
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -78,25 +79,6 @@ class Order(TextProgram):
         # --decimal-comma is only meaningful with --currency-sort or --natural-sort.
         if self.args.decimal_comma and not any((self.args.currency_sort, self.args.natural_sort)):
             self.print_error_and_exit("--decimal-comma requires --currency-sort or --natural-sort")
-
-    @override
-    def execute(self) -> None:
-        """Execute the command using the prepared runtime state."""
-        if terminal.stdin_is_redirected():
-            if self.args.stdin_files:
-                self.process_text_files_from_stdin()
-            else:
-                if standard_input := sys.stdin.readlines():
-                    self.print_file_header(file_name="")
-                    self.sort_and_print_lines(standard_input)
-
-            # Process any additional file arguments.
-            if self.args.files:
-                self.process_text_files(self.args.files)
-        elif self.args.files:
-            self.process_text_files(self.args.files)
-        else:
-            self.sort_and_print_lines_from_input()
 
     def generate_currency_sort_key(self, line: str) -> list[tuple[int, float | str]]:
         """
@@ -195,10 +177,15 @@ class Order(TextProgram):
         return fields
 
     @override
-    def handle_text_stream(self, file_info: io.FileInfo) -> None:
-        """Process the text stream for a single input file."""
-        self.print_file_header(file_info.file_name)
-        self.sort_and_print_lines(file_info.text_stream.readlines())
+    def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
+        """Process input received from redirected standard input."""
+        self.print_file_header(file_name="")
+        self.sort_and_print_lines(list(input_lines))
+
+    @override
+    def handle_terminal_input(self) -> None:
+        """Read and process input interactively from the terminal."""
+        self.sort_and_print_lines(sys.stdin.readlines())
 
     def normalize_line(self, line: str) -> str:
         """Return the line with trailing whitespace removed and optional leading-blank and case normalization applied."""
@@ -234,8 +221,14 @@ class Order(TextProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """Print the file header for ``file_name``."""
-        if self.can_print_file_header():
-            print(self.render_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
+        if self.should_print_file_header():
+            print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
+
+    @override
+    def process_text_stream(self, file_info: io.FileInfo) -> None:
+        """Process the text stream for a single input file."""
+        self.print_file_header(file_info.file_name)
+        self.sort_and_print_lines(file_info.text_stream.readlines())
 
     def sort_and_print_lines(self, lines: list[str]) -> None:
         """Sort and print lines to standard output according to command-line options."""
@@ -257,10 +250,6 @@ class Order(TextProgram):
                 continue
 
             print(line)
-
-    def sort_and_print_lines_from_input(self) -> None:
-        """Read, sort, and print lines from standard input until EOF."""
-        self.sort_and_print_lines(sys.stdin.readlines())
 
     @override
     def validate_option_ranges(self) -> None:

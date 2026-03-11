@@ -5,7 +5,7 @@ import sys
 from collections.abc import Iterable, Sequence
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, text
 
 
 class _Styles:
@@ -20,7 +20,7 @@ class Dupe(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="dupe")
+        super().__init__(name="dupe", buffer_stdin=True)
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -62,35 +62,12 @@ class Dupe(TextProgram):
 
         return parser
 
-    def can_group_key(self, key: str) -> bool:
-        """Return ``True`` if ``key`` should participate in grouping."""
-        return not self.args.ignore_blank or key.strip()
-
     @override
     def check_option_dependencies(self) -> None:
         """Enforce relationships and mutual constraints between command-line options."""
         # --field-separator is only meaningful with --skip-fields.
         if self.args.field_separator is not None and self.args.skip_fields is None:
             self.print_error_and_exit("--field-separator requires --skip-fields")
-
-    @override
-    def execute(self) -> None:
-        """Execute the command using the prepared runtime state."""
-        if terminal.stdin_is_redirected():
-            if self.args.stdin_files:
-                self.process_text_files_from_stdin()
-            else:
-                if standard_input := sys.stdin.readlines():
-                    self.print_file_header(file_name="")
-                    self.group_and_print_lines(standard_input)
-
-            # Process any additional file arguments.
-            if self.args.files:
-                self.process_text_files(self.args.files)
-        elif self.args.files:
-            self.process_text_files(self.args.files)
-        else:
-            self.group_and_print_lines_from_input()
 
     def get_compare_key(self, line: str) -> str:
         """Return a normalized comparison key derived from the line, applying skip, trim, and case options."""
@@ -124,7 +101,7 @@ class Dupe(TextProgram):
         for line in text.iter_normalized_lines(lines):
             next_key = self.get_compare_key(line)
 
-            if not self.can_group_key(next_key):
+            if not self.should_include_key(next_key):
                 continue
 
             if next_key != previous_key:
@@ -136,17 +113,13 @@ class Dupe(TextProgram):
         return groups
 
     def group_and_print_lines(self, lines: Iterable[str]) -> None:
-        """Group lines and print them to standard output."""
+        """Group lines by the configured strategy and print the resulting groups."""
         if self.args.adjacent:
             line_groups = self.group_adjacent_matching_lines(lines)
         else:
             line_groups = self.group_lines_by_key(lines).values()
 
         self.print_line_groups(line_groups)
-
-    def group_and_print_lines_from_input(self) -> None:
-        """Read and print lines from standard input until EOF."""
-        self.group_and_print_lines(sys.stdin)
 
     def group_lines_by_key(self, lines: Iterable[str]) -> dict[str, list[str]]:
         """Return a mapping from comparison keys to matching lines."""
@@ -155,7 +128,7 @@ class Dupe(TextProgram):
         for line in text.iter_normalized_lines(lines):
             key = self.get_compare_key(line)
 
-            if not self.can_group_key(key):
+            if not self.should_include_key(key):
                 continue
 
             if key in group_map:
@@ -166,10 +139,15 @@ class Dupe(TextProgram):
         return group_map
 
     @override
-    def handle_text_stream(self, file_info: io.FileInfo) -> None:
-        """Process the text stream for a single input file."""
-        self.print_file_header(file_info.file_name)
-        self.group_and_print_lines(file_info.text_stream)
+    def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
+        """Process input received from redirected standard input."""
+        self.print_file_header(file_name="")
+        self.group_and_print_lines(input_lines)
+
+    @override
+    def handle_terminal_input(self) -> None:
+        """Read and process input interactively from the terminal."""
+        self.group_and_print_lines(sys.stdin)
 
     @override
     def normalize_options(self) -> None:
@@ -180,8 +158,8 @@ class Dupe(TextProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """Print the file header for ``file_name``."""
-        if self.can_print_file_header():
-            print(self.render_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
+        if self.should_print_file_header():
+            print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
 
     def print_line_groups(self, line_groups: Iterable[Sequence[str]]) -> None:
         """Print line groups as duplicates, unique lines, or grouped output."""
@@ -212,15 +190,23 @@ class Dupe(TextProgram):
                         else:
                             group_count_str = f"{group_count:>{self.args.count_width},}:"
                     else:
-                        indent = " "  # Ensure lines align.
-
-                        group_count_str = f"{indent:>{self.args.count_width}} "
+                        group_count_str = f"{' ':>{self.args.count_width}} "  # Ensure lines align.
 
                 print(f"{group_count_str}{line}")
                 printed_line_count += 1
 
                 if not self.should_print_all_group_lines():
                     break
+
+    @override
+    def process_text_stream(self, file_info: io.FileInfo) -> None:
+        """Process the text stream for a single input file."""
+        self.print_file_header(file_info.file_name)
+        self.group_and_print_lines(file_info.text_stream)
+
+    def should_include_key(self, key: str) -> bool:
+        """Return ``True`` if ``key`` should participate in grouping."""
+        return not self.args.ignore_blank or key.strip()
 
     def should_print_all_group_lines(self) -> bool:
         """Return ``True`` if all lines in a group should be printed."""

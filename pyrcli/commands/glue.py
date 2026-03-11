@@ -5,7 +5,7 @@ import sys
 from collections.abc import Iterable
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, text
 
 
 class _Styles:
@@ -63,26 +63,14 @@ class Glue(TextProgram):
         return parser
 
     @override
-    def execute(self) -> None:
-        """Execute the command using the prepared runtime state."""
-        if terminal.stdin_is_redirected():
-            if self.args.stdin_files:
-                self.process_text_files_from_stdin()
-            else:
-                self.print_lines(sys.stdin)
-
-            # Process any additional file arguments.
-            if self.args.files:
-                self.process_text_files(self.args.files)
-        elif self.args.files:
-            self.process_text_files(self.args.files)
-        else:
-            self.print_lines_from_input()
+    def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
+        """Process input received from redirected standard input."""
+        self.print_lines(input_lines)
 
     @override
-    def handle_text_stream(self, file_info: io.FileInfo) -> None:
-        """Process the text stream for a single input file."""
-        self.print_lines(file_info.text_stream)
+    def handle_terminal_input(self) -> None:
+        """Read and process input interactively from the terminal."""
+        self.print_lines(sys.stdin)
 
     def print_lines(self, lines: Iterable[str]) -> None:
         """Print lines to standard output, applying numbering, whitespace rendering, and blank-line handling."""
@@ -111,9 +99,10 @@ class Glue(TextProgram):
 
             print(line)
 
-    def print_lines_from_input(self) -> None:
-        """Read and print lines from standard input until EOF."""
-        self.print_lines(sys.stdin)
+    @override
+    def process_text_stream(self, file_info: io.FileInfo) -> None:
+        """Process the text stream for a single input file."""
+        self.print_lines(file_info.text_stream)
 
     def render_number(self, line: str) -> str:
         """Prefix a formatted line number to the line."""

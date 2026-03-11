@@ -304,12 +304,22 @@ class MyProgram(CLIProgram):  # or TextProgram
 
 All programs **must** call `super().__init__` with:
 
-- program name
-- error exit code (optional; defaults to 1)
+- `name` — program name
+- `error_exit_code` — exit code on failure (optional; defaults to `1`)
+
+Text programs additionally accept:
+
+- `buffer_stdin` — when `True`, redirected standard input is fully buffered before being passed to
+  `handle_redirected_input`; when `False` (default), stdin is passed as a streaming iterable
 
 ``` python
 def __init__(self) -> None:
     super().__init__(name="myprog")
+```
+
+``` python
+def __init__(self) -> None:
+    super().__init__(name="myprog", buffer_stdin=True)
 ```
 
 ---
@@ -320,14 +330,16 @@ def __init__(self) -> None:
 
 Every program **must implement**:
 
-#### build_arguments(self) -\> argparse.ArgumentParser
+#### `build_arguments(self) -> argparse.ArgumentParser`
 
 Define all command-line options.
 
-#### execute(self) -\> None
+#### `execute(self) -> None`
 
 Implement the program's core behavior.
 This method is called **after** arguments are parsed, validated, normalized, and runtime state is initialized.
+
+> **TextProgram** marks `execute` as `@final`. Do not override it. Use the lifecycle hooks described below instead.
 
 ---
 
@@ -335,51 +347,62 @@ This method is called **after** arguments are parsed, validated, normalized, and
 
 Text-processing programs **must implement**:
 
-#### handle_text_stream(self, file_info: FileInfo) -\> None
+#### `handle_redirected_input(self, input_lines: Iterable[str]) -> None`
+
+Process input received from redirected standard input.
+
+- `input_lines` is either a streaming `sys.stdin` or a buffered `list[str]`, depending on `buffer_stdin`.
+- Called only when stdin is redirected and `--stdin-files` is not set.
+- Do not read from `sys.stdin` directly.
+
+#### `handle_terminal_input(self) -> None`
+
+Read and process input interactively from the terminal.
+
+- Called only when stdin is not redirected and no file arguments are provided.
+- Responsible for prompting or reading from the terminal as needed.
+
+#### `process_text_stream(self, file_info: FileInfo) -> None`
 
 Process a single text stream.
 
-- `file_info.file_name` -- normalized file name
-- `file_info.text_stream` -- open TextIO stream
-- May raise UnicodeDecodeError (handled by the base class)
-
-Do **not** open files manually; use the provided stream.
-
----
-
-## Reading Text Files
-
-Text programs **must use**:
-
-``` python
-self.process_text_files(files)
-```
-
-This function:
-
-- Opens files using the configured encoding
-- Delegates each stream to `handle_text_stream`
-- Handles UnicodeDecodeError uniformly
-- Returns a list of successfully processed file names
+- `file_info.file_name` — normalized file name
+- `file_info.text_stream` — open `TextIO` stream
+- May raise `UnicodeDecodeError` (handled by the base class)
+- Do **not** open files manually; use the provided stream.
 
 ---
 
-## Reading File Names from Standard Input
+## TextProgram Execution Flow
 
-When file names are supplied via a pipe rather than as positional arguments, text programs must use:
+`TextProgram.execute` is final and manages input routing automatically:
 
-``` python
-self.process_text_files_from_stdin()
+```
+stdin redirected?
+    yes:
+        --stdin-files set?
+            yes → read file names from stdin, process each file
+            no  → invoke handle_redirected_input() with stdin
+        process any additional file arguments
+    no:
+        file arguments provided?
+            yes → process each file
+            no  → invoke handle_terminal_input()
+
+post_execute() is always called after input processing completes.
 ```
 
-This function:
+---
 
-- Reads file names from stdin (one per line)
-- Filters empty lines
-- Delegates to process_text_files using the collected file list
-- Preserves the same error handling and return contract
+## Optional Hooks
 
-This ensures that piped file lists and argument-based file lists follow identical processing semantics.
+### `post_execute(self, processed_files: Iterable[str]) -> None`
+
+Called after all input has been processed.
+
+- `processed_files` — names of files successfully processed during execution.
+- Use this hook for post-processing, reporting, or summary output.
+- Default implementation does nothing.
 
 ---
 
@@ -387,7 +410,7 @@ This ensures that piped file lists and argument-based file lists follow identica
 
 All argument validation and normalization **must** be organized across these hooks:
 
-### check_option_dependencies(self)
+### `check_option_dependencies(self)`
 
 Enforce relationships between options.
 
@@ -396,7 +419,7 @@ Examples:
 - one option requires another
 - mutually exclusive semantic constraints
 
-### validate_option_ranges(self)
+### `validate_option_ranges(self)`
 
 Validate numeric and logical ranges.
 
@@ -405,7 +428,7 @@ Examples:
 - `--count-width >= 1`
 - `--skip-fields >= 1`
 
-### normalize_options(self)
+### `normalize_options(self)`
 
 Apply derived defaults and convert values to internal form.
 
@@ -415,72 +438,17 @@ Examples:
 - sort and deduplicate field lists
 - infer default flags
 
-### initialize_runtime_state(self)
+### `initialize_runtime_state(self)`
 
 Prepare internal state derived from options.
 
 Handled automatically in `CLIProgram`:
 
-- color enablement (disabled when stdout is redirected)
+- `print_color` — disabled when stdout is not connected to a terminal
 
 Handled additionally in `TextProgram`:
 
-- text encoding (`utf-8` or `iso-8859-1` via `--latin1`)
-
----
-
-## Optional Method
-
-### exit_if_errors(self)
-
-Override **only if** the program needs additional end-of-run validation.
-
-The default behavior exits if any errors were recorded via `print_error`.
-
----
-
-## Error Reporting
-
-Programs **must use** the provided helpers:
-
-### self.print_error(message)
-
-- Records an error
-- Prints a formatted message to stderr
-- Allows the program to continue
-
-### self.print_error_and_exit(message)
-
-- Prints a formatted message to stderr
-- Immediately terminates with the configured exit code
-
-Do **not** print raw error messages.
-
----
-
-## Program Entry Point
-
-All programs **must** use the standardized lifecycle:
-
-``` python
-def main() -> int | NoReturn:
-    """Run the command and return the exit code."""
-    return MyProgram().run_program()
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
-```
-
-The `run_program()` method guarantees:
-
-1. ANSI setup (Windows compatibility)
-2. SIGPIPE handling (POSIX)
-3. Argument parsing
-4. Validation and normalization
-5. Runtime state initialization
-6. Program execution
-7. Consistent error handling and exit codes
+- `encoding` — set to `iso-8859-1` when `--latin1` is enabled, otherwise `utf-8`
 
 ---
 
@@ -491,7 +459,7 @@ The `run_program()` method guarantees:
 - Inherit from `CLIProgram` or `TextProgram`
 - Call `super().__init__(name=...)`
 - Implement `build_arguments`
-- Implement `execute`
+- Implement `execute` (CLIProgram only; TextProgram marks this `@final`)
 - Use validation hooks appropriately
 - Use `print_error` / `print_error_and_exit`
 - Use `run_program()` in the entry point
@@ -499,10 +467,13 @@ The `run_program()` method guarantees:
 ### For text programs
 
 - Inherit from `TextProgram`
-- Implement `handle_text_stream`
-- Use `process_text_files` for file input
-- Use `process_text_files_from_stdin` for file-name input from standard input
+- Pass `buffer_stdin=True` if stdin must be fully read before processing
+- Implement `handle_redirected_input`
+- Implement `handle_terminal_input`
+- Implement `process_text_stream`
+- Optionally implement `post_execute` for post-processing or summary output
 - Do not manually open text files
+- Do not override `execute`
 
 ---
 
@@ -642,7 +613,7 @@ import sys
 from collections.abc import Iterable
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, terminal, text
+from pyrcli.cli import TextProgram, ansi, io, text
 
 
 class _Styles:
@@ -656,7 +627,7 @@ class TextProgramDemo(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="demo")
+        super().__init__(name="demo", buffer_stdin=True)
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -675,29 +646,15 @@ class TextProgramDemo(TextProgram):
         return parser
 
     @override
-    def execute(self) -> None:
-        """Execute the command using the prepared runtime state."""
-        if terminal.stdin_is_redirected():
-            if self.args.stdin_files:
-                self.process_text_files_from_stdin()
-            else:
-                if standard_input := sys.stdin.readlines():
-                    self.print_file_header(file_name="")
-                    self.print_lines(standard_input)
-
-            # Process any additional file arguments.
-            if self.args.files:
-                self.process_text_files(self.args.files)
-        elif self.args.files:
-            self.process_text_files(self.args.files)
-        else:
-            self.print_lines_from_input()
+    def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
+        """Process input received from redirected standard input."""
+        self.print_file_header(file_name="")
+        self.print_lines(input_lines)
 
     @override
-    def handle_text_stream(self, file_info: io.FileInfo) -> None:
-        """Process the text stream for a single input file."""
-        self.print_file_header(file_info.file_name)
-        self.print_lines(file_info.text_stream)
+    def handle_terminal_input(self) -> None:
+        """Read and process input interactively from the terminal."""
+        self.print_lines(sys.stdin)
 
     @override
     def normalize_options(self) -> None:
@@ -708,8 +665,8 @@ class TextProgramDemo(TextProgram):
 
     def print_file_header(self, file_name: str) -> None:
         """Print the rendered file header for ``file_name``."""
-        if self.can_print_file_header():
-            print(self.render_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
+        if self.should_print_file_header():
+            print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
 
     @staticmethod
     def print_lines(lines: Iterable[str]) -> None:
@@ -717,9 +674,11 @@ class TextProgramDemo(TextProgram):
         for line in text.iter_normalized_lines(lines):
             print(line)
 
-    def print_lines_from_input(self) -> None:
-        """Read and print lines from standard input until EOF."""
-        self.print_lines(sys.stdin)
+    @override
+    def process_text_stream(self, file_info: io.FileInfo) -> None:
+        """Process the text stream for a single input file."""
+        self.print_file_header(file_info.file_name)
+        self.print_lines(file_info.text_stream)
 
 
 def main() -> int | NoReturn:
