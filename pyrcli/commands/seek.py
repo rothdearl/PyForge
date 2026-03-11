@@ -78,16 +78,6 @@ class Seek(CLIProgram):
 
         return parser
 
-    def compile_patterns(self) -> None:
-        """Compile ``--name`` and ``--path`` patterns for file matching."""
-        if self.args.name:
-            self.name_patterns = patterns.compile_patterns(self.args.name, ignore_case=self.args.ignore_case,
-                                                           on_error=self.print_error_and_exit)
-
-        if self.args.path:
-            self.path_patterns = patterns.compile_patterns(self.args.path, ignore_case=self.args.ignore_case,
-                                                           on_error=self.print_error_and_exit)
-
     @override
     def execute(self) -> None:
         """Execute the command using the prepared runtime state."""
@@ -102,7 +92,7 @@ class Seek(CLIProgram):
 
     @override
     def exit_if_errors(self) -> None:
-        """Raise ``SystemExit(NO_MATCHES_EXIT_CODE)`` if a match was not found."""
+        """Raise ``SystemExit(1)`` if a match was not found."""
         super().exit_if_errors()
 
         if not self.match_found:
@@ -113,7 +103,14 @@ class Seek(CLIProgram):
         """Initialize internal state derived from parsed options."""
         super().initialize_runtime_state()
 
-        self.compile_patterns()
+        # Compile patterns for file matching.
+        if self.args.name:
+            self.name_patterns = patterns.compile_patterns(self.args.name, ignore_case=self.args.ignore_case,
+                                                           on_error=self.print_error_and_exit)
+
+        if self.args.path:
+            self.path_patterns = patterns.compile_patterns(self.args.path, ignore_case=self.args.ignore_case,
+                                                           on_error=self.print_error_and_exit)
 
     def path_matches_filters(self, path: Path) -> bool:
         """Return ``True`` if the path matches all enabled filters."""
@@ -123,7 +120,8 @@ class Seek(CLIProgram):
 
                 if self.args.type == "d" and not is_dir:
                     return False
-                elif self.args.type == "f" and is_dir:
+
+                if self.args.type == "f" and is_dir:
                     return False
 
             if self.args.empty_only:

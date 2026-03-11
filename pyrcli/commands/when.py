@@ -85,7 +85,7 @@ class When(CLIProgram):
 
     @staticmethod
     def highlight(text: str) -> str:
-        """Return ``text`` highlighted for the current day or month."""
+        """Return text rendered with reverse video."""
         return render.reverse_video(text)
 
     def highlight_day_within_bounds(self, line: str, day: str, bounds: _CalendarQuarterColumnBounds) -> str:
@@ -152,7 +152,7 @@ class When(CLIProgram):
         found_day = False
 
         for output in year[quarter_header_index + 2:]:
-            # End of quarter?
+            # An empty line marks the end of the quarter.
             if not output:
                 break
 

@@ -67,7 +67,7 @@ class Emit(CLIProgram):
         needs_space = False
 
         for raw_string in strings:
-            string = text.strip_trailing_newline(raw_string)  # Normalize stdin lines by stripping the trailing newline.
+            string = text.strip_trailing_newline(raw_string)
 
             if needs_space:
                 sys.stdout.write(" ")
