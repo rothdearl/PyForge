@@ -28,7 +28,11 @@ def iter_normalized_lines(lines: Iterable[str]) -> Iterator[str]:
 
 
 def split_csv(text: str, *, separator: str = " ", on_error: ErrorReporter) -> list[str]:
-    """Split ``text`` using CSV parsing when possible, falling back to ``str.split()``."""
+    """
+    Split ``text`` using CSV parsing.
+
+    - Falls back to ``str.split()`` if parsing fails.
+    """
     try:
         decoded_separator = decode_python_escape_sequences(separator)
 
@@ -46,7 +50,11 @@ def split_csv(text: str, *, separator: str = " ", on_error: ErrorReporter) -> li
 
 
 def split_regex(text: str, *, pattern: str, ignore_case: bool = False, on_error: ErrorReporter) -> list[str]:
-    """Split ``text`` using a regular expression pattern, falling back to ``str.split()`` if the pattern is invalid."""
+    """
+    Split ``text`` using a regular expression pattern.
+
+    - Falls back to ``str.split()`` if the pattern is invalid.
+    """
     flags = re.IGNORECASE if ignore_case else re.NOFLAG
 
     try:
