@@ -19,7 +19,7 @@ class Slice(TextProgram):
     Command implementation for splitting lines in files into fields.
 
     Attributes:
-        selected_fields: Selected fields to print.
+        selected_fields: Zero-based field indices to print.
     """
 
     def __init__(self) -> None:

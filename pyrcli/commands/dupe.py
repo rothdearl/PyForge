@@ -122,7 +122,7 @@ class Dupe(TextProgram):
         self.print_line_groups(line_groups)
 
     def group_lines_by_key(self, lines: Iterable[str]) -> dict[str, list[str]]:
-        """Return a mapping from comparison keys to matching lines."""
+        """Return a mapping from comparison keys to grouped lines."""
         group_map = {}
 
         for line in text.iter_normalized_lines(lines):

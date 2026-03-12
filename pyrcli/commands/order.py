@@ -188,7 +188,7 @@ class Order(TextProgram):
         self.sort_and_print_lines(sys.stdin.readlines())
 
     def normalize_line(self, line: str) -> str:
-        """Return the line with trailing whitespace removed and optional leading-blank and case normalization applied."""
+        """Return the line with trailing whitespace removed and optional leading-blank and case normalization."""
         normalized = line.rstrip()
 
         if self.args.ignore_leading_blanks:

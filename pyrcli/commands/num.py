@@ -82,7 +82,7 @@ class Num(TextProgram):
             self.print_error_and_exit("--number-separator contains an invalid escape sequence")
 
     def number_lines(self, lines: Iterable[str]) -> None:
-        """Number and print lines to standard output."""
+        """Number lines and print them to standard output."""
         blank_line_count = 0
         format_prefix = _FORMAT_PREFIXES[self.args.number_format]
         line_number = self.args.number_start - 1

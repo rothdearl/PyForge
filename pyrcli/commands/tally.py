@@ -82,7 +82,7 @@ class Tally(TextProgram):
         return parser
 
     def calculate_counts(self, lines: Iterable[str]) -> _Counts:
-        """Return line, word, character, and maximum display-width counts for ``lines``."""
+        """Return line, word, character, and maximum display width counts for ``lines``."""
         line_count, word_count, character_count, max_line_length = 0, 0, 0, 0
 
         for raw_line in lines:
