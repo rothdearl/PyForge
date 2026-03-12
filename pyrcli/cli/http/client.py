@@ -77,7 +77,7 @@ def _execute_request(*, method: _Methods, url: str, params: QueryParameters | No
 
 
 def _serialize_request_body(*, data: JsonType, files: MultipartFiles | None, serialize_to_json: bool) -> JsonType:
-    """Serialize the request body payload when conditions are met, or return ``data`` unchanged."""
+    """Serialize the request body when required, or return ``data`` unchanged."""
     if files is None and isinstance(data, dict) and serialize_to_json:
         return json.dumps(data)
 
@@ -168,7 +168,7 @@ def put_file(url: str, *, file_path: str, field_name: str = "file", auth_headers
 
 
 def set_timeout(timeout: float) -> None:
-    """Set the module-wide HTTP request timeout in seconds, affecting all subsequent requests."""
+    """Set the module-wide HTTP request timeout in seconds for subsequent requests."""
     if timeout <= 0:
         raise ValueError("http request timeout must be greater than 0.")
 
