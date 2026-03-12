@@ -343,6 +343,52 @@ This method is called **after** arguments are parsed, validated, normalized, and
 
 ---
 
+## Option Validation Lifecycle
+
+All argument validation and normalization **must** be organized across these hooks:
+
+### `check_option_dependencies(self)`
+
+Enforce relationships between options.
+
+Examples:
+
+- one option requires another
+- mutually exclusive semantic constraints
+
+### `validate_option_ranges(self)`
+
+Validate numeric and logical ranges.
+
+Examples:
+
+- `--count-width >= 1`
+- `--skip-fields >= 1`
+
+### `normalize_options(self)`
+
+Apply derived defaults and convert values to internal form.
+
+Examples:
+
+- convert one-based indices to zero-based
+- sort and deduplicate field lists
+- infer default flags
+
+### `initialize_runtime_state(self)`
+
+Prepare internal state derived from options.
+
+Handled automatically in `CLIProgram`:
+
+- `print_color` — disabled when stdout is not connected to a terminal
+
+Handled additionally in `TextProgram`:
+
+- `encoding` — set to `iso-8859-1` when `--latin1` is enabled, otherwise `utf-8`
+
+---
+
 ### From TextProgram
 
 Text-processing programs **must implement**:
@@ -406,49 +452,23 @@ Called after all input has been processed.
 
 ---
 
-## Option Validation Lifecycle
+## Program Lifecycle
 
-All argument validation and normalization **must** be organized across these hooks:
+The following diagram shows the full execution lifecycle for all programs, from argument parsing through exit code
+resolution.
 
-### `check_option_dependencies(self)`
-
-Enforce relationships between options.
-
-Examples:
-
-- one option requires another
-- mutually exclusive semantic constraints
-
-### `validate_option_ranges(self)`
-
-Validate numeric and logical ranges.
-
-Examples:
-
-- `--count-width >= 1`
-- `--skip-fields >= 1`
-
-### `normalize_options(self)`
-
-Apply derived defaults and convert values to internal form.
-
-Examples:
-
-- convert one-based indices to zero-based
-- sort and deduplicate field lists
-- infer default flags
-
-### `initialize_runtime_state(self)`
-
-Prepare internal state derived from options.
-
-Handled automatically in `CLIProgram`:
-
-- `print_color` — disabled when stdout is not connected to a terminal
-
-Handled additionally in `TextProgram`:
-
-- `encoding` — set to `iso-8859-1` when `--latin1` is enabled, otherwise `utf-8`
+```
+parse arguments
+→ option lifecycle
+    check_option_dependencies
+    validate_option_ranges
+    normalize_options
+    initialize_runtime_state
+→ execute
+    (TextProgram manages input routing here)
+→ post_execute (TextProgram only)
+→ exit_if_errors
+```
 
 ---
 
