@@ -119,16 +119,17 @@ class TestINI(unittest.TestCase):
         self.assertEqual(ini.get_str_option("missing_section", "normal_string"), "")
 
     def test_values_strings(self) -> None:
+        section = "string_list_option"
+
         # Valid.
-        self.assertEqual(ini.get_str_options("string_list_options", "comma_separated"), ["a", "b", "c"])
-        self.assertEqual(ini.get_str_options("string_list_options", "tab_separated", separator="\t"),
-                         ["a", "b", "c", "d"])
-        self.assertEqual(ini.get_str_options("string_list_options", "comma_with_spaces"), ["a", "b", "c"])
-        self.assertEqual(ini.get_str_options("string_list_options", "leading_trailing"), ["a", "b"])
-        self.assertEqual(ini.get_str_options("string_list_options", "only_separators"), [])
-        self.assertEqual(ini.get_str_options("string_list_options", "single_value"), ["one"])
+        self.assertEqual(ini.get_str_list_option(section, "comma_separated"), ["a", "b", "c"])
+        self.assertEqual(ini.get_str_list_option(section, "tab_separated", separator="\t"), ["a", "b", "c", "d"])
+        self.assertEqual(ini.get_str_list_option(section, "comma_with_spaces"), ["a", "b", "c"])
+        self.assertEqual(ini.get_str_list_option(section, "leading_trailing"), ["a", "b"])
+        self.assertEqual(ini.get_str_list_option(section, "only_separators"), [])
+        self.assertEqual(ini.get_str_list_option(section, "single_value"), ["one"])
 
         # Fallback.
-        self.assertEqual(ini.get_str_options("string_list_options", "empty_value"), [])
-        self.assertEqual(ini.get_str_options("string_list_options", "missing_value"), [])
-        self.assertEqual(ini.get_str_options("missing_section", "comma_separated"), [])
+        self.assertEqual(ini.get_str_list_option(section, "empty_value"), [])
+        self.assertEqual(ini.get_str_list_option(section, "missing_value"), [])
+        self.assertEqual(ini.get_str_list_option("missing_section", "comma_separated"), [])

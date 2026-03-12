@@ -16,8 +16,8 @@ from .ini import (
     get_dict_option,
     get_float_option,
     get_int_option,
+    get_str_list_option,
     get_str_option,
-    get_str_options,
     has_defaults,
     has_sections,
     is_empty,
@@ -37,7 +37,7 @@ from .os_info import (
     IS_WINDOWS,
 )
 from .patterns import (
-    compile_combined_patterns,
+    compile_any_pattern,
     compile_patterns,
     matches_all_patterns,
 )
@@ -93,8 +93,8 @@ __all__: Final[tuple[str, ...]] = (
     "get_dict_option",
     "get_float_option",
     "get_int_option",
+    "get_str_list_option",
     "get_str_option",
-    "get_str_options",
     "has_defaults",
     "has_sections",
     "is_empty",
@@ -114,7 +114,7 @@ __all__: Final[tuple[str, ...]] = (
     "IS_WINDOWS",
 
     # patterns
-    "compile_combined_patterns",
+    "compile_any_pattern",
     "compile_patterns",
     "matches_all_patterns",
 

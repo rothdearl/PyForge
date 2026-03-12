@@ -85,16 +85,16 @@ def get_int_option(section: str, option: str) -> int | None:
         return None
 
 
-def get_str_option(section: str, option: str, *, fallback: str = "") -> str:
-    """Return a string value, using ``fallback`` if the option is missing or empty."""
-    return _config.get(section, option, fallback=fallback) or fallback
-
-
-def get_str_options(section: str, option: str, *, separator: str = ",") -> list[str]:
-    """Return string values split on ``separator``, trimming whitespace and skipping empty entries."""
+def get_str_list_option(section: str, option: str, *, separator: str = ",") -> list[str]:
+    """Return a list of values split on ``separator``, trimming whitespace and skipping empty entries."""
     value = get_str_option(section, option, fallback="")
 
     return [entry for part in value.split(separator) if (entry := part.strip())]
+
+
+def get_str_option(section: str, option: str, *, fallback: str = "") -> str:
+    """Return a string value, using ``fallback`` if the option is missing or empty."""
+    return _config.get(section, option, fallback=fallback) or fallback
 
 
 def has_defaults() -> bool:
@@ -118,7 +118,7 @@ def read_options(path: str, *, clear_previous: bool = True, on_error: ErrorRepor
 
     - Clears previously loaded options before reading when ``clear_previous`` is ``True``.
     - Invokes ``on_error(message)`` if the file cannot be read or parsed.
-    - Errors reported: missing file, permission denied, invalid configuration file, other OS read errors.
+    - Reports: missing file, permission denied, invalid configuration file, and other OS read errors.
     - Returns ``True`` on success.
     - If reading fails after clearing, the configuration remains empty.
     """
@@ -149,8 +149,8 @@ __all__: Final[tuple[str, ...]] = (
     "get_dict_option",
     "get_float_option",
     "get_int_option",
+    "get_str_list_option",
     "get_str_option",
-    "get_str_options",
     "has_defaults",
     "has_sections",
     "is_empty",
