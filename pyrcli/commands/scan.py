@@ -113,14 +113,16 @@ class Scan(TextProgram):
 
     @override
     def initialize_runtime_state(self) -> None:
-        """Initialize internal state derived from parsed options."""
+        """
+        Initialize runtime state, additionally compiling ``--find`` patterns.
+
+        - Raises ``SystemExit(1)`` if no ``--find`` patterns are provided.
+        """
         super().initialize_runtime_state()
 
-        # Exit early if no --find patterns are provided.
         if not self.args.find:
             raise SystemExit(_NO_MATCHES_EXIT_CODE)
 
-        # Compile patterns for line matching.
         self.patterns = patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
                                                   on_error=self.print_error_and_exit)
 

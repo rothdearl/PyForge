@@ -17,8 +17,8 @@ class TextProgram(CLIProgram, ABC):
     Base class for command-line programs that process text files and streams.
 
     Attributes:
-        encoding:  Encoding used when reading text files (default: ``"utf-8"``).
-        buffer_stdin: Whether redirected standard input should be buffered before processing  (default: ``False``).
+        encoding: Encoding used when reading text files (default: ``"utf-8"``).
+        buffer_stdin: Whether redirected standard input should be buffered before processing (default: ``False``).
     """
 
     def __init__(self, *, name: str, buffer_stdin: bool = False, error_exit_code: int = 1) -> None:
@@ -54,7 +54,7 @@ class TextProgram(CLIProgram, ABC):
 
     def _process_text_files(self, file_names: Iterable[str]) -> list[str]:
         """
-        Process the given files and return the names of successfully processed files.
+        Process each file and return the names of the ones successfully processed.
 
         - Skips unreadable files and reports errors via print_error().
         """
@@ -70,7 +70,7 @@ class TextProgram(CLIProgram, ABC):
         return processed_files
 
     def _process_text_files_from_stdin(self) -> list[str]:
-        """Process file names read from standard input and return the names of successfully processed files."""
+        """Process file names read from standard input and return the names of the ones successfully processed."""
         return self._process_text_files(iter_stdin_file_names())
 
     @final

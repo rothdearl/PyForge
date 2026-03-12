@@ -59,7 +59,7 @@ def read_text_files(file_names: Iterable[str], *, encoding: str, on_error: Error
 
     - Each yielded ``FileInfo.text_stream`` is valid only until the next iteration.
     - ``on_error(message)`` is invoked for file-related errors; processing continues with the next file.
-    - Errors reported: directory path, missing file, unknown encoding, permission denied, other OS read errors.
+    - Reports: directory path, missing file, unknown encoding, permission denied, and other OS read errors.
     """
     for file_name in iter_normalized_lines(file_names):
         try:
@@ -84,7 +84,7 @@ def write_text_file(file_name: str, *, lines: Iterable[str], encoding: str, on_e
     Write lines to a file, normalizing each line to end with exactly one newline.
 
     - ``on_error(message)`` is invoked for file-related errors.
-    - Errors reported: unknown encoding, permission denied, encoding failures, other OS write errors.
+    - Reports: unknown encoding, permission denied, encoding failures, and other OS write errors.
     """
     try:
         with open(file_name, mode="wt", encoding=encoding) as f:
