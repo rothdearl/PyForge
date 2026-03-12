@@ -116,9 +116,9 @@ class Tally(TextProgram):
     @override
     def initialize_runtime_state(self) -> None:
         """
-        Initialize runtime state, additionally configuring count flags.
+        Initialize internal state derived from parsed options.
 
-        - Defaults to lines, words, and characters when no count flags are provided.
+        - Defaults count flags to lines, words, and characters if none are provided.
         """
         super().initialize_runtime_state()
 

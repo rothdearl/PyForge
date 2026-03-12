@@ -69,7 +69,7 @@ class CLIProgram(ABC):
 
     def initialize_runtime_state(self) -> None:
         """
-        Initialize runtime state.
+        Initialize internal state derived from parsed options.
 
         - Disables ``print_color`` if standard output is not connected to a terminal.
         """
@@ -90,7 +90,7 @@ class CLIProgram(ABC):
 
     @final
     def print_error_and_exit(self, error_message: str) -> None:
-        """Print ``error_message`` to standard error and raise ``SystemExit`` immediately."""
+        """Print ``error_message`` to standard error and raise ``SystemExit(error_exit_code)`` immediately."""
         print(f"{self.name}: error: {error_message}", file=sys.stderr)
         raise SystemExit(self.error_exit_code)
 

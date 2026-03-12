@@ -114,9 +114,10 @@ class Scan(TextProgram):
     @override
     def initialize_runtime_state(self) -> None:
         """
-        Initialize runtime state, additionally compiling ``--find`` patterns.
+        Initialize internal state derived from parsed options.
 
         - Raises ``SystemExit(1)`` if no ``--find`` patterns are provided.
+        - Compiles ``--find`` patterns.
         """
         super().initialize_runtime_state()
 
