@@ -5,7 +5,8 @@ import sys
 from collections.abc import Iterable, Sequence
 from typing import Final, NamedTuple, NoReturn, override
 
-from pyrcli.cli import CompiledPatterns, TextProgram, ansi, patterns, render, text
+from pyrcli.cli import CompiledPatterns, TextProgram, patterns, render, text
+from pyrcli.cli.ansi import ForegroundColors, RESET
 from pyrcli.cli.io import InputFile
 
 # Exit code when no matches are found.
@@ -20,10 +21,10 @@ class _Match(NamedTuple):
 
 class _Styles:
     """Namespace for ANSI styling constants."""
-    COLON: Final[str] = ansi.ForegroundColors.BRIGHT_CYAN
-    FILE_NAME: Final[str] = ansi.ForegroundColors.BRIGHT_MAGENTA
-    LINE_NUMBER: Final[str] = ansi.ForegroundColors.BRIGHT_GREEN
-    MATCH: Final[str] = ansi.ForegroundColors.BRIGHT_RED
+    COLON: Final[str] = ForegroundColors.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ForegroundColors.BRIGHT_MAGENTA
+    LINE_NUMBER: Final[str] = ForegroundColors.BRIGHT_GREEN
+    MATCH: Final[str] = ForegroundColors.BRIGHT_RED
 
 
 class Scan(TextProgram):
@@ -85,7 +86,7 @@ class Scan(TextProgram):
                 self.match_found = True
 
                 if self.print_color and not self.args.invert_match:
-                    line = render.style_pattern_matches(line, patterns=self.patterns, ansi_style=_Styles.MATCH)
+                    line = render.style_pattern_matches(line, patterns=self.patterns, style=_Styles.MATCH)
 
                 matches.append(_Match(line_number, line))
 
@@ -162,7 +163,7 @@ class Scan(TextProgram):
                             f"{_Styles.LINE_NUMBER}"
                             f"{line_number:>{padding}}"
                             f"{_Styles.COLON}:"
-                            f"{ansi.RESET}",
+                            f"{RESET}",
                             end=""
                         )
                     else:

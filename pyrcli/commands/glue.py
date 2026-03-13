@@ -5,15 +5,16 @@ import sys
 from collections.abc import Iterable
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, text
+from pyrcli.cli import TextProgram, text
+from pyrcli.cli.ansi import ForegroundColors, RESET
 from pyrcli.cli.io import InputFile
 
 
 class _Styles:
     """Namespace for ANSI styling constants."""
-    END_MARKER: Final[str] = ansi.ForegroundColors.BRIGHT_BLUE
-    NUMBER: Final[str] = ansi.ForegroundColors.BRIGHT_GREEN
-    TAB_MARKER: Final[str] = ansi.ForegroundColors.BRIGHT_CYAN
+    END_MARKER: Final[str] = ForegroundColors.BRIGHT_BLUE
+    NUMBER: Final[str] = ForegroundColors.BRIGHT_GREEN
+    TAB_MARKER: Final[str] = ForegroundColors.BRIGHT_CYAN
 
 
 class _Whitespace:
@@ -111,7 +112,7 @@ class Glue(TextProgram):
             return (
                 f"{_Styles.NUMBER}"
                 f"{self.line_number:>{self.args.number_width}}"
-                f"{ansi.RESET}"
+                f"{RESET}"
                 f" {line}"
             )
 
@@ -126,7 +127,7 @@ class Glue(TextProgram):
                 tab_marker = (
                     f"{_Styles.TAB_MARKER}"
                     f"{_Whitespace.TAB_MARKER}"
-                    f"{ansi.RESET}"
+                    f"{RESET}"
                 )
 
                 rendered = rendered.replace("\t", tab_marker)
@@ -139,7 +140,7 @@ class Glue(TextProgram):
                     f"{rendered}"
                     f"{_Styles.END_MARKER}"
                     f"{_Whitespace.END_MARKER}"
-                    f"{ansi.RESET}"
+                    f"{RESET}"
                 )
             else:
                 rendered = f"{rendered}{_Whitespace.END_MARKER}"

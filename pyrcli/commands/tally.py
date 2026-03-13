@@ -6,7 +6,8 @@ import sys
 from collections.abc import Iterable, Sequence
 from typing import Final, NamedTuple, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, text
+from pyrcli.cli import TextProgram, text
+from pyrcli.cli.ansi import ForegroundColors, RESET
 from pyrcli.cli.io import InputFile
 
 # Matches sequences of word characters bounded by word boundaries.
@@ -23,9 +24,9 @@ class _Counts(NamedTuple):
 
 class _Styles:
     """Namespace for ANSI styling constants."""
-    COUNT: Final[str] = ansi.ForegroundColors.BRIGHT_CYAN
-    COUNT_TOTAL: Final[str] = ansi.ForegroundColors.BRIGHT_YELLOW
-    FILE_NAME: Final[str] = ansi.ForegroundColors.BRIGHT_MAGENTA
+    COUNT: Final[str] = ForegroundColors.BRIGHT_CYAN
+    COUNT_TOTAL: Final[str] = ForegroundColors.BRIGHT_YELLOW
+    FILE_NAME: Final[str] = ForegroundColors.BRIGHT_MAGENTA
 
 
 class Tally(TextProgram):
@@ -156,7 +157,7 @@ class Tally(TextProgram):
                     print(
                         f"{count_color}"
                         f"{count:>{padding},}"
-                        f"{ansi.RESET}",
+                        f"{RESET}",
                         end=""
                     )
                 else:
@@ -164,7 +165,7 @@ class Tally(TextProgram):
 
         if source_file:
             if self.print_color:
-                print(f" {source_file_color}{source_file}{ansi.RESET}")
+                print(f" {source_file_color}{source_file}{RESET}")
             else:
                 print(f" {source_file}")
         else:

@@ -6,14 +6,15 @@ import sys
 from collections.abc import Iterable, Iterator
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, patterns, text
-from pyrcli.cli.io import InputFile, write_text_file
+from pyrcli.cli import TextProgram, io, patterns, text
+from pyrcli.cli.ansi import ForegroundColors
+from pyrcli.cli.io import InputFile
 
 
 class _Styles:
     """Namespace for ANSI styling constants."""
-    COLON: Final[str] = ansi.ForegroundColors.BRIGHT_CYAN
-    FILE_NAME: Final[str] = ansi.ForegroundColors.BRIGHT_MAGENTA
+    COLON: Final[str] = ForegroundColors.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ForegroundColors.BRIGHT_MAGENTA
 
 
 class Subs(TextProgram):
@@ -120,8 +121,8 @@ class Subs(TextProgram):
             # Buffer before writing to avoid reading and writing the same file simultaneously.
             lines = input_file.text_stream.readlines()
 
-            write_text_file(input_file.file_name, lines=self.iter_replaced_lines(lines), encoding=self.encoding,
-                            on_error=self.print_error)
+            io.write_text_file(input_file.file_name, lines=self.iter_replaced_lines(lines), encoding=self.encoding,
+                               on_error=self.print_error)
         else:
             self.print_file_header(input_file.file_name)
             self.print_replaced_lines(input_file.text_stream.readlines())

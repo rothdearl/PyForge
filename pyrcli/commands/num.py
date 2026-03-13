@@ -5,7 +5,8 @@ import sys
 from collections.abc import Iterable
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, text
+from pyrcli.cli import TextProgram, text
+from pyrcli.cli.ansi import ForegroundColors, RESET
 from pyrcli.cli.io import InputFile
 
 # Format-spec alignment prefixes keyed by --number-format value.
@@ -18,9 +19,9 @@ _FORMAT_PREFIXES: Final[dict[str, str]] = {
 
 class _Styles:
     """Namespace for ANSI styling constants."""
-    COLON: Final[str] = ansi.ForegroundColors.BRIGHT_CYAN
-    FILE_NAME: Final[str] = ansi.ForegroundColors.BRIGHT_MAGENTA
-    LINE_NUMBER: Final[str] = ansi.ForegroundColors.BRIGHT_GREEN
+    COLON: Final[str] = ForegroundColors.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ForegroundColors.BRIGHT_MAGENTA
+    LINE_NUMBER: Final[str] = ForegroundColors.BRIGHT_GREEN
 
 
 class Num(TextProgram):
@@ -125,7 +126,7 @@ class Num(TextProgram):
             return (
                 f"{_Styles.LINE_NUMBER}"
                 f"{line_number:{format_prefix}{self.args.number_width}}"
-                f"{ansi.RESET}"
+                f"{RESET}"
                 f"{self.args.number_separator}"
                 f"{line}"
             )

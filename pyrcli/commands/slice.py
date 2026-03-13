@@ -5,14 +5,15 @@ import sys
 from collections.abc import Iterable
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, text
+from pyrcli.cli import TextProgram, text
+from pyrcli.cli.ansi import ForegroundColors
 from pyrcli.cli.io import InputFile
 
 
 class _Styles:
     """Namespace for ANSI styling constants."""
-    COLON: Final[str] = ansi.ForegroundColors.BRIGHT_CYAN
-    FILE_NAME: Final[str] = ansi.ForegroundColors.BRIGHT_MAGENTA
+    COLON: Final[str] = ForegroundColors.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ForegroundColors.BRIGHT_MAGENTA
 
 
 class Slice(TextProgram):

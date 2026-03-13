@@ -5,10 +5,9 @@ import sys
 from collections.abc import Iterable, Sequence
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram
+from pyrcli.cli import TextProgram, text
 from pyrcli.cli.ansi import ForegroundColors, RESET
 from pyrcli.cli.io import InputFile
-from pyrcli.cli.text import iter_normalized_lines, split_csv
 
 
 class _Styles:
@@ -82,7 +81,7 @@ class Dupe(TextProgram):
         if self.args.skip_fields:
             separator = self.args.field_separator or " "
 
-            compare_key = split_csv(compare_key, separator=separator, on_error=self.print_error_and_exit)
+            compare_key = text.split_csv(compare_key, separator=separator, on_error=self.print_error_and_exit)
             compare_key = separator.join(compare_key[self.args.skip_fields:])
 
         if self.args.max_chars or self.args.skip_chars:
@@ -101,7 +100,7 @@ class Dupe(TextProgram):
         groups = []
         previous_key = None
 
-        for line in iter_normalized_lines(lines):
+        for line in text.iter_normalized_lines(lines):
             next_key = self.get_compare_key(line)
 
             if not self.should_include_key(next_key):
@@ -128,7 +127,7 @@ class Dupe(TextProgram):
         """Return a mapping from comparison keys to grouped lines."""
         group_map = {}
 
-        for line in iter_normalized_lines(lines):
+        for line in text.iter_normalized_lines(lines):
             key = self.get_compare_key(line)
 
             if not self.should_include_key(key):

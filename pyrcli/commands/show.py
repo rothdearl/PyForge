@@ -5,18 +5,19 @@ import sys
 from collections.abc import Iterable, Sequence
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, text
+from pyrcli.cli import TextProgram, text
+from pyrcli.cli.ansi import ForegroundColors, RESET
 from pyrcli.cli.io import InputFile
 
 
 class _Styles:
     """Namespace for ANSI styling constants."""
-    COLON: Final[str] = ansi.ForegroundColors.BRIGHT_CYAN
-    END_MARKER: Final[str] = ansi.ForegroundColors.BRIGHT_BLUE
-    FILE_NAME: Final[str] = ansi.ForegroundColors.BRIGHT_MAGENTA
-    LINE_NUMBER: Final[str] = ansi.ForegroundColors.BRIGHT_GREEN
-    SPACE_MARKER: Final[str] = ansi.ForegroundColors.BRIGHT_CYAN
-    TAB_MARKER: Final[str] = ansi.ForegroundColors.BRIGHT_CYAN
+    COLON: Final[str] = ForegroundColors.BRIGHT_CYAN
+    END_MARKER: Final[str] = ForegroundColors.BRIGHT_BLUE
+    FILE_NAME: Final[str] = ForegroundColors.BRIGHT_MAGENTA
+    LINE_NUMBER: Final[str] = ForegroundColors.BRIGHT_GREEN
+    SPACE_MARKER: Final[str] = ForegroundColors.BRIGHT_CYAN
+    TAB_MARKER: Final[str] = ForegroundColors.BRIGHT_CYAN
 
 
 class _Whitespace:
@@ -122,7 +123,7 @@ class Show(TextProgram):
                 f"{line}"
                 f"{_Styles.END_MARKER}"
                 f"{_Whitespace.END_MARKER}"
-                f"{ansi.RESET}"
+                f"{RESET}"
             )
 
         return f"{line}{_Whitespace.END_MARKER}"
@@ -133,7 +134,7 @@ class Show(TextProgram):
             return (
                 f"{_Styles.LINE_NUMBER}"
                 f"{line_number:>{padding}}"
-                f"{ansi.RESET}"
+                f"{RESET}"
                 f" {line}"
             )
 
@@ -149,11 +150,11 @@ class Show(TextProgram):
             rendered = rendered[:-trailing_count]
 
         if self.print_color:
-            space_marker = f"{_Styles.SPACE_MARKER}{_Whitespace.SPACE_MARKER}{ansi.RESET}"
+            space_marker = f"{_Styles.SPACE_MARKER}{_Whitespace.SPACE_MARKER}{RESET}"
 
             rendered = rendered.replace(" ", space_marker)
             rendered = rendered + _Styles.SPACE_MARKER + (
-                    _Whitespace.TRAILING_SPACE_MARKER * trailing_count) + ansi.RESET
+                    _Whitespace.TRAILING_SPACE_MARKER * trailing_count) + RESET
         else:
             rendered = rendered.replace(" ", _Whitespace.SPACE_MARKER)
             rendered = rendered + (_Whitespace.TRAILING_SPACE_MARKER * trailing_count)
@@ -166,7 +167,7 @@ class Show(TextProgram):
             tab_marker = (
                 f"{_Styles.TAB_MARKER}"
                 f"{_Whitespace.TAB_MARKER}"
-                f"{ansi.RESET}"
+                f"{RESET}"
             )
 
             return line.replace("\t", tab_marker)

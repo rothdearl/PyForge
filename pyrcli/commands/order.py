@@ -10,7 +10,8 @@ from typing import Final, NoReturn, override
 
 from dateutil.parser import ParserError, parse
 
-from pyrcli.cli import TextProgram, ansi, text
+from pyrcli.cli import TextProgram, text
+from pyrcli.cli.ansi import ForegroundColors
 from pyrcli.cli.io import InputFile
 
 # Matches one or more consecutive characters that are not digits, commas, or periods.
@@ -25,8 +26,8 @@ _NON_WORD_OR_WHITESPACE_REGEX: Final[str] = r"[^\w\s]+"
 
 class _Styles:
     """Namespace for ANSI styling constants."""
-    COLON: Final[str] = ansi.ForegroundColors.BRIGHT_CYAN
-    FILE_NAME: Final[str] = ansi.ForegroundColors.BRIGHT_MAGENTA
+    COLON: Final[str] = ForegroundColors.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ForegroundColors.BRIGHT_MAGENTA
 
 
 class Order(TextProgram):

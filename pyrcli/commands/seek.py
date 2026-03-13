@@ -8,7 +8,8 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import CLIProgram, CompiledPatterns, ansi, io, patterns, render, terminal, text
+from pyrcli.cli import CLIProgram, CompiledPatterns, io, patterns, render, terminal, text
+from pyrcli.cli.ansi import ForegroundColors
 
 # Exit code when no matches are found.
 _NO_MATCHES_EXIT_CODE: Final[int] = 1
@@ -16,7 +17,7 @@ _NO_MATCHES_EXIT_CODE: Final[int] = 1
 
 class _Styles:
     """Namespace for ANSI styling constants."""
-    MATCH: Final[str] = ansi.ForegroundColors.BRIGHT_RED
+    MATCH: Final[str] = ForegroundColors.BRIGHT_RED
 
 
 class Seek(CLIProgram):
@@ -185,8 +186,8 @@ class Seek(CLIProgram):
         self.match_found = True
 
         if self.print_color and not self.args.invert_match:
-            name_part = render.style_pattern_matches(name_part, patterns=self.name_patterns, ansi_style=_Styles.MATCH)
-            path_part = render.style_pattern_matches(path_part, patterns=self.path_patterns, ansi_style=_Styles.MATCH)
+            name_part = render.style_pattern_matches(name_part, patterns=self.name_patterns, style=_Styles.MATCH)
+            path_part = render.style_pattern_matches(path_part, patterns=self.path_patterns, style=_Styles.MATCH)
 
         if self.args.abs:
             # Do not join the current working directory with '.'.
