@@ -26,7 +26,7 @@ class Track(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="track", buffer_stdin=True)
+        super().__init__(name="track")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -100,7 +100,7 @@ class Track(TextProgram):
     @override
     def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
         """Process input received from redirected standard input."""
-        lines = list(input_lines)  # Convert to a list; print_lines requires a Sequence to compute line bounds.
+        lines = list(input_lines)  # Materialize to a list; print_lines requires a Sequence to compute line bounds.
 
         self.print_file_header(file_name="")
         self.print_lines(lines)

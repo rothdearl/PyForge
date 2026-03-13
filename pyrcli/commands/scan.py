@@ -38,7 +38,7 @@ class Scan(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="scan", buffer_stdin=True, error_exit_code=2)
+        super().__init__(name="scan", error_exit_code=2)
 
         self.match_found: bool = False
         self.patterns: CompiledPatterns = []

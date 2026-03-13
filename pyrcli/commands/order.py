@@ -35,7 +35,7 @@ class Order(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="order", buffer_stdin=True)
+        super().__init__(name="order")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
@@ -181,7 +181,7 @@ class Order(TextProgram):
     @override
     def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
         """Process input received from redirected standard input."""
-        lines = list(input_lines)  # Convert to a list; sort_and_print_lines requires a list for in-place sorting.
+        lines = list(input_lines)  # Materialize to a list; sort_and_print_lines requires a list for in-place sorting.
 
         self.print_file_header(file_name="")
         self.sort_and_print_lines(lines)

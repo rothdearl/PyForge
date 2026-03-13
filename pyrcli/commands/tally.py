@@ -41,7 +41,7 @@ class Tally(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="tally", buffer_stdin=True)
+        super().__init__(name="tally")
 
         self.flags: list[bool] = [False, False, False, False]  # [lines, words, characters, max_line_length]
         self.received_stdin: bool = False

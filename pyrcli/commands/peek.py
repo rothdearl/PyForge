@@ -22,7 +22,7 @@ class Peek(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="peek", buffer_stdin=True)
+        super().__init__(name="peek")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:

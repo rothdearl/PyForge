@@ -22,7 +22,7 @@ class Dupe(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="dupe", buffer_stdin=True)
+        super().__init__(name="dupe")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:

@@ -1,5 +1,6 @@
 """Base class for command-line programs that process text files and streams."""
 
+import io
 import os
 import sys
 from abc import ABC, abstractmethod
@@ -18,14 +19,12 @@ class TextProgram(CLIProgram, ABC):
 
     Attributes:
         encoding: Encoding used when reading text files (default: ``"utf-8"``).
-        buffer_stdin: Whether redirected standard input should be buffered before processing (default: ``False``).
     """
 
-    def __init__(self, *, name: str, buffer_stdin: bool = False, error_exit_code: int = 1) -> None:
+    def __init__(self, *, name: str, error_exit_code: int = 1) -> None:
         """Initialize a new instance."""
         super().__init__(name=name, error_exit_code=error_exit_code)
 
-        self.buffer_stdin: bool = buffer_stdin
         self.encoding: str = "utf-8"
 
     def _execute_redirected_input_flow(self) -> list[str]:
@@ -44,13 +43,17 @@ class TextProgram(CLIProgram, ABC):
         return processed_files
 
     def _invoke_redirected_input_handler(self) -> None:
-        """Invoke ``handle_redirected_input()`` with buffered or streaming stdin."""
-        if self.buffer_stdin:
-            # Skip empty buffered stdin; an empty read indicates no input was provided.
+        """Invoke ``handle_redirected_input()`` when stdin contains redirected input."""
+        # Use peek() to detect piped input without consuming it.
+        # Fall back to readlines() when the underlying buffer is not a BufferedReader.
+        stdin_buffer = getattr(sys.stdin, "buffer", None)
+
+        if isinstance(stdin_buffer, io.BufferedReader):
+            if stdin_buffer.peek():
+                self.handle_redirected_input(sys.stdin)
+        else:
             if lines := sys.stdin.readlines():
                 self.handle_redirected_input(lines)
-        else:
-            self.handle_redirected_input(sys.stdin)
 
     def _process_text_files(self, file_names: Iterable[str]) -> list[str]:
         """
