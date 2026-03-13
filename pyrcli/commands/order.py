@@ -10,7 +10,8 @@ from typing import Final, NoReturn, override
 
 from dateutil.parser import ParserError, parse
 
-from pyrcli.cli import TextProgram, ansi, io, text
+from pyrcli.cli import TextProgram, ansi, text
+from pyrcli.cli.io import InputFile
 
 # Matches one or more consecutive characters that are not digits, commas, or periods.
 _CURRENCY_SANITIZE_REGEX: Final[str] = r"[^0-9,.]+"
@@ -227,7 +228,7 @@ class Order(TextProgram):
             print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
 
     @override
-    def process_text_stream(self, input_file: io.InputFile) -> None:
+    def process_text_stream(self, input_file: InputFile) -> None:
         """Process the text stream for a single input file."""
         self.print_file_header(input_file.file_name)
         self.sort_and_print_lines(input_file.text_stream.readlines())

@@ -6,7 +6,8 @@ import sys
 from collections.abc import Iterable, Sequence
 from typing import Final, NamedTuple, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, text
+from pyrcli.cli import TextProgram, ansi, text
+from pyrcli.cli.io import InputFile
 
 # Matches sequences of word characters bounded by word boundaries.
 _WORD_PATTERN: Final[re.Pattern[str]] = re.compile(r"\b\w+\b")
@@ -170,7 +171,7 @@ class Tally(TextProgram):
             print()
 
     @override
-    def process_text_stream(self, input_file: io.InputFile) -> None:
+    def process_text_stream(self, input_file: InputFile) -> None:
         """Process the text stream for a single input file."""
         counts = self.calculate_counts(input_file.text_stream)
 

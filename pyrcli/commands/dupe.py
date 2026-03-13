@@ -5,14 +5,17 @@ import sys
 from collections.abc import Iterable, Sequence
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, text
+from pyrcli.cli import TextProgram
+from pyrcli.cli.ansi import ForegroundColors, RESET
+from pyrcli.cli.io import InputFile
+from pyrcli.cli.text import iter_normalized_lines, split_csv
 
 
 class _Styles:
     """Namespace for ANSI styling constants."""
-    COLON: Final[str] = ansi.ForegroundColors.BRIGHT_CYAN
-    FILE_NAME: Final[str] = ansi.ForegroundColors.BRIGHT_MAGENTA
-    GROUP_COUNT: Final[str] = ansi.ForegroundColors.BRIGHT_GREEN
+    COLON: Final[str] = ForegroundColors.BRIGHT_CYAN
+    FILE_NAME: Final[str] = ForegroundColors.BRIGHT_MAGENTA
+    GROUP_COUNT: Final[str] = ForegroundColors.BRIGHT_GREEN
 
 
 class Dupe(TextProgram):
@@ -79,7 +82,7 @@ class Dupe(TextProgram):
         if self.args.skip_fields:
             separator = self.args.field_separator or " "
 
-            compare_key = text.split_csv(compare_key, separator=separator, on_error=self.print_error_and_exit)
+            compare_key = split_csv(compare_key, separator=separator, on_error=self.print_error_and_exit)
             compare_key = separator.join(compare_key[self.args.skip_fields:])
 
         if self.args.max_chars or self.args.skip_chars:
@@ -98,7 +101,7 @@ class Dupe(TextProgram):
         groups = []
         previous_key = None
 
-        for line in text.iter_normalized_lines(lines):
+        for line in iter_normalized_lines(lines):
             next_key = self.get_compare_key(line)
 
             if not self.should_include_key(next_key):
@@ -125,7 +128,7 @@ class Dupe(TextProgram):
         """Return a mapping from comparison keys to grouped lines."""
         group_map = {}
 
-        for line in text.iter_normalized_lines(lines):
+        for line in iter_normalized_lines(lines):
             key = self.get_compare_key(line)
 
             if not self.should_include_key(key):
@@ -185,7 +188,7 @@ class Dupe(TextProgram):
                                 f"{_Styles.GROUP_COUNT}"
                                 f"{group_count:>{self.args.count_width},}"
                                 f"{_Styles.COLON}:"
-                                f"{ansi.RESET}"
+                                f"{RESET}"
                             )
                         else:
                             group_count_str = f"{group_count:>{self.args.count_width},}:"
@@ -199,7 +202,7 @@ class Dupe(TextProgram):
                     break
 
     @override
-    def process_text_stream(self, input_file: io.InputFile) -> None:
+    def process_text_stream(self, input_file: InputFile) -> None:
         """Process the text stream for a single input file."""
         self.print_file_header(input_file.file_name)
         self.group_and_print_lines(input_file.text_stream)

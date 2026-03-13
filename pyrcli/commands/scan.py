@@ -5,7 +5,8 @@ import sys
 from collections.abc import Iterable, Sequence
 from typing import Final, NamedTuple, NoReturn, override
 
-from pyrcli.cli import CompiledPatterns, TextProgram, ansi, io, patterns, render, text
+from pyrcli.cli import CompiledPatterns, TextProgram, ansi, patterns, render, text
+from pyrcli.cli.io import InputFile
 
 # Exit code when no matches are found.
 _NO_MATCHES_EXIT_CODE: Final[int] = 1
@@ -180,7 +181,7 @@ class Scan(TextProgram):
         self.print_match_results(matches, source_file=source_file)
 
     @override
-    def process_text_stream(self, input_file: io.InputFile) -> None:
+    def process_text_stream(self, input_file: InputFile) -> None:
         """Process the text stream for a single input file."""
         self.print_matches(input_file.text_stream, source_file=input_file.file_name)
 

@@ -7,7 +7,8 @@ from collections.abc import Iterable, Sequence
 from threading import Thread
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, text
+from pyrcli.cli import TextProgram, ansi, text
+from pyrcli.cli.io import InputFile
 
 # Interval in seconds between file content polls when following.
 _POLLING_INTERVAL: Final[float] = 0.5
@@ -139,7 +140,7 @@ class Track(TextProgram):
                 print(line)
 
     @override
-    def process_text_stream(self, input_file: io.InputFile) -> None:
+    def process_text_stream(self, input_file: InputFile) -> None:
         """Process the text stream for a single input file."""
         self.print_file_header(input_file.file_name)
         self.print_lines(input_file.text_stream.readlines())

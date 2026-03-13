@@ -6,7 +6,8 @@ import sys
 from collections.abc import Iterable, Iterator
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, patterns, text
+from pyrcli.cli import TextProgram, ansi, patterns, text
+from pyrcli.cli.io import InputFile, write_text_file
 
 
 class _Styles:
@@ -113,14 +114,14 @@ class Subs(TextProgram):
             print(line)
 
     @override
-    def process_text_stream(self, input_file: io.InputFile) -> None:
+    def process_text_stream(self, input_file: InputFile) -> None:
         """Process the text stream for a single input file."""
         if self.args.in_place:
             # Buffer before writing to avoid reading and writing the same file simultaneously.
             lines = input_file.text_stream.readlines()
 
-            io.write_text_file(input_file.file_name, lines=self.iter_replaced_lines(lines), encoding=self.encoding,
-                               on_error=self.print_error)
+            write_text_file(input_file.file_name, lines=self.iter_replaced_lines(lines), encoding=self.encoding,
+                            on_error=self.print_error)
         else:
             self.print_file_header(input_file.file_name)
             self.print_replaced_lines(input_file.text_stream.readlines())

@@ -5,7 +5,8 @@ import sys
 from collections.abc import Iterable
 from typing import Final, NoReturn, override
 
-from pyrcli.cli import TextProgram, ansi, io, text
+from pyrcli.cli import TextProgram, ansi, text
+from pyrcli.cli.io import InputFile
 
 # Format-spec alignment prefixes keyed by --number-format value.
 _FORMAT_PREFIXES: Final[dict[str, str]] = {
@@ -113,7 +114,7 @@ class Num(TextProgram):
             print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
 
     @override
-    def process_text_stream(self, input_file: io.InputFile) -> None:
+    def process_text_stream(self, input_file: InputFile) -> None:
         """Process the text stream for a single input file."""
         self.print_file_header(input_file.file_name)
         self.number_lines(input_file.text_stream)
