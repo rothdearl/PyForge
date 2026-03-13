@@ -30,16 +30,16 @@ from .io import (
     read_text_files,
     write_text_file,
 )
-from .os_info import (
+from .patterns import (
+    compile_or_pattern,
+    compile_patterns,
+    matches_all_patterns,
+)
+from .platform import (
     IS_LINUX,
     IS_MACOS,
     IS_POSIX,
     IS_WINDOWS,
-)
-from .patterns import (
-    compile_any_pattern,
-    compile_patterns,
-    matches_all_patterns,
 )
 from .render import (
     bold,
@@ -107,16 +107,16 @@ __all__: Final[tuple[str, ...]] = (
     "read_text_files",
     "write_text_file",
 
-    # os_info
+    # patterns
+    "compile_or_pattern",
+    "compile_patterns",
+    "matches_all_patterns",
+
+    # platform
     "IS_LINUX",
     "IS_MACOS",
     "IS_POSIX",
     "IS_WINDOWS",
-
-    # patterns
-    "compile_any_pattern",
-    "compile_patterns",
-    "matches_all_patterns",
 
     # render
     "bold",

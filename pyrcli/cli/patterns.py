@@ -7,7 +7,7 @@ from typing import Final
 from .types import CompiledPatterns, ErrorReporter
 
 
-def compile_any_pattern(patterns: Iterable[re.Pattern[str]], *, ignore_case: bool) -> re.Pattern[str]:
+def compile_or_pattern(patterns: Iterable[re.Pattern[str]], *, ignore_case: bool) -> re.Pattern[str]:
     """
     Return a compiled pattern that matches any of the provided patterns.
 
@@ -50,7 +50,7 @@ def matches_all_patterns(text: str, *, compiled_patterns: Iterable[re.Pattern[st
 
 
 __all__: Final[tuple[str, ...]] = (
-    "compile_any_pattern",
+    "compile_or_pattern",
     "compile_patterns",
     "matches_all_patterns",
 )

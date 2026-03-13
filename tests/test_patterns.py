@@ -7,7 +7,7 @@ from pyrcli.cli import patterns
 class TestCompileAnyPattern(unittest.TestCase):
     def test_basic_combination(self):
         test_patterns = [re.compile(r"abc"), re.compile(r"def")]
-        combined = patterns.compile_any_pattern(test_patterns, ignore_case=False)
+        combined = patterns.compile_or_pattern(test_patterns, ignore_case=False)
 
         self.assertTrue(combined.search("abc"))
         self.assertTrue(combined.search("def"))
@@ -15,24 +15,24 @@ class TestCompileAnyPattern(unittest.TestCase):
 
     def test_ignore_case_enabled(self):
         test_patterns = [re.compile(r"abc")]
-        combined = patterns.compile_any_pattern(test_patterns, ignore_case=True)
+        combined = patterns.compile_or_pattern(test_patterns, ignore_case=True)
 
         self.assertTrue(combined.search("ABC"))
 
     def test_ignore_case_disabled(self):
         test_patterns = [re.compile(r"abc")]
-        combined = patterns.compile_any_pattern(test_patterns, ignore_case=False)
+        combined = patterns.compile_or_pattern(test_patterns, ignore_case=False)
 
         self.assertFalse(combined.search("ABC"))
 
     def test_single_pattern(self):
         test_patterns = [re.compile(r"abc")]
-        combined = patterns.compile_any_pattern(test_patterns, ignore_case=False)
+        combined = patterns.compile_or_pattern(test_patterns, ignore_case=False)
 
         self.assertTrue(combined.search("abc"))
 
     def test_empty_pattern_list(self):
-        combined = patterns.compile_any_pattern([], ignore_case=False)
+        combined = patterns.compile_or_pattern([], ignore_case=False)
 
         # Empty pattern compiles to an empty regex, which matches everything
         self.assertTrue(combined.search("anything"))

@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Final, final
 
 from pyrcli import __version__
-from .os_info import IS_WINDOWS
+from .platform import IS_WINDOWS
 from .terminal import stdout_is_terminal
 
 # Standard Unix exit codes for errors and signal termination.

@@ -5,10 +5,10 @@ import calendar
 import datetime
 from typing import Final, NamedTuple, NoReturn, override
 
-from pyrcli.cli import CLIProgram, os_info, render
+from pyrcli.cli import CLIProgram, platform, render
 
 # Default format for printing the date and time.
-_DEFAULT_DATETIME_FORMAT: Final[str] = "%a %b %-d %-I:%M%p" if os_info.IS_POSIX else "%a %b %d %I:%M%p"
+_DEFAULT_DATETIME_FORMAT: Final[str] = "%a %b %-d %-I:%M%p" if platform.IS_POSIX else "%a %b %d %I:%M%p"
 
 
 class _CalendarQuarterColumnBounds(NamedTuple):
