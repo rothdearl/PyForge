@@ -169,9 +169,9 @@ def put_file(url: str, *, file_path: str, field_name: str = "file", auth_headers
 
 
 def set_timeout(timeout: float) -> None:
-    """Set the module-wide HTTP request timeout in seconds for subsequent requests."""
+    """Set the module-wide HTTP request timeout in seconds; ignored if ``timeout`` is non-positive."""
     if timeout <= 0:
-        raise ValueError("http request timeout must be greater than 0")
+        return
 
     global _timeout
     _timeout = timeout
