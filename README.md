@@ -307,11 +307,6 @@ All programs **must** call `super().__init__` with:
 - `name` — program name
 - `error_exit_code` — exit code on failure (optional; defaults to `1`)
 
-Text programs additionally accept:
-
-- `buffer_stdin` — when `True`, redirected standard input is fully buffered before being passed to
-  `handle_redirected_input`; when `False` (default), stdin is passed as a streaming iterable
-
 ``` python
 def __init__(self) -> None:
     super().__init__(name="myprog")
@@ -319,7 +314,7 @@ def __init__(self) -> None:
 
 ``` python
 def __init__(self) -> None:
-    super().__init__(name="myprog")
+    super().__init__(name="myprog", error_exit_code=2)
 ```
 
 ---
@@ -397,7 +392,7 @@ Text-processing programs **must implement**:
 
 Process input received from redirected standard input.
 
-- `input_lines` is either a streaming `sys.stdin` or a buffered `list[str]`, depending on `buffer_stdin`.
+- `input_lines` is a non-empty iterable of lines from stdin; iterate over it directly.
 - Called only when stdin is redirected and `--stdin-files` is not set.
 - Do not read from `sys.stdin` directly.
 
