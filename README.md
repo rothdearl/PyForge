@@ -319,7 +319,7 @@ def __init__(self) -> None:
 
 ``` python
 def __init__(self) -> None:
-    super().__init__(name="myprog", buffer_stdin=True)
+    super().__init__(name="myprog")
 ```
 
 ---
@@ -487,7 +487,6 @@ parse arguments
 ### For text programs
 
 - Inherit from `TextProgram`
-- Pass `buffer_stdin=True` if stdin must be fully read before processing
 - Implement `handle_redirected_input`
 - Implement `handle_terminal_input`
 - Implement `process_text_stream`
@@ -650,7 +649,7 @@ class TextProgramDemo(TextProgram):
 
     def __init__(self) -> None:
         """Initialize a new instance."""
-        super().__init__(name="demo", buffer_stdin=True)
+        super().__init__(name="demo")
 
     @override
     def build_arguments(self) -> argparse.ArgumentParser:
