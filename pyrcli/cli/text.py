@@ -29,7 +29,7 @@ def iter_normalized_lines(lines: Iterable[str]) -> Iterator[str]:
 
 def split_csv(text: str, *, separator: str = " ", on_error: ErrorReporter) -> list[str]:
     """
-    Split ``text`` using CSV parsing.
+    Split ``text`` using CSV-style parsing.
 
     - Falls back to ``str.split()`` if parsing fails.
     """

@@ -2,7 +2,7 @@
 
 from typing import Final, final
 
-# ANSI CSI prefix for SGR escape sequences.
+# Control Sequence Introducer (CSI) prefix used by SGR escape sequences.
 _CSI: Final[str] = "\x1b["
 
 #: Reset all text attributes and colors.

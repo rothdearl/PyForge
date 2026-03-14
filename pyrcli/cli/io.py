@@ -12,11 +12,11 @@ from .types import ErrorReporter
 
 class InputFile(NamedTuple):
     """
-    Information about a file being read.
+    Information about a file currently being read.
 
     Attributes:
-        file_name: File name (normalized by the caller).
-        text_stream: Open text stream for the file, valid only until the next iteration.
+        file_name: File name supplied by the caller.
+        text_stream: Open text stream valid until the next iteration.
     """
     file_name: str
     text_stream: TextIO
@@ -36,7 +36,7 @@ def iter_descendant_paths(root: Path, max_depth: int = sys.maxsize) -> Iterator[
         current_path = Path(dir_path)
         depth = len(current_path.parts) - root_depth
 
-        # Prune subdirectories to prevent descent beyond max_depth.
+        # Prevent traversal beyond max_depth.
         if depth >= max_depth:
             dir_names[:] = []
             continue
@@ -81,7 +81,7 @@ def read_text_files(file_names: Iterable[str], *, encoding: str, on_error: Error
 
 def write_text_file(file_name: str, *, lines: Iterable[str], encoding: str, on_error: ErrorReporter) -> None:
     """
-    Write lines to a file, normalizing each line to end with exactly one newline.
+    Write lines to a file, ensuring each ends with exactly one newline.
 
     - Invokes ``on_error(message)`` for file-related errors.
     - Reports: unknown encoding, permission denied, encoding failures, and other OS write errors.

@@ -85,11 +85,11 @@ def get_mapping_option(section: str, option: str) -> dict[str, Any] | None:
     value = get_str_option(section, option, fallback="{}")
 
     try:
-        dict_value = json.loads(value)
+        mapping = json.loads(value)
     except json.JSONDecodeError:
         return None
 
-    return dict_value if isinstance(dict_value, dict) else None
+    return mapping if isinstance(mapping, dict) else None
 
 
 def get_str_option(section: str, option: str, *, fallback: str = "") -> str:
@@ -114,12 +114,11 @@ def is_empty() -> bool:
 
 def load_config(path: str, *, clear_previous: bool = True, on_error: ErrorReporter) -> bool:
     """
-    Load options from a configuration file.
+    Load options from a configuration file and return ``True`` on success.
 
     - Clears previously loaded options before reading when ``clear_previous`` is ``True``.
     - Invokes ``on_error(message)`` if the file cannot be read or parsed.
     - Reports: missing file, permission denied, invalid configuration file, and other OS read errors.
-    - Returns ``True`` on success.
     - If reading fails after clearing, the configuration remains empty.
     """
     try:
