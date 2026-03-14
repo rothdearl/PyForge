@@ -33,7 +33,7 @@ _timeout: float = 15.0
 def _build_request_headers(*, data: JsonType = None, files: MultipartFiles | None = None,
                            serialize_to_json: bool = True, auth_headers: KeyValuePairs | None = None) -> KeyValuePairs:
     """
-    Return request headers for the HTTP client.
+    Return request headers for an HTTP request.
 
     - Always sets ``Accept: application/json``.
     - Sets ``Content-Type`` based on ``data``, ``files``, and ``serialize_to_json``:
@@ -78,7 +78,7 @@ def _execute_request(*, method: _HTTPMethod, url: str, params: QueryParameters |
 
 
 def _serialize_request_body(*, data: JsonType, files: MultipartFiles | None, serialize_to_json: bool) -> JsonType:
-    """Serialize the request body when required, or return ``data`` unchanged."""
+    """Serialize ``data`` when required, or return it unchanged."""
     if files is None and isinstance(data, dict) and serialize_to_json:
         return json.dumps(data)
 
@@ -158,7 +158,7 @@ def put(url: str, *, params: QueryParameters | None = None, data: JsonType = Non
 def put_file(url: str, *, file_path: str, field_name: str = "file", auth_headers: KeyValuePairs | None = None,
              raise_on_error: bool = False) -> requests.Response:
     """
-    Upload a file using a multipart/form-data PUT request.
+    Upload a file using a multipart/form-data PUT request and return the response.
 
     - Uses ``field_name`` as the multipart form field name (default: ``"file"``).
     - Merges ``auth_headers`` into the request headers when provided.

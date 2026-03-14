@@ -11,10 +11,9 @@ from .types import MultipartFiles
 @contextmanager
 def multipart_file(file_path: str, *, field_name: str = "file") -> Iterator[MultipartFiles]:
     """
-    Yield a multipart file mapping for HTTP uploads.
+    Yield a multipart file mapping for HTTP uploads and close the file on exit.
 
     - Yields a mapping suitable for the ``files`` parameter of an HTTP multipart upload.
-    - Closes the file when the context exits.
     """
     path = Path(file_path)
 
