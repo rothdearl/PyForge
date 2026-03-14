@@ -71,7 +71,7 @@ class CLIProgram(ABC):
         """
         Initialize internal state derived from parsed options.
 
-        - Disables ``print_color`` if standard output is not connected to a terminal.
+        - Enables ``print_color`` only when ``--color=on`` and standard output is a terminal.
         """
         self.print_color = getattr(self.args, "color", "off") == "on" and stdout_is_terminal()
 
@@ -107,7 +107,7 @@ class CLIProgram(ABC):
           - ``normalize_options()``
           - ``initialize_runtime_state()``
         - Executes the command.
-        - Handles runtime errors and signals.
+        - Normalizes runtime errors and signals to consistent exit behavior.
         - Returns ``0`` on success.
         - Raises ``SystemExit`` with a non-zero code on failure.
         """
