@@ -85,11 +85,11 @@ def get_mapping_option(section: str, option: str) -> dict[str, Any] | None:
     value = get_str_option(section, option, fallback="{}")
 
     try:
-        mapping = json.loads(value)
+        decoded = json.loads(value)
     except json.JSONDecodeError:
         return None
 
-    return mapping if isinstance(mapping, dict) else None
+    return decoded if isinstance(decoded, dict) else None
 
 
 def get_str_option(section: str, option: str, *, fallback: str = "") -> str:

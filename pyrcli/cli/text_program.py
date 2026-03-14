@@ -27,23 +27,8 @@ class TextProgram(CLIProgram, ABC):
 
         self.encoding: str = "utf-8"
 
-    def _execute_redirected_input_flow(self) -> list[str]:
-        """Process redirected input and return the names of successfully processed files."""
-        processed_files = []
-
-        if self.args.stdin_files:
-            processed_files.extend(self._process_text_files_from_stdin())
-        else:
-            self._invoke_redirected_input_handler()
-
-        # Process any additional file arguments.
-        if self.args.files:
-            processed_files.extend(self._process_text_files(self.args.files))
-
-        return processed_files
-
     def _invoke_redirected_input_handler(self) -> None:
-        """Invoke ``handle_redirected_input()`` when stdin contains redirected input."""
+        """Invoke ``handle_redirected_input()`` when redirected input is present on stdin."""
         # Use peek() to detect piped input without consuming it.
         # Fall back to readlines() when the underlying buffer is not a BufferedReader.
         stdin_buffer = getattr(sys.stdin, "buffer", None)
@@ -75,13 +60,28 @@ class TextProgram(CLIProgram, ABC):
         """Process file names read from standard input and return the names of the ones successfully processed."""
         return self._process_text_files(iter_stdin_file_names())
 
+    def _route_redirected_input(self) -> list[str]:
+        """Process redirected input and return the names of successfully processed files."""
+        processed_files = []
+
+        if self.args.stdin_files:
+            processed_files.extend(self._process_text_files_from_stdin())
+        else:
+            self._invoke_redirected_input_handler()
+
+        # Process any additional file arguments.
+        if self.args.files:
+            processed_files.extend(self._process_text_files(self.args.files))
+
+        return processed_files
+
     @final
     def execute(self) -> None:
         """Route input sources and process them using the configured handlers."""
         processed_files = []
 
         if stdin_is_redirected():
-            processed_files.extend(self._execute_redirected_input_flow())
+            processed_files.extend(self._route_redirected_input())
         elif self.args.files:
             processed_files.extend(self._process_text_files(self.args.files))
         else:
@@ -131,7 +131,7 @@ class TextProgram(CLIProgram, ABC):
 
     @abstractmethod
     def process_text_stream(self, input_file: InputFile) -> None:
-        """Process the text stream for a single input file."""
+        """Process the text stream contained in ``input_file``."""
         ...
 
     @final

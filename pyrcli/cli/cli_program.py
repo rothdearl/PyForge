@@ -41,7 +41,7 @@ class CLIProgram(ABC):
         """Parse command-line arguments and populate ``args``."""
         self.args = self.build_arguments().parse_args()
 
-    def _prepare_runtime_state(self) -> None:
+    def _run_option_lifecycle(self) -> None:
         """Run the option lifecycle hooks to prepare runtime state."""
         self.check_option_dependencies()
         self.validate_option_ranges()
@@ -124,7 +124,7 @@ class CLIProgram(ABC):
                 signal(SIGPIPE, SIG_DFL)
 
             self._parse_arguments()
-            self._prepare_runtime_state()
+            self._run_option_lifecycle()
             self.execute()
             self.exit_if_errors()
         except BrokenPipeError:

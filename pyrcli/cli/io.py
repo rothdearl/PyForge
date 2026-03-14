@@ -55,7 +55,7 @@ def iter_stdin_file_names() -> Iterator[str]:
 
 def read_text_files(file_names: Iterable[str], *, encoding: str, on_error: ErrorReporter) -> Iterator[InputFile]:
     """
-    Yield a ``InputFile`` for each readable file in ``file_names``.
+    Yield an ``InputFile`` for each readable file in ``file_names``.
 
     - Each yielded ``InputFile.text_stream`` is valid only until the next iteration.
     - Invokes ``on_error(message)`` for file-related errors; processing continues with the next file.
