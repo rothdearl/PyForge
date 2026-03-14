@@ -1,4 +1,4 @@
-"""Helpers for sending HTTP DELETE, GET, POST, and PUT requests using ``requests``."""
+"""Helpers for sending HTTP DELETE, GET, POST, and PUT requests."""
 
 import json
 from enum import StrEnum
@@ -27,7 +27,7 @@ _REQUEST_DISPATCH: Final[dict[_HTTPMethod, Callable[..., requests.Response]]] = 
 }
 
 # Module-wide request timeout in seconds; use set_timeout() to change.
-_timeout: float = 15.0
+_request_timeout: float = 15.0
 
 
 def _build_request_headers(*, data: JsonType = None, files: MultipartFiles | None = None,
@@ -62,14 +62,15 @@ def _execute_request(*, method: _HTTPMethod, url: str, params: QueryParameters |
                      files: MultipartFiles | None = None, headers: KeyValuePairs,
                      raise_on_error: bool) -> requests.Response:
     """
-    Send the HTTP request and return the ``requests.Response``.
+    Send the HTTP request and return the response.
 
     - Dispatches to the corresponding ``requests`` function for ``method``.
     - Uses the module-wide default request timeout (configurable via ``set_timeout``).
     - Calls ``response.raise_for_status()`` when ``raise_on_error`` is ``True``.
     """
     request_function = _REQUEST_DISPATCH[method]
-    response = request_function(url=url, params=params, data=data, files=files, headers=headers, timeout=_timeout)
+    response = request_function(url=url, params=params, data=data, files=files, headers=headers,
+                                timeout=_request_timeout)
 
     if raise_on_error:
         response.raise_for_status()
@@ -77,9 +78,9 @@ def _execute_request(*, method: _HTTPMethod, url: str, params: QueryParameters |
     return response
 
 
-def _serialize_request_body(*, data: JsonType, files: MultipartFiles | None, serialize_to_json: bool) -> JsonType:
+def _serialize_json_body(*, data: JsonType, files: MultipartFiles | None, enabled: bool) -> JsonType:
     """Serialize ``data`` when required, or return it unchanged."""
-    if files is None and isinstance(data, dict) and serialize_to_json:
+    if files is None and isinstance(data, dict) and enabled:
         return json.dumps(data)
 
     return data
@@ -129,7 +130,7 @@ def post(url: str, *, params: QueryParameters | None = None, data: JsonType = No
     """
     headers = _build_request_headers(data=data, files=files, serialize_to_json=serialize_to_json,
                                      auth_headers=auth_headers)
-    payload = _serialize_request_body(data=data, files=files, serialize_to_json=serialize_to_json)
+    payload = _serialize_json_body(data=data, files=files, enabled=serialize_to_json)
 
     return _execute_request(method=_HTTPMethod.POST, url=url, params=params, data=payload, files=files, headers=headers,
                             raise_on_error=raise_on_error)
@@ -149,7 +150,7 @@ def put(url: str, *, params: QueryParameters | None = None, data: JsonType = Non
     """
     headers = _build_request_headers(data=data, files=files, serialize_to_json=serialize_to_json,
                                      auth_headers=auth_headers)
-    payload = _serialize_request_body(data=data, files=files, serialize_to_json=serialize_to_json)
+    payload = _serialize_json_body(data=data, files=files, enabled=serialize_to_json)
 
     return _execute_request(method=_HTTPMethod.PUT, url=url, params=params, data=payload, files=files, headers=headers,
                             raise_on_error=raise_on_error)
@@ -173,8 +174,8 @@ def set_timeout(timeout: float) -> None:
     if timeout <= 0:
         return
 
-    global _timeout
-    _timeout = timeout
+    global _request_timeout
+    _request_timeout = timeout
 
 
 __all__: Final[tuple[str, ...]] = (
