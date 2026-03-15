@@ -82,5 +82,5 @@ class _LineWriter:
 
     def write_indicator_line(self, *, indicator: str, message: ProgressMessage,
                              position: ProgressMessagePosition) -> None:
-        """Write an indicator line with an optional message placed to the left or right."""
+        """Write an indicator line with an optional message positioned to the left or right."""
         self.write(_compose_line(indicator=indicator, message=message, position=position))

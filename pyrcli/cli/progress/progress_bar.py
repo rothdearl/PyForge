@@ -55,8 +55,8 @@ class ProgressBar(_ProgressIndicator):
 
       - Retains or clears the bar according to ``clear_on_finish``.
       - Prints a terminating newline when visible and not cleared.
-      - Writes a non-empty final message followed by a newline (even when not visible).
-    - Treats empty messages as no message.
+      - Writes a final message followed by a newline when the message is non-empty, even when the indicator is not visible.
+    - Treats ``None`` and empty strings as no message.
 
     Attributes:
         total: Total number of units representing 100% completion (non-positive values render as permanently 100%).
