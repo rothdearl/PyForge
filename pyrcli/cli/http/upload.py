@@ -1,4 +1,4 @@
-"""Helpers for building multipart file mappings for HTTP uploads."""
+"""Helpers for building multipart/form-data file mappings for HTTP uploads."""
 
 from collections.abc import Iterator
 from contextlib import contextmanager
