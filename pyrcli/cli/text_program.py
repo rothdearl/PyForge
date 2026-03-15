@@ -28,7 +28,7 @@ class TextProgram(CLIProgram, ABC):
         self.encoding: str = "utf-8"
 
     def _invoke_redirected_input(self) -> None:
-        """Invoke ``handle_redirected_input()`` when redirected input is present on stdin."""
+        """Invoke ``handle_redirected_input()`` when redirected input is present on standard input."""
         # Use peek() to detect piped input without consuming it.
         # Fall back to readlines() when the underlying buffer is not a BufferedReader.
         stdin_buffer = getattr(sys.stdin, "buffer", None)
@@ -56,16 +56,12 @@ class TextProgram(CLIProgram, ABC):
 
         return processed_files
 
-    def _process_text_files_from_stdin(self) -> list[str]:
-        """Process file names read from standard input and return the names of successfully processed files."""
-        return self._process_text_files(iter_stdin_file_names())
-
     def _route_redirected_input(self) -> list[str]:
         """Process redirected input and return the names of successfully processed files."""
         processed_files = []
 
         if self.args.stdin_files:
-            processed_files.extend(self._process_text_files_from_stdin())
+            processed_files.extend(self._process_text_files(iter_stdin_file_names()))
         else:
             self._invoke_redirected_input()
 
