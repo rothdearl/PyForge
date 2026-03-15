@@ -20,7 +20,7 @@ def suppress(_: str) -> None:
     pass
 
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "raises",
     "suppress",
 )

@@ -34,7 +34,7 @@ def stdout_is_terminal() -> bool:
     return sys.stdout.isatty()
 
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "stderr_is_redirected",
     "stderr_is_terminal",
     "stdin_is_redirected",

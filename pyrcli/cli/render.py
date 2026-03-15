@@ -75,7 +75,7 @@ def style_pattern_matches(text: str, *, patterns: Collection[re.Pattern[str]], a
     return "".join(styled_text)
 
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "bold",
     "dim",
     "reverse_video",

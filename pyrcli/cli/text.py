@@ -86,7 +86,7 @@ def strip_trailing_newline(line: str) -> str:
     return line.removesuffix("\n")
 
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "decode_python_escape_sequences",
     "iter_nonempty_lines",
     "iter_normalized_lines",

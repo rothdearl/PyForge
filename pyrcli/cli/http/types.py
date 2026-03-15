@@ -1,7 +1,7 @@
 """Type aliases for HTTP requests and JSON values."""
 
 from collections.abc import Mapping
-from typing import Any, BinaryIO, Final
+from typing import Any, BinaryIO
 
 #: Decoded JSON array.
 type JsonArray = list[Any]
@@ -24,7 +24,7 @@ type MultipartFiles = Mapping[str, tuple[str, BinaryIO]]
 #: String-to-string mapping of URL query parameters.
 type QueryParameters = Mapping[str, str]
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "JsonArray",
     "JsonObject",
     "JsonScalar",

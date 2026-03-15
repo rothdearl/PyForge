@@ -10,7 +10,7 @@ type CompiledPatterns = Sequence[re.Pattern[str]]
 #: Callback for reporting error messages.
 type ErrorReporter = Callable[[str], None]
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "CompiledPatterns",
     "ErrorReporter",
 )

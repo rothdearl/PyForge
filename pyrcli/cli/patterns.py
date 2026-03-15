@@ -49,7 +49,7 @@ def matches_all_patterns(text: str, *, compiled_patterns: Iterable[re.Pattern[st
     return all(pattern.search(text) for pattern in compiled_patterns)
 
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "compile_or_pattern",
     "compile_patterns",
     "matches_all_patterns",

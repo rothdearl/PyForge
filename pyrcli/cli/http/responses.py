@@ -1,7 +1,5 @@
 """Utilities for parsing and validating HTTP response bodies."""
 
-from typing import Final
-
 import requests
 
 from pyrcli.cli import ErrorReporter
@@ -31,4 +29,4 @@ def parse_json_body(response: requests.Response, *, allowed_types: tuple[type[Js
     return json_value
 
 
-__all__: Final[tuple[str, ...]] = ("parse_json_body",)
+__all__ = ("parse_json_body",)

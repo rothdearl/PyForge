@@ -143,7 +143,7 @@ def load_config(path: str, *, clear_previous: bool = True, on_error: ErrorReport
     return True
 
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "get_bool_option",
     "get_float_option",
     "get_int_option",

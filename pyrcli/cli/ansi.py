@@ -68,7 +68,7 @@ class TextAttributes:
     STRIKETHROUGH: Final[str] = f"{_CSI}9m"
 
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "BACKGROUND_COLORS_256",
     "BackgroundColors",
     "FOREGROUND_COLORS_256",

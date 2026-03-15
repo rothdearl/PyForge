@@ -100,7 +100,7 @@ def write_text_file(file_name: str, *, lines: Iterable[str], encoding: str, on_e
         on_error(f"{file_name!r}: unable to write")
 
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "InputFile",
     "iter_descendant_paths",
     "iter_stdin_file_names",

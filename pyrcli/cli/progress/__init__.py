@@ -1,7 +1,5 @@
 """Public API for terminal progress indicators."""
 
-from typing import Final
-
 from .progress_bar import (
     ProgressBar,
     ProgressBarLayout,
@@ -12,7 +10,7 @@ from .types import (
     ProgressMessagePosition,
 )
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     # progress indicators
     "ProgressBar",
     "ProgressBarLayout",

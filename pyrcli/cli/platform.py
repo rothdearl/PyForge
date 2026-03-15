@@ -9,7 +9,7 @@ IS_MACOS: Final[bool] = sys.platform == "darwin"
 IS_POSIX: Final[bool] = os.name == "posix"  # Covers BSD, Linux, and macOS.
 IS_WINDOWS: Final[bool] = os.name == "nt"
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "IS_LINUX",
     "IS_MACOS",
     "IS_POSIX",

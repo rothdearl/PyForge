@@ -75,7 +75,7 @@ from .types import (
     ErrorReporter,
 )
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     # ansi
     "BACKGROUND_COLORS_256",
     "BackgroundColors",

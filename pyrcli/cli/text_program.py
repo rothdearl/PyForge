@@ -136,4 +136,4 @@ class TextProgram(CLIProgram, ABC):
         return not getattr(self.args, "no_file_name", False)
 
 
-__all__: Final[tuple[str, ...]] = ("TextProgram",)
+__all__ = ("TextProgram",)

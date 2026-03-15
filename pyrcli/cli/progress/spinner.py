@@ -50,4 +50,4 @@ class Spinner(_ProgressIndicator):
         self._frame_index += 1
 
 
-__all__: Final[tuple[str, ...]] = ("Spinner",)
+__all__ = ("Spinner",)

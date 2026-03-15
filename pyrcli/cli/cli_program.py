@@ -146,4 +146,4 @@ class CLIProgram(ABC):
         pass  # Optional hook; no action by default.
 
 
-__all__: Final[tuple[str, ...]] = ("CLIProgram",)
+__all__ = ("CLIProgram",)

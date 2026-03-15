@@ -3,7 +3,6 @@
 from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Final
 
 from .types import MultipartFiles
 
@@ -17,4 +16,4 @@ def multipart_file(file_path: str, *, field_name: str = "file") -> Iterator[Mult
         yield {field_name: (path.name, file)}
 
 
-__all__: Final[tuple[str, ...]] = ("multipart_file",)
+__all__ = ("multipart_file",)

@@ -181,7 +181,7 @@ def set_timeout(timeout: float) -> None:
     _request_timeout = timeout
 
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "delete",
     "get",
     "post",

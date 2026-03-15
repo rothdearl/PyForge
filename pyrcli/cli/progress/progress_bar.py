@@ -1,7 +1,7 @@
 """Terminal progress bar for tracking work with a known total."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar, Final, final
+from typing import ClassVar, final
 
 from pyrcli.cli import RESET
 from ._base import _ProgressIndicator
@@ -145,7 +145,7 @@ class ProgressBar(_ProgressIndicator):
         self._completed = clamped
 
 
-__all__: Final[tuple[str, ...]] = (
+__all__ = (
     "ProgressBar",
     "ProgressBarLayout",
 )
