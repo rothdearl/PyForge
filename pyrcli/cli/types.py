@@ -2,7 +2,6 @@
 
 import re
 from collections.abc import Callable, Sequence
-from typing import Final
 
 #: Sequence of compiled regular expression patterns.
 type CompiledPatterns = Sequence[re.Pattern[str]]

@@ -2,7 +2,6 @@
 
 import re
 from collections.abc import Collection
-from typing import Final
 
 from .ansi import RESET, TextAttributes
 

@@ -1,7 +1,5 @@
 """Factory functions for creating ``ErrorReporter`` callbacks."""
 
-from typing import Final
-
 from .types import ErrorReporter
 
 

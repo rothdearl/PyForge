@@ -5,7 +5,7 @@ import os
 import sys
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Sequence
-from typing import Final, final, override
+from typing import final, override
 
 from .ansi import RESET
 from .cli_program import CLIProgram

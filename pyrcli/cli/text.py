@@ -4,7 +4,6 @@ import csv
 import re
 import shlex
 from collections.abc import Iterable, Iterator
-from typing import Final
 
 from .types import ErrorReporter
 

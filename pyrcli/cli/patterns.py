@@ -2,7 +2,6 @@
 
 import re
 from collections.abc import Iterable
-from typing import Final
 
 from .types import CompiledPatterns, ErrorReporter
 

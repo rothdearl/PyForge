@@ -1,7 +1,6 @@
 """Predicates describing whether standard streams are attached to a terminal."""
 
 import sys
-from typing import Final
 
 
 def stderr_is_redirected() -> bool:

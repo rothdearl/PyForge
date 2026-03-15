@@ -4,7 +4,7 @@ import os
 import sys
 from collections.abc import Iterable, Iterator
 from pathlib import Path
-from typing import Final, NamedTuple, TextIO
+from typing import NamedTuple, TextIO
 
 from .text import iter_nonempty_lines, iter_normalized_lines, strip_trailing_newline
 from .types import ErrorReporter

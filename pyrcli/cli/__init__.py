@@ -1,7 +1,5 @@
 """Public API for the command-line interface framework."""
 
-from typing import Final
-
 from .ansi import (
     BACKGROUND_COLORS_256,
     BackgroundColors,
