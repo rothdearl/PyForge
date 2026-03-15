@@ -32,7 +32,7 @@ _request_timeout: float = 15.0
 
 def _build_request_headers(*, accept: str, data: JsonArray | JsonObject | None = None,
                            files: MultipartFiles | None = None, serialize_to_json: bool = True,
-                           auth_headers: KeyValuePairs | None = None) -> KeyValuePairs:
+                           auth_headers: KeyValuePairs | None = None) -> dict[str, str]:
     """
     Return HTTP request headers.
 
@@ -173,7 +173,7 @@ def put_file(url: str, *, file_path: str, field_name: str = "file", accept: str 
 
 
 def set_timeout(timeout: float) -> None:
-    """Set the module-wide HTTP request timeout in seconds; ignored if ``timeout`` is non-positive."""
+    """Set the module-wide HTTP request timeout in seconds for subsequent requests; ignored if ``timeout`` is non-positive."""
     if timeout <= 0:
         return
 
