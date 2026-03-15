@@ -50,7 +50,7 @@ class _LineWriter:
     _last_visible_width: int = field(default=0, init=False, repr=False)
 
     def clear(self) -> None:
-        """Clear the current line, if enabled."""
+        """Clear the current line."""
         if not self.enabled:
             return
 

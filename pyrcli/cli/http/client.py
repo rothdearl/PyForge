@@ -6,7 +6,7 @@ from typing import Callable, Final
 
 import requests
 
-from .types import JsonType, KeyValuePairs, MultipartFiles, QueryParameters
+from .types import JsonArray, JsonObject, KeyValuePairs, MultipartFiles, QueryParameters
 from .upload import multipart_file
 
 
@@ -30,10 +30,10 @@ _REQUEST_DISPATCH: Final[dict[_HTTPMethod, Callable[..., requests.Response]]] = 
 _request_timeout: float = 15.0
 
 
-def _build_request_headers(*, data: JsonType = None, files: MultipartFiles | None = None,
+def _build_request_headers(*, data: JsonArray | JsonObject | None = None, files: MultipartFiles | None = None,
                            serialize_to_json: bool = True, auth_headers: KeyValuePairs | None = None) -> KeyValuePairs:
     """
-    Return request headers for an HTTP request.
+    Return the request headers for an HTTP request.
 
     - Always sets ``Accept: application/json``.
     - Sets ``Content-Type`` based on ``data``, ``files``, and ``serialize_to_json``:
@@ -58,14 +58,14 @@ def _build_request_headers(*, data: JsonType = None, files: MultipartFiles | Non
     return headers
 
 
-def _execute_request(*, method: _HTTPMethod, url: str, params: QueryParameters | None = None, data: JsonType = None,
-                     files: MultipartFiles | None = None, headers: KeyValuePairs,
-                     raise_on_error: bool) -> requests.Response:
+def _execute_request(*, method: _HTTPMethod, url: str, params: QueryParameters | None = None,
+                     data: JsonArray | JsonObject | None = None, files: MultipartFiles | None = None,
+                     headers: KeyValuePairs, raise_on_error: bool) -> requests.Response:
     """
     Send the HTTP request and return the response.
 
     - Dispatches to the corresponding ``requests`` function for ``method``.
-    - Uses the module-wide default request timeout (configurable via ``set_timeout``).
+    - Uses the module-wide request timeout (configurable via ``set_timeout``).
     - Calls ``response.raise_for_status()`` when ``raise_on_error`` is ``True``.
     """
     request_function = _REQUEST_DISPATCH[method]
@@ -78,9 +78,10 @@ def _execute_request(*, method: _HTTPMethod, url: str, params: QueryParameters |
     return response
 
 
-def _serialize_json_body(*, data: JsonType, files: MultipartFiles | None, enabled: bool) -> JsonType:
-    """Serialize ``data`` when required, or return it unchanged."""
-    if files is None and isinstance(data, dict) and enabled:
+def _serialize_json_body(*, data: JsonArray | JsonObject | None, files: MultipartFiles | None,
+                         enabled: bool) -> JsonArray | JsonObject | str | None:
+    """Serialize ``data`` to JSON when required, or return it unchanged."""
+    if files is None and data is not None and enabled:
         return json.dumps(data)
 
     return data
@@ -116,8 +117,8 @@ def get(url: str, *, params: QueryParameters | None = None, auth_headers: KeyVal
                             raise_on_error=raise_on_error)
 
 
-def post(url: str, *, params: QueryParameters | None = None, data: JsonType = None, files: MultipartFiles | None = None,
-         serialize_to_json: bool = True, auth_headers: KeyValuePairs | None = None,
+def post(url: str, *, params: QueryParameters | None = None, data: JsonArray | JsonObject | None = None,
+         files: MultipartFiles | None = None, serialize_to_json: bool = True, auth_headers: KeyValuePairs | None = None,
          raise_on_error: bool = False) -> requests.Response:
     """
     Send a POST request and return the response.
@@ -136,8 +137,8 @@ def post(url: str, *, params: QueryParameters | None = None, data: JsonType = No
                             raise_on_error=raise_on_error)
 
 
-def put(url: str, *, params: QueryParameters | None = None, data: JsonType = None, files: MultipartFiles | None = None,
-        serialize_to_json: bool = True, auth_headers: KeyValuePairs | None = None,
+def put(url: str, *, params: QueryParameters | None = None, data: JsonArray | JsonObject | None = None,
+        files: MultipartFiles | None = None, serialize_to_json: bool = True, auth_headers: KeyValuePairs | None = None,
         raise_on_error: bool = False) -> requests.Response:
     """
     Send a PUT request and return the response.
