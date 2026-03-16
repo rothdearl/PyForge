@@ -158,8 +158,9 @@ def put(url: str, *, params: QueryParameters | None = None, data: JsonArray | Js
                             raise_on_error=raise_on_error)
 
 
-def put_file(url: str, *, file_path: str, field_name: str = "file", accept: str = "application/json",
-             auth_headers: KeyValuePairs | None = None, raise_on_error: bool = False) -> requests.Response:
+def put_file(url: str, *, params: QueryParameters | None = None, file_path: str, field_name: str = "file",
+             accept: str = "application/json", auth_headers: KeyValuePairs | None = None,
+             raise_on_error: bool = False) -> requests.Response:
     """
     Upload a file using a multipart/form-data PUT request and return the response.
 
@@ -169,7 +170,8 @@ def put_file(url: str, *, file_path: str, field_name: str = "file", accept: str 
     - Calls ``response.raise_for_status()`` when ``raise_on_error`` is ``True``.
     """
     with multipart_file(file_path, field_name=field_name) as files:
-        return put(url, files=files, accept=accept, auth_headers=auth_headers, raise_on_error=raise_on_error)
+        return put(url, params=params, files=files, accept=accept, auth_headers=auth_headers,
+                   raise_on_error=raise_on_error)
 
 
 def set_timeout(timeout: float) -> None:

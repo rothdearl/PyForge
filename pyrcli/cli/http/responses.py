@@ -6,10 +6,10 @@ from pyrcli.cli import ErrorReporter
 from .types import JsonType
 
 
-def parse_json_body(response: requests.Response, *, allowed_types: tuple[type[JsonType], ...] = (dict, list),
-                    on_error: ErrorReporter) -> JsonType | None:
+def decode_json_body(response: requests.Response, *, allowed_types: tuple[type[JsonType], ...] = (dict, list),
+                     on_error: ErrorReporter) -> JsonType | None:
     """
-    Return the decoded JSON body from ``response``.
+    Return the decoded JSON body of ``response``.
 
     - Invokes ``on_error(message)`` and returns ``None`` if:
 
@@ -29,4 +29,4 @@ def parse_json_body(response: requests.Response, *, allowed_types: tuple[type[Js
     return json_value
 
 
-__all__ = ("parse_json_body",)
+__all__ = ("decode_json_body",)

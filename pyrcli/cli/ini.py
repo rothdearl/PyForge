@@ -1,4 +1,4 @@
-"""Utilities for reading and querying INI configuration files."""
+"""Utilities for loading and querying a shared INI configuration instance."""
 
 import configparser
 import json

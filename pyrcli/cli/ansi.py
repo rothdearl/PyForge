@@ -8,8 +8,10 @@ _CSI: Final[str] = "\x1b["
 #: Reset all text attributes and colors.
 RESET: Final[str] = f"{_CSI}0m"
 
-#: 256-color palettes (SGR codes 38;5;0–255 and 48;5;0–255).
+#: ANSI SGR background colors for the 256-color palette (0–255).
 BACKGROUND_COLORS_256: Final[tuple[str, ...]] = tuple(f"{_CSI}48;5;{code}m" for code in range(256))
+
+#: ANSI SGR foreground colors for the 256-color palette (0–255).
 FOREGROUND_COLORS_256: Final[tuple[str, ...]] = tuple(f"{_CSI}38;5;{code}m" for code in range(256))
 
 

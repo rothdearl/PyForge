@@ -8,7 +8,7 @@ from .client import (
     put_file,
     set_timeout,
 )
-from .responses import parse_json_body
+from .responses import decode_json_body
 from .types import (
     JsonArray,
     JsonObject,
@@ -29,8 +29,8 @@ __all__ = (
     "put_file",
     "set_timeout",
 
-    # response
-    "parse_json_body",
+    # responses
+    "decode_json_body",
 
     # upload
     "multipart_file",
