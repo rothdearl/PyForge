@@ -7,7 +7,6 @@ from typing import Callable, Final
 import requests
 
 from .types import JsonArray, JsonObject, KeyValuePairs, MultipartFiles, QueryParameters
-from .upload import multipart_file
 
 
 class _HTTPMethod(StrEnum):
@@ -158,22 +157,6 @@ def put(url: str, *, params: QueryParameters | None = None, data: JsonArray | Js
                             raise_on_error=raise_on_error)
 
 
-def put_file(url: str, *, params: QueryParameters | None = None, file_path: str, field_name: str = "file",
-             accept: str = "application/json", auth_headers: KeyValuePairs | None = None,
-             raise_on_error: bool = False) -> requests.Response:
-    """
-    Upload a file using a multipart/form-data PUT request and return the response.
-
-    - Uses ``field_name`` as the multipart/form-data field name (default: ``"file"``).
-    - Uses ``accept`` as the ``Accept`` header value (default: ``"application/json"``).
-    - Merges ``auth_headers`` into the request headers when provided.
-    - Calls ``response.raise_for_status()`` when ``raise_on_error`` is ``True``.
-    """
-    with multipart_file(file_path, field_name=field_name) as files:
-        return put(url, params=params, files=files, accept=accept, auth_headers=auth_headers,
-                   raise_on_error=raise_on_error)
-
-
 def set_timeout(timeout: float) -> None:
     """Set the module-wide HTTP request timeout in seconds for subsequent requests; ignored if ``timeout`` is non-positive."""
     if timeout <= 0:
@@ -188,6 +171,5 @@ __all__ = (
     "get",
     "post",
     "put",
-    "put_file",
     "set_timeout",
 )

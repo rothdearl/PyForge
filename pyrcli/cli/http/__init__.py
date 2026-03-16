@@ -5,7 +5,6 @@ from .client import (
     get,
     post,
     put,
-    put_file,
     set_timeout,
 )
 from .responses import decode_json_body
@@ -26,7 +25,6 @@ __all__ = (
     "get",
     "post",
     "put",
-    "put_file",
     "set_timeout",
 
     # responses
