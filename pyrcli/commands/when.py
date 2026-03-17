@@ -8,7 +8,7 @@ from typing import Final, NamedTuple, NoReturn, override
 from pyrcli.cli import CLIProgram, render
 from pyrcli.cli.platform import IS_POSIX
 
-# Default format for printing the date and time.
+# %-d and %-I remove leading zeros; not supported on Windows.
 _DEFAULT_DATETIME_FORMAT: Final[str] = "%a %b %-d %-I:%M%p" if IS_POSIX else "%a %b %d %I:%M%p"
 
 
@@ -76,6 +76,7 @@ class When(CLIProgram):
     @staticmethod
     def get_quarter_column_bounds_for_month(month: int) -> _CalendarQuarterColumnBounds:
         """Return the character column bounds for ``month`` within a three-month quarter row."""
+        # Column bounds are fixed by calendar.formatyear with w=2, c=6.
         bounds_by_index = (
             _CalendarQuarterColumnBounds(0, 20),
             _CalendarQuarterColumnBounds(26, 46),
