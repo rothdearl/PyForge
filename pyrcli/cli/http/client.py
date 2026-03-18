@@ -62,7 +62,7 @@ def _execute_request(*, method: _HTTPMethod, url: str, params: QueryParameters |
                      data: JsonArray | JsonObject | str | None = None, files: MultipartFiles | None = None,
                      headers: KeyValuePairs, raise_on_error: bool) -> requests.Response:
     """
-    Send the HTTP request and return the response.
+    Send an HTTP request and return the response.
 
     - Dispatches to the corresponding ``requests`` function for ``method``.
     - Uses the module-wide request timeout (configurable via ``set_timeout``).
@@ -80,7 +80,7 @@ def _execute_request(*, method: _HTTPMethod, url: str, params: QueryParameters |
 
 def _serialize_json_body(*, data: JsonArray | JsonObject | None, files: MultipartFiles | None,
                          enabled: bool) -> JsonArray | JsonObject | str | None:
-    """Serialize ``data`` to JSON when ``enabled`` and no files are provided."""
+    """Return ``data`` as a JSON-encoded string when enabled and no files are provided."""
     if files is None and data is not None and enabled:
         return json.dumps(data)
 

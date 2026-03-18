@@ -17,7 +17,7 @@ from .types import (
     MultipartFiles,
     QueryParameters,
 )
-from .upload import multipart_file
+from .upload import open_multipart_file
 
 __all__ = (
     # client
@@ -30,9 +30,6 @@ __all__ = (
     # responses
     "decode_json_body",
 
-    # upload
-    "multipart_file",
-
     # types
     "JsonArray",
     "JsonObject",
@@ -41,4 +38,7 @@ __all__ = (
     "KeyValuePairs",
     "MultipartFiles",
     "QueryParameters",
+
+    # upload
+    "open_multipart_file",
 )
