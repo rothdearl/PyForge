@@ -58,7 +58,7 @@ class _ProgressIndicator(ABC):
 
     @final
     def finalize(self) -> None:
-        """Finalize the indicator (idempotent) and emit any configured final output."""
+        """Finalize the indicator and emit any configured final output; safe to call multiple times."""
         if self._finished:
             return
 

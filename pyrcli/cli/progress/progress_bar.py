@@ -113,7 +113,7 @@ class ProgressBar(_ProgressIndicator):
         )
 
     def advance(self, step: int = 1, *, message: ProgressMessage = None) -> None:
-        """Increment progress by ``step`` units and redraw the bar."""
+        """Advance progress by ``step`` units and redraw the bar."""
         self.update(self._completed + step, message=message)
 
     def complete(self) -> None:

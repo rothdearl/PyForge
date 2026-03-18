@@ -2,7 +2,7 @@
 
 from typing import Literal
 
-#: Message rendered alongside a progress indicator, or ``None`` for no message.
+#: Message rendered alongside an indicator, or ``None`` for no message.
 type ProgressMessage = str | None
 
 #: Position of the message relative to the indicator.

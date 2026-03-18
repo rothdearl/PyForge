@@ -30,7 +30,7 @@ def _visible_width(text: str) -> int:
     """
     Return the visible width of ``text``, excluding ANSI CSI escape sequences.
 
-    - Does not account for Unicode double-width characters.
+    - Does not account for double-width Unicode characters.
     """
     return len(_strip_ansi(text))
 
@@ -68,7 +68,7 @@ class _LineWriter:
         self._last_visible_width = 0
 
     def write(self, text: str) -> None:
-        """Overwrite the current terminal line with ``text`` (without a trailing newline)."""
+        """Overwrite the current terminal line with ``text`` without adding a newline."""
         if not self.enabled:
             return
 

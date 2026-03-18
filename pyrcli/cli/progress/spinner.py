@@ -19,7 +19,7 @@ class Spinner(_ProgressIndicator):
     - Cycles through configured glyphs on each call to ``advance``.
     - Clears the rendered frame on finalization.
     - Writes a final message followed by a newline when a message is provided, even when the indicator is not visible.
-    - Treats empty messages as no message.
+    - Treats ``None`` and empty strings as no message.
 
     Attributes:
         frames: Spinner glyph sequence cycled on each call to ``advance``.
