@@ -208,7 +208,7 @@ class Dupe(TextProgram):
 
     def should_include_key(self, key: str) -> bool:
         """Return ``True`` if ``key`` should participate in grouping."""
-        return not self.args.ignore_blank or key.strip()
+        return not self.args.ignore_blank or bool(key.strip())
 
     def should_print_all_group_lines(self) -> bool:
         """Return ``True`` if all lines in a group should be printed."""

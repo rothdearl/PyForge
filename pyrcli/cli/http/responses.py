@@ -7,11 +7,11 @@ from .types import JsonType
 
 
 def decode_json_body(response: requests.Response, *, allowed_types: tuple[type[JsonType], ...] = (dict, list),
-                     on_error: ErrorReporter) -> JsonType | None:
+                     on_error: ErrorReporter) -> JsonType:
     """
     Return the decoded JSON body of ``response``.
 
-    - Invokes ``on_error(message)`` and returns ``None`` if:
+    - Invokes ``on_error(message)`` if:
 
       - The body cannot be decoded as JSON.
       - The decoded value is not one of ``allowed_types``.

@@ -59,7 +59,7 @@ def _build_request_headers(*, accept: str, data: JsonArray | JsonObject | None =
 
 
 def _execute_request(*, method: _HTTPMethod, url: str, params: QueryParameters | None = None,
-                     data: JsonArray | JsonObject | None = None, files: MultipartFiles | None = None,
+                     data: JsonArray | JsonObject | str | None = None, files: MultipartFiles | None = None,
                      headers: KeyValuePairs, raise_on_error: bool) -> requests.Response:
     """
     Send the HTTP request and return the response.

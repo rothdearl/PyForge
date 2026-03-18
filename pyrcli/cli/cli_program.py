@@ -30,7 +30,7 @@ class CLIProgram(ABC):
 
     def __init__(self, *, name: str, error_exit_code: int = _DEFAULT_ERROR_EXIT_CODE) -> None:
         """Initialize a new instance."""
-        self.args: argparse.Namespace | None = None
+        self.args: argparse.Namespace = argparse.Namespace()
         self.error_exit_code: Final[int] = error_exit_code
         self.has_errors: bool = False
         self.name: Final[str] = name
