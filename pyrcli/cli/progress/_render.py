@@ -72,11 +72,11 @@ class _LineWriter:
         if not self.enabled:
             return
 
-        # Pad with spaces to fully overwrite any leftover characters from the previous render.
+        # Pad to overwrite any leftover characters from the previous render.
         visible_width = _visible_width(text)
-        pad = max(0, self._last_visible_width - visible_width)
+        padding_width = max(0, self._last_visible_width - visible_width)
 
-        self.output_stream.write("\r" + text + (" " * pad))
+        self.output_stream.write("\r" + text + (" " * padding_width))
         self.output_stream.flush()
         self._last_visible_width = visible_width
 

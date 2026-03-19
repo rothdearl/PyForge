@@ -12,7 +12,7 @@ from .types import ProgressMessage, ProgressMessagePosition
 @dataclass(kw_only=True, slots=True)
 class _ProgressIndicator(ABC):
     """
-    Base class for terminal progress indicators that update a single terminal line and optionally emit a final message.
+    Base class for single-line terminal progress indicators.
 
     Attributes:
         output_stream: Text stream where indicator output is written.

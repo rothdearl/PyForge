@@ -7,7 +7,7 @@ from .types import JsonType
 
 
 def decode_json_body(response: requests.Response, *, allowed_types: tuple[type[JsonType], ...] = (dict, list),
-                     on_error: ErrorReporter) -> JsonType:
+                     on_error: ErrorReporter) -> JsonType | None:
     """
     Return the decoded JSON body of ``response``.
 
