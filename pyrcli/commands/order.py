@@ -23,6 +23,12 @@ _DIGIT_TOKEN_REGEX: Final[str] = r"(\d+)"
 # Matches one or more consecutive characters that are not Unicode word characters or whitespace.
 _NON_WORD_OR_WHITESPACE_REGEX: Final[str] = r"[^\w\s]+"
 
+#: Sort key segment where ``0`` indicates a parsed date and ``1`` indicates a text fallback.
+type _DateSortSegment = tuple[int, datetime.datetime | str]
+
+#: Sort key segment where ``0`` indicates a numeric value and ``1`` indicates a text fallback.
+type _NumericSortSegment = tuple[int, float | str]
+
 
 class _Styles:
     """Namespace for ANSI styling constants."""
@@ -82,7 +88,7 @@ class Order(TextProgram):
         if self.args.decimal_comma and not any((self.args.currency_sort, self.args.natural_sort)):
             self.print_error_and_exit("--decimal-comma requires --currency-sort or --natural-sort")
 
-    def generate_currency_sort_key(self, line: str) -> list[tuple[int, float | str]]:
+    def generate_currency_sort_key(self, line: str) -> list[_NumericSortSegment]:
         """
         Return a sort key that orders currency-like values numerically when possible.
 
@@ -90,7 +96,7 @@ class Order(TextProgram):
         - Each tuple is ``(0, number)`` when the text parses as a number.
         - Otherwise returns ``(1, text)`` to fall back to lexicographic comparison.
         """
-        segments = []
+        segments: list[_NumericSortSegment] = []
 
         for field in self.get_sort_fields(line, filter_empty_fields=True):
             negative = "-" in field or ("(" in field and ")" in field)
@@ -103,7 +109,7 @@ class Order(TextProgram):
 
         return segments
 
-    def generate_date_sort_key(self, line: str) -> list[tuple[int, datetime.datetime | str]]:
+    def generate_date_sort_key(self, line: str) -> list[_DateSortSegment]:
         """
         Return a sort key that orders date-like values chronologically when possible.
 
@@ -111,7 +117,7 @@ class Order(TextProgram):
         - Each tuple is ``(0, date)`` when the text parses as a date.
         - Otherwise returns ``(1, text)`` to fall back to lexicographic comparison.
         """
-        segments = []
+        segments: list[_DateSortSegment] = []
 
         for field in self.get_sort_fields(line, filter_empty_fields=True):
             try:
@@ -135,7 +141,7 @@ class Order(TextProgram):
 
         return sort_fields
 
-    def generate_natural_sort_key(self, line: str) -> list[tuple[int, float | str]]:
+    def generate_natural_sort_key(self, line: str) -> list[_NumericSortSegment]:
         """
         Return a sort key that orders text lexicographically and numbers numerically when possible.
 
@@ -143,7 +149,7 @@ class Order(TextProgram):
         - Each tuple is ``(0, number)`` when the text parses as a number.
         - Otherwise returns ``(1, text)`` to fall back to lexicographic comparison.
         """
-        segments = []
+        segments: list[_NumericSortSegment] = []
 
         for field in self.get_sort_fields(line, filter_empty_fields=True):
             try:

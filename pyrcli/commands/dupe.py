@@ -9,6 +9,9 @@ from pyrcli.cli import TextProgram, text
 from pyrcli.cli.ansi import ForegroundColors, RESET
 from pyrcli.cli.io import InputFile
 
+#: Lines sharing the same comparison key.
+type _LineGroups = list[str]
+
 
 class _Styles:
     """Namespace for ANSI styling constants."""
@@ -95,9 +98,9 @@ class Dupe(TextProgram):
 
         return compare_key
 
-    def group_adjacent_matching_lines(self, lines: Iterable[str]) -> list[list[str]]:
+    def group_adjacent_matching_lines(self, lines: Iterable[str]) -> list[_LineGroups]:
         """Return groups of adjacent lines that share the same comparison key, preserving input order."""
-        groups = []
+        groups: list[_LineGroups] = []
         previous_key = None
 
         for line in text.iter_normalized_lines(lines):
@@ -123,9 +126,9 @@ class Dupe(TextProgram):
 
         self.print_line_groups(line_groups)
 
-    def group_lines_by_key(self, lines: Iterable[str]) -> dict[str, list[str]]:
+    def group_lines_by_key(self, lines: Iterable[str]) -> dict[str, _LineGroups]:
         """Return a mapping from comparison keys to grouped lines."""
-        group_map = {}
+        group_map: dict[str, _LineGroups] = {}
 
         for line in text.iter_normalized_lines(lines):
             key = self.get_compare_key(line)

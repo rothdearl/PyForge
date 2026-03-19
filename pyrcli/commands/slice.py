@@ -76,7 +76,7 @@ class Slice(TextProgram):
         provided_options = {
             "--field-pattern": self.args.field_pattern is not None,
             "--field-separator": self.args.field_separator is not None,
-            "--literal-quotes": self.args.literal_quotes
+            "--literal-quotes": bool(self.args.literal_quotes)
         }
         allowed = allowed_option_by_mode[self.args.mode]
         mismatched = [name for name, is_set in provided_options.items() if is_set and name != allowed]

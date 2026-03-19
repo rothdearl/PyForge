@@ -5,17 +5,20 @@ from collections.abc import Collection
 
 from .ansi import RESET, TextAttributes
 
+#: Start and end character position pair representing a match range.
+type _MatchRange = tuple[int, int]
 
-def _collect_merged_match_ranges(text: str, *, patterns: Collection[re.Pattern[str]]) -> list[tuple[int, int]]:
+
+def _collect_merged_match_ranges(text: str, *, patterns: Collection[re.Pattern[str]]) -> list[_MatchRange]:
     """Return merged non-overlapping match ranges for all patterns within ``text``."""
-    ranges = []
+    ranges: list[_MatchRange] = []
 
     for pattern in patterns:
         for match in pattern.finditer(text):
             ranges.append((match.start(), match.end()))
 
     # Merge overlapping ranges to prevent nested ANSI codes from corrupting the output.
-    merged = []
+    merged: list[_MatchRange] = []
 
     for start, end in sorted(ranges):
         if merged and start <= merged[-1][1]:
