@@ -29,6 +29,15 @@ _REQUEST_DISPATCH: Final[dict[_HTTPMethod, Callable[..., requests.Response]]] = 
 _request_timeout: float = 15.0
 
 
+def _build_request_body(*, data: JsonArray | JsonObject | None, files: MultipartFiles | None,
+                        enabled: bool) -> JsonArray | JsonObject | str | None:
+    """Return ``data`` as a JSON-encoded string when ``enabled`` and no files are provided."""
+    if files is None and data is not None and enabled:
+        return json.dumps(data)
+
+    return data
+
+
 def _build_request_headers(*, accept: str, data: JsonArray | JsonObject | None = None,
                            files: MultipartFiles | None = None, serialize_to_json: bool = True,
                            auth_headers: KeyValuePairs | None = None) -> dict[str, str]:
@@ -58,9 +67,9 @@ def _build_request_headers(*, accept: str, data: JsonArray | JsonObject | None =
     return headers
 
 
-def _execute_request(*, method: _HTTPMethod, url: str, params: QueryParameters | None = None,
-                     data: JsonArray | JsonObject | str | None = None, files: MultipartFiles | None = None,
-                     headers: KeyValuePairs, raise_on_error: bool) -> requests.Response:
+def _send_request(*, method: _HTTPMethod, url: str, params: QueryParameters | None = None,
+                  data: JsonArray | JsonObject | str | None = None, files: MultipartFiles | None = None,
+                  headers: KeyValuePairs, raise_on_error: bool) -> requests.Response:
     """
     Send an HTTP request and return the response.
 
@@ -78,15 +87,6 @@ def _execute_request(*, method: _HTTPMethod, url: str, params: QueryParameters |
     return response
 
 
-def _serialize_json_body(*, data: JsonArray | JsonObject | None, files: MultipartFiles | None,
-                         enabled: bool) -> JsonArray | JsonObject | str | None:
-    """Return ``data`` as a JSON-encoded string when enabled and no files are provided."""
-    if files is None and data is not None and enabled:
-        return json.dumps(data)
-
-    return data
-
-
 def delete(url: str, *, params: QueryParameters | None = None, accept: str = "application/json",
            auth_headers: KeyValuePairs | None = None, raise_on_error: bool = False) -> requests.Response:
     """
@@ -98,8 +98,8 @@ def delete(url: str, *, params: QueryParameters | None = None, accept: str = "ap
     """
     headers = _build_request_headers(accept=accept, auth_headers=auth_headers)
 
-    return _execute_request(method=_HTTPMethod.DELETE, url=url, params=params, headers=headers,
-                            raise_on_error=raise_on_error)
+    return _send_request(method=_HTTPMethod.DELETE, url=url, params=params, headers=headers,
+                         raise_on_error=raise_on_error)
 
 
 def get(url: str, *, params: QueryParameters | None = None, accept: str = "application/json",
@@ -113,8 +113,7 @@ def get(url: str, *, params: QueryParameters | None = None, accept: str = "appli
     """
     headers = _build_request_headers(accept=accept, auth_headers=auth_headers)
 
-    return _execute_request(method=_HTTPMethod.GET, url=url, params=params, headers=headers,
-                            raise_on_error=raise_on_error)
+    return _send_request(method=_HTTPMethod.GET, url=url, params=params, headers=headers, raise_on_error=raise_on_error)
 
 
 def post(url: str, *, params: QueryParameters | None = None, data: JsonArray | JsonObject | None = None,
@@ -131,10 +130,10 @@ def post(url: str, *, params: QueryParameters | None = None, data: JsonArray | J
     """
     headers = _build_request_headers(accept=accept, data=data, files=files, serialize_to_json=serialize_to_json,
                                      auth_headers=auth_headers)
-    payload = _serialize_json_body(data=data, files=files, enabled=serialize_to_json)
+    payload = _build_request_body(data=data, files=files, enabled=serialize_to_json)
 
-    return _execute_request(method=_HTTPMethod.POST, url=url, params=params, data=payload, files=files, headers=headers,
-                            raise_on_error=raise_on_error)
+    return _send_request(method=_HTTPMethod.POST, url=url, params=params, data=payload, files=files, headers=headers,
+                         raise_on_error=raise_on_error)
 
 
 def put(url: str, *, params: QueryParameters | None = None, data: JsonArray | JsonObject | None = None,
@@ -151,10 +150,10 @@ def put(url: str, *, params: QueryParameters | None = None, data: JsonArray | Js
     """
     headers = _build_request_headers(accept=accept, data=data, files=files, serialize_to_json=serialize_to_json,
                                      auth_headers=auth_headers)
-    payload = _serialize_json_body(data=data, files=files, enabled=serialize_to_json)
+    payload = _build_request_body(data=data, files=files, enabled=serialize_to_json)
 
-    return _execute_request(method=_HTTPMethod.PUT, url=url, params=params, data=payload, files=files, headers=headers,
-                            raise_on_error=raise_on_error)
+    return _send_request(method=_HTTPMethod.PUT, url=url, params=params, data=payload, files=files, headers=headers,
+                         raise_on_error=raise_on_error)
 
 
 def set_timeout(timeout: float) -> None:
