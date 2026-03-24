@@ -90,7 +90,11 @@ class CLIProgram(ABC):
 
     @final
     def print_error_and_exit(self, error_message: str) -> None:
-        """Print ``error_message`` to standard error and exit immediately."""
+        """
+        Print ``error_message`` to standard error and exit immediately.
+
+        - Does not set the error flag.
+        """
         print(f"{self.name}: error: {error_message}", file=sys.stderr)
         raise SystemExit(self.error_exit_code)
 

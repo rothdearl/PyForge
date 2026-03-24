@@ -12,6 +12,7 @@ def compile_or_pattern(patterns: Iterable[re.Pattern[str]], *, ignore_case: bool
 
     - Wraps each pattern as a non-capturing group before combining.
     - Case-insensitive when ``ignore_case`` is ``True``.
+    - Raises ``re.error`` if combining the validated patterns produces an invalid composite expression.
     """
     flags = re.IGNORECASE if ignore_case else re.NOFLAG
     sources = [f"(?:{pattern.pattern})" for pattern in patterns]
@@ -28,7 +29,7 @@ def compile_patterns(patterns: Iterable[str], *, ignore_case: bool, on_error: Er
     - Calls ``on_error(message)`` for invalid patterns and continues.
     - Returns only successfully compiled patterns.
     """
-    compiled = []
+    compiled: list[re.Pattern[str]] = []
     flags = re.IGNORECASE if ignore_case else re.NOFLAG
 
     for pattern in patterns:

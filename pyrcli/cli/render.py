@@ -53,9 +53,8 @@ def style_matches(text: str, *, patterns: Collection[re.Pattern[str]], ansi_styl
     """
     Return ``text`` with pattern matches styled using ``ansi_style``.
 
-    - Styles only matched ranges.
-    - Resets styling after each match.
     - Overlapping matches are merged before styling.
+    - Resets styling after each match.
     """
     # Avoid allocation and iteration for the empty case.
     if not patterns:

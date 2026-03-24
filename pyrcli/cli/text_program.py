@@ -57,7 +57,13 @@ class TextProgram(CLIProgram, ABC):
         return processed_files
 
     def _process_redirected_input(self) -> list[str]:
-        """Process redirected input and return the names of successfully processed files."""
+        """
+        Process redirected input and return the names of successfully processed files.
+
+        - When ``--stdin-files`` is set, reads file names from standard input and processes each as a file.
+        - Otherwise, invokes ``handle_redirected_input()`` with standard input.
+        - Processes any additional file arguments after handling standard input.
+        """
         processed_files = []
 
         if self.args.stdin_files:
@@ -124,7 +130,7 @@ class TextProgram(CLIProgram, ABC):
         """
         super().initialize_runtime_state()
 
-        self.encoding = "iso-8859-1" if getattr(self.args, "latin1", False) else "utf-8"
+        self.encoding = "iso-8859-1" if self.args.latin1 else "utf-8"
 
     def post_execute(self, processed_files: Sequence[str]) -> None:
         """Run post-execution logic after all input processing completes."""

@@ -14,7 +14,7 @@ _NO_MATCHES_EXIT_CODE: Final[int] = 1
 
 
 class _Match(NamedTuple):
-    """Information about a matched line."""
+    """Line number and text content of a matched line."""
     line_number: int
     line: str
 
@@ -80,7 +80,7 @@ class Scan(TextProgram):
         - Applies match styling when color is enabled and ``--invert-match`` is not set.
         - Raises ``SystemExit(0)`` immediately when ``--quiet`` is set and a match is found.
         """
-        matches = []
+        matches: list[_Match] = []
 
         for line_number, line in enumerate(text.iter_normalized_lines(lines), start=1):
             if patterns.matches_all_patterns(line, compiled_patterns=self.patterns) != self.args.invert_match:
@@ -99,7 +99,7 @@ class Scan(TextProgram):
 
     @override
     def exit_if_errors(self) -> None:
-        """Raise ``SystemExit(1)`` if a match was not found."""
+        """Raise ``SystemExit`` if a match was not found."""
         super().exit_if_errors()
 
         if not self.match_found:

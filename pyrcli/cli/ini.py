@@ -2,17 +2,17 @@
 
 import configparser
 import json
-from typing import Any, Final
+from typing import Final
 
 from .types import ErrorReporter
 
 # Shared configuration instance reflecting the most recently loaded file.
 _config: configparser.ConfigParser = configparser.ConfigParser()
 
-# String values that are considered falsy.
+# Recognized string representations of false, consistent with configparser.getboolean().
 _falsy_values: Final[frozenset[str]] = frozenset({"0", "false", "off", "n", "no"})
 
-# String values that are considered truthy.
+# Recognized string representations of true, consistent with configparser.getboolean().
 _truthy_values: Final[frozenset[str]] = frozenset({"1", "on", "true", "y", "yes"})
 
 
@@ -74,7 +74,7 @@ def get_list_option(section: str, option: str, *, separator: str = ",") -> list[
     return [entry for part in value.split(separator) if (entry := part.strip())]
 
 
-def get_mapping_option(section: str, option: str) -> dict[str, Any] | None:
+def get_mapping_option(section: str, option: str) -> dict[str, object] | None:
     """
     Return the option as a dictionary.
 

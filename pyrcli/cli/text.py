@@ -28,14 +28,15 @@ def iter_normalized_lines(lines: Iterable[str]) -> Iterator[str]:
 
 def split_csv(text: str, *, separator: str = " ", on_error: ErrorReporter) -> list[str]:
     """
-    Split ``text`` using CSV parsing rules.
+    Split ``text`` using CSV parsing rules when ``separator`` is a valid single-character CSV delimiter.
 
-    - Calls ``on_error(message)`` and falls back to whitespace splitting if the separator is invalid.
-    - Falls back to ``str.split(separator)`` if the separator cannot be used as a CSV delimiter.
+    - Falls back to ``str.split(separator)`` when ``separator`` is not eligible for CSV parsing.
+    - Falls back to ``str.split()`` and calls ``on_error(message)`` when ``separator`` is invalid.
     """
     try:
         decoded_separator = decode_python_escape_sequences(separator)
 
+        # Empty decoded separator is invalid; raise to unify with UnicodeDecodeError and csv.Error handling.
         if not decoded_separator:
             raise ValueError()
 

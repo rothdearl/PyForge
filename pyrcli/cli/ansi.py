@@ -59,7 +59,7 @@ class ForegroundColors:
 
 @final
 class TextAttributes:
-    """ANSI SGR text attributes."""
+    """ANSI SGR text formatting attributes."""
     BOLD: Final[str] = f"{_CSI}1m"
     DIM: Final[str] = f"{_CSI}2m"
     ITALIC: Final[str] = f"{_CSI}3m"

@@ -12,7 +12,7 @@ from .types import ErrorReporter
 
 class InputFile(NamedTuple):
     """
-    Information about a file currently being read.
+    File name and open text stream for a readable file.
 
     Attributes:
         file_name: File name supplied by the caller.
