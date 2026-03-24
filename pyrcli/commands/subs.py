@@ -76,10 +76,13 @@ class Subs(TextProgram):
 
     @override
     def initialize_runtime_state(self) -> None:
-        """Initialize runtime state derived from parsed options."""
+        """
+        Initialize runtime state derived from parsed options.
+
+        - Compiles ``--find`` patterns into a single OR-pattern.
+        """
         super().initialize_runtime_state()
 
-        # Compile search patterns into a single OR-pattern.
         if compiled := patterns.compile_patterns(self.args.find, ignore_case=self.args.ignore_case,
                                                  on_error=self.print_error_and_exit):
             self.pattern = patterns.compile_or_pattern(compiled, ignore_case=self.args.ignore_case)
@@ -95,8 +98,7 @@ class Subs(TextProgram):
             for line in text.iter_normalized_lines(lines):
                 yield self.pattern.sub(repl=self.args.replace, string=line, count=self.args.max_replacements)
         else:
-            for line in text.iter_normalized_lines(lines):
-                yield line
+            yield from text.iter_normalized_lines(lines)
 
     @override
     def normalize_options(self) -> None:
@@ -126,7 +128,7 @@ class Subs(TextProgram):
                                on_error=self.print_error)
         else:
             self.print_file_header(input_file.file_name)
-            self.print_replaced_lines(input_file.text_stream.readlines())
+            self.print_replaced_lines(input_file.text_stream)
 
     @override
     def validate_option_ranges(self) -> None:

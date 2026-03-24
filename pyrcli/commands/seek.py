@@ -93,7 +93,7 @@ class Seek(CLIProgram):
 
     @override
     def exit_if_errors(self) -> None:
-        """Raise ``SystemExit(1)`` if a match was not found."""
+        """Raise ``SystemExit`` if a match was not found."""
         super().exit_if_errors()
 
         if not self.match_found:
@@ -101,10 +101,13 @@ class Seek(CLIProgram):
 
     @override
     def initialize_runtime_state(self) -> None:
-        """Initialize runtime state derived from parsed options."""
+        """
+        Initialize runtime state derived from parsed options.
+
+        - Compiles ``--name`` and ``--path`` patterns when provided.
+        """
         super().initialize_runtime_state()
 
-        # Compile patterns for file matching.
         if self.args.name:
             self.name_patterns = patterns.compile_patterns(self.args.name, ignore_case=self.args.ignore_case,
                                                            on_error=self.print_error_and_exit)
@@ -135,9 +138,9 @@ class Seek(CLIProgram):
 
             # --mtime options are mutually exclusive; only one may be provided.
             if self.args.mtime_days or self.args.mtime_hours or self.args.mtime_mins:
-                if self.args.mtime_days:
+                if self.args.mtime_days is not None:
                     threshold_seconds = self.args.mtime_days * 86400
-                elif self.args.mtime_hours:
+                elif self.args.mtime_hours is not None:
                     threshold_seconds = self.args.mtime_hours * 3600
                 else:
                     threshold_seconds = self.args.mtime_mins * 60
@@ -152,10 +155,11 @@ class Seek(CLIProgram):
             self.print_error(f"{path!r}: permission denied")
             return False
 
+        # All active filters passed.
         return True
 
     def path_matches_patterns(self, name_part: str, path_part: str) -> bool:
-        """Return ``True`` if the ``name_part`` and ``path_part`` match all provided pattern groups."""
+        """Return ``True`` if the ``name_part`` and ``path_part`` match all provided name and path patterns."""
         if not patterns.matches_all_patterns(name_part, compiled_patterns=self.name_patterns):
             return False
 
