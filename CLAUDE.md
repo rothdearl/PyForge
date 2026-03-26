@@ -332,3 +332,5 @@ if __name__ == "__main__":
 - `CLIProgram` assigns it to `self.version` — use `self.version` in command implementations.
 - Never hardcode or import `__version__` in individual command modules.
 - `--version` flag: `version=f"%(prog)s {self.version}"`.
+- Changes accumulate in `CHANGELOG.md` under `## Unreleased` and are promoted to a versioned section when a release is
+  cut.

@@ -20,3 +20,4 @@ versioned section when a release is cut.
 - `skills`: Updated the `changelog` skill to append entries to CHANGELOG.md under the Unreleased section.
 - `skills`: Updated the `release-docs` skill to read from CHANGELOG.md and reset the Unreleased section after a release.
 - `docs`: Added CHANGELOG.md with the unreleased accumulation structure, seeded with entries from the current cycle.
+- `CLAUDE.md`: Added a note to the Versioning section documenting the CHANGELOG.md unreleased accumulation workflow.
