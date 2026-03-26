@@ -3,7 +3,7 @@
 import argparse
 import sys
 import time
-from collections.abc import Iterable, Sequence
+from collections.abc import Collection, Iterable, Sequence
 from threading import Thread
 from typing import Final, NoReturn, override
 
@@ -127,7 +127,7 @@ class Track(TextProgram):
         if self.should_print_file_header():
             print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
 
-    def print_lines(self, lines: Sequence[str]) -> None:
+    def print_lines(self, lines: Collection[str]) -> None:
         """Print lines to standard output."""
         # Negative --lines: skip the first N lines.
         if self.args.lines < 0:

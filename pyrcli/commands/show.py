@@ -2,7 +2,7 @@
 
 import argparse
 import sys
-from collections.abc import Iterable, Sequence
+from collections.abc import Collection, Iterable
 from typing import Final, NoReturn, override
 
 from pyrcli.cli import TextProgram, text
@@ -61,7 +61,7 @@ class Show(TextProgram):
 
         return parser
 
-    def get_line_range(self, lines: Sequence[str]) -> tuple[int, int]:
+    def get_line_range(self, lines: Collection[str]) -> tuple[int, int]:
         """
         Return the start and end line numbers for printing.
 
@@ -97,7 +97,7 @@ class Show(TextProgram):
         if self.should_print_file_header():
             print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
 
-    def print_lines(self, lines: Sequence[str]) -> None:
+    def print_lines(self, lines: Collection[str]) -> None:
         """Print lines to standard output, applying numbering and whitespace rendering."""
         line_start, line_end = self.get_line_range(lines)
         padding = len(str(line_end))

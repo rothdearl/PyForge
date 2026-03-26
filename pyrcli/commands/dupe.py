@@ -2,7 +2,7 @@
 
 import argparse
 import sys
-from collections.abc import Iterable, Sequence
+from collections.abc import Collection, Iterable
 from typing import Final, NoReturn, override
 
 from pyrcli.cli import TextProgram, text
@@ -163,7 +163,7 @@ class Dupe(TextProgram):
         if self.should_print_file_header():
             print(self.format_file_header(file_name, file_name_style=_Styles.FILE_NAME, colon_style=_Styles.COLON))
 
-    def print_line_groups(self, line_groups: Iterable[Sequence[str]]) -> None:
+    def print_line_groups(self, line_groups: Iterable[Collection[str]]) -> None:
         """Print line groups as duplicates, unique lines, or grouped output."""
         printed_line_count = 0
 
