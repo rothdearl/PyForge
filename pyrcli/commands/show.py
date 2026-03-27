@@ -75,7 +75,7 @@ class Show(TextProgram):
     @override
     def handle_redirected_input(self, input_lines: Iterable[str]) -> None:
         """Process input received from redirected standard input."""
-        lines = list(input_lines)  # Materialize to a list; print_lines requires a Sequence to compute line range.
+        lines = list(input_lines)  # Materialize to a list; required by print_lines to compute line range.
 
         self.print_file_header(file_name="")
         self.print_lines(lines)
@@ -83,7 +83,7 @@ class Show(TextProgram):
     @override
     def handle_terminal_input(self) -> None:
         """Read and process input interactively from the terminal."""
-        self.print_lines(sys.stdin.readlines())  # print_lines requires a Sequence to compute line range.
+        self.print_lines(sys.stdin.readlines())  # print_lines requires a list to compute line range.
 
     @override
     def normalize_options(self) -> None:
