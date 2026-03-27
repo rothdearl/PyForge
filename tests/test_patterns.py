@@ -45,8 +45,8 @@ class TestCompilePatterns(unittest.TestCase):
         compiled = patterns.compile_patterns(test_patterns, ignore_case=False, on_error=errors.append)
 
         self.assertEqual(len(compiled), 2)
-        self.assertTrue(compiled[0].search("abc"))
-        self.assertTrue(compiled[1].search("def"))
+        self.assertTrue(any(p.search("abc") for p in compiled))
+        self.assertTrue(any(p.search("def") for p in compiled))
         self.assertEqual(errors, [])
 
     def test_empty_patterns_are_skipped(self):
@@ -69,7 +69,7 @@ class TestCompilePatterns(unittest.TestCase):
         errors = []
         compiled = patterns.compile_patterns(test_patterns, ignore_case=True, on_error=errors.append)
 
-        self.assertTrue(compiled[0].search("ABC"))
+        self.assertTrue(next(iter(compiled)).search("ABC"))
 
     def test_ignore_case_disabled(self):
         test_patterns = ["abc"]
@@ -80,7 +80,7 @@ class TestCompilePatterns(unittest.TestCase):
             on_error=errors.append,
         )
 
-        self.assertFalse(compiled[0].search("ABC"))
+        self.assertFalse(next(iter(compiled)).search("ABC"))
 
     def test_all_invalid_patterns(self):
         test_patterns = ["[", "("]
