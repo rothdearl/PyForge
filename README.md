@@ -140,7 +140,7 @@ Provides HTTP request helpers for DELETE, GET, POST, and PUT operations, built o
 parsing and validating HTTP response bodies.
 
 - ``client`` — HTTP request helpers with configurable timeout and optional status validation.
-- ``responses`` — Utilities for parsing and validating HTTP response bodies.
+- ``json`` — Utilities for reading and validating JSON response bodies.
 - ``upload`` — Multipart file upload helpers.
 
 ### `pyrcli.cli.progress`
@@ -376,7 +376,7 @@ Prepare internal state derived from options.
 
 Handled automatically in `CLIProgram`:
 
-- `print_color` — disabled when stdout is not connected to a terminal
+- `use_color` — disabled when stdout is not connected to a terminal
 
 Handled additionally in `TextProgram`:
 
