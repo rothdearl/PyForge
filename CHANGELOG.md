@@ -7,6 +7,10 @@ versioned section when a release is cut.
 
 ## Unreleased
 
+---
+
+## 1.4.10 — 2026-03-27
+
 - `skills`: Added the `audit-docs` skill for verifying that README.md and CLAUDE.md are consistent with the project.
 - `skills`: Added the `docstring` skill for reviewing and generating docstrings in isolation.
 - `skills`: Added the `evaluate` skill for evaluating modules against the project's coding standards.
