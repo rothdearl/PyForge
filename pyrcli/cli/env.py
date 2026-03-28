@@ -1,4 +1,4 @@
-"""Utilities for reading environment variables. """
+"""Utilities for reading environment variables."""
 
 import os
 
@@ -6,7 +6,11 @@ from .types import ErrorReporter
 
 
 def get_env_str(key: str, default: str | None = None, *, trim: bool = True) -> str | None:
-    """Return the value of environment variable ``key``, or ``default`` if unset or empty after trimming."""
+    """Return the value of environment variable ``key``, or ``default`` if unset or empty.
+
+    - Removes surrounding whitespace from the value when ``trim`` is enabled.
+    - Treats a whitespace-only value as empty when ``trim`` is enabled.
+    """
     value = os.getenv(key)
 
     if value is None:
@@ -19,10 +23,9 @@ def get_env_str(key: str, default: str | None = None, *, trim: bool = True) -> s
 
 
 def get_required_env_str(key: str, *, trim: bool = True, on_error: ErrorReporter) -> str | None:
-    """
-    Return the value of environment variable ``key``, or ``None`` if missing or empty.
+    """Return the value of environment variable ``key``, or ``None`` if missing or empty.
 
-    - Removes surrounding whitespace from the value when ``trim`` is enabled.
+    - Treats a whitespace-only value as missing when ``trim`` is enabled.
     - Calls ``on_error(message)`` and returns ``None`` when ``key`` is unset or empty.
     """
     value = get_env_str(key, trim=trim)
