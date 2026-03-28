@@ -14,8 +14,7 @@ from .terminal import stdin_is_redirected
 
 
 class TextProgram(CLIProgram, ABC):
-    """
-    Base class for command-line programs that process text files and streams.
+    """Base class for command-line programs that process text files and streams.
 
     Attributes:
         encoding: Encoding used when reading text files (default: ``"utf-8"``).
@@ -40,8 +39,7 @@ class TextProgram(CLIProgram, ABC):
             self.handle_redirected_input(input_lines)
 
     def _process_input_files(self, file_names: Iterable[str]) -> list[str]:
-        """
-        Process files and return the names of those successfully processed.
+        """Process files and return the names of those successfully processed.
 
         - Skips unreadable files and reports errors via print_error().
         """
@@ -57,8 +55,7 @@ class TextProgram(CLIProgram, ABC):
         return processed_files
 
     def _process_redirected_input(self) -> list[str]:
-        """
-        Process redirected input and return the names of successfully processed files.
+        """Process redirected input and return the names of successfully processed files.
 
         - When ``--stdin-files`` is set, reads file names from standard input and processes each as a file.
         - Otherwise, invokes ``handle_redirected_input()`` with standard input.
@@ -79,8 +76,7 @@ class TextProgram(CLIProgram, ABC):
 
     @final
     def execute(self) -> None:
-        """
-        Route input using the configured handlers.
+        """Route input using the configured handlers.
 
         - Handles redirected standard input, file arguments, or terminal input.
         - Always calls ``post_execute()`` after processing completes.
@@ -123,8 +119,7 @@ class TextProgram(CLIProgram, ABC):
 
     @override
     def initialize_runtime_state(self) -> None:
-        """
-        Initialize runtime state derived from parsed options.
+        """Initialize runtime state derived from parsed options.
 
         - Sets encoding to ``iso-8859-1`` when ``--latin1`` is set.
         """

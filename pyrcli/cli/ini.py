@@ -17,8 +17,7 @@ _truthy_values: Final[frozenset[str]] = frozenset({"1", "on", "true", "y", "yes"
 
 
 def get_bool_option(section: str, option: str) -> bool | None:
-    """
-    Return the option as a boolean.
+    """Return the option as a boolean.
 
     - Treats a missing or empty option as ``"false"``.
     - Returns ``True`` or ``False`` for recognized truthy or falsy values.
@@ -36,8 +35,7 @@ def get_bool_option(section: str, option: str) -> bool | None:
 
 
 def get_float_option(section: str, option: str) -> float | None:
-    """
-    Return the option as a float.
+    """Return the option as a float.
 
     - Treats a missing or empty option as ``"0.0"``.
     - Returns the parsed float when conversion succeeds.
@@ -52,8 +50,7 @@ def get_float_option(section: str, option: str) -> float | None:
 
 
 def get_int_option(section: str, option: str) -> int | None:
-    """
-    Return the option as an integer.
+    """Return the option as an integer.
 
     - Treats a missing or empty option as ``"0"``.
     - Returns the parsed integer when conversion succeeds.
@@ -75,8 +72,7 @@ def get_list_option(section: str, option: str, *, separator: str = ",") -> list[
 
 
 def get_mapping_option(section: str, option: str) -> dict[str, object] | None:
-    """
-    Return the option as a dictionary.
+    """Return the option as a dictionary.
 
     - Treats a missing or empty option as ``"{}"``.
     - Returns the decoded dictionary when decoding succeeds.
@@ -113,8 +109,7 @@ def is_empty() -> bool:
 
 
 def load_config(path: str, *, clear_previous: bool = True, on_error: ErrorReporter) -> bool:
-    """
-    Load options from a configuration file and return ``True`` on success.
+    """Load options from a configuration file and return ``True`` on success.
 
     - Clears previously loaded options before reading when ``clear_previous`` is ``True``.
     - Calls ``on_error(message)`` if the file cannot be read or parsed.

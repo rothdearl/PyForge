@@ -16,8 +16,7 @@ _SIGPIPE_EXIT_CODE: Final[int] = 141
 
 
 class CLIProgram(ABC):
-    """
-    Base class for command-line programs with a standard parse–configure–execute lifecycle.
+    """Base class for command-line programs with a standard parse–configure–execute lifecycle.
 
     Attributes:
         args: Parsed command-line arguments.
@@ -68,8 +67,7 @@ class CLIProgram(ABC):
             raise SystemExit(self.error_exit_code)
 
     def initialize_runtime_state(self) -> None:
-        """
-        Initialize runtime state derived from parsed options.
+        """Initialize runtime state derived from parsed options.
 
         - Enables ``use_color`` only when ``--color=on`` and standard output is attached to a terminal.
         """
@@ -90,8 +88,7 @@ class CLIProgram(ABC):
 
     @final
     def print_error_and_exit(self, error_message: str) -> None:
-        """
-        Print ``error_message`` to standard error and exit immediately.
+        """Print ``error_message`` to standard error and exit immediately.
 
         - Does not set the error flag.
         """
@@ -100,8 +97,7 @@ class CLIProgram(ABC):
 
     @final
     def run(self) -> int:
-        """
-        Run the program lifecycle and normalize process termination.
+        """Run the program lifecycle and normalize process termination.
 
         - Configures platform-specific terminal and signal handling.
         - Parses arguments and prepares runtime state by running the option lifecycle hooks:

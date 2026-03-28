@@ -7,6 +7,10 @@ versioned section when a release is cut.
 
 ## Unreleased
 
+- `env`: Improved docstrings for `get_env_str` and `get_required_env_str` to more accurately describe trim behavior.
+- `docs`: Updated multi-line docstrings across `pyrcli.cli` and `pyrcli.cli.progress` to conform to PEP 257 — summary line now starts on the same line as the opening `"""`.
+- `client`: Removed redundant `accept` default documentation from `delete`, `get`, `post`, and `put`; simplified `set_timeout` docstring.
+
 ---
 
 ## 1.4.10 — 2026-03-27

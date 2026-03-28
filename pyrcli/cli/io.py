@@ -11,8 +11,7 @@ from .types import ErrorReporter
 
 
 class InputFile(NamedTuple):
-    """
-    File name and open text stream for a readable file.
+    """File name and open text stream for a readable file.
 
     Attributes:
         file_name: File name supplied by the caller.
@@ -23,8 +22,7 @@ class InputFile(NamedTuple):
 
 
 def iter_descendant_paths(root: Path, max_depth: int = sys.maxsize) -> Iterator[Path]:
-    """
-    Yield descendant paths under ``root`` whose depth is less than or equal to ``max_depth``.
+    """Yield descendant paths under ``root`` whose depth is less than or equal to ``max_depth``.
 
     - Depth is measured relative to ``root`` (depth 1 is an immediate child).
     - The ``root`` path itself is not yielded.
@@ -54,8 +52,7 @@ def iter_stdin_lines() -> Iterator[str]:
 
 
 def open_text_files(file_names: Iterable[str], *, encoding: str, on_error: ErrorReporter) -> Iterator[InputFile]:
-    """
-    Yield an ``InputFile`` for each readable file in ``file_names``.
+    """Yield an ``InputFile`` for each readable file in ``file_names``.
 
     - Each yielded ``InputFile.text_stream`` remains valid only until the next iteration.
     - Calls ``on_error(message)`` for file-related errors; processing continues with the next file.
@@ -80,8 +77,7 @@ def open_text_files(file_names: Iterable[str], *, encoding: str, on_error: Error
 
 
 def write_text_file(file_name: str, *, lines: Iterable[str], encoding: str, on_error: ErrorReporter) -> None:
-    """
-    Write lines to a file, ensuring each ends with exactly one trailing newline.
+    """Write lines to a file, ensuring each ends with exactly one trailing newline.
 
     - Calls ``on_error(message)`` for file-related errors.
     - Reports: unknown encoding, permission denied, encoding failures, and other OS write errors.

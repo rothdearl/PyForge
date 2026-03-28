@@ -27,8 +27,7 @@ def iter_normalized_lines(lines: Iterable[str]) -> Iterator[str]:
 
 
 def split_csv(text: str, *, separator: str = " ", on_error: ErrorReporter) -> list[str]:
-    """
-    Split ``text`` using CSV parsing rules when ``separator`` is a valid single-character CSV delimiter.
+    """Split ``text`` using CSV parsing rules when ``separator`` is a valid single-character CSV delimiter.
 
     - Falls back to ``str.split(separator)`` when ``separator`` is not eligible for CSV parsing.
     - Falls back to ``str.split()`` and calls ``on_error(message)`` when ``separator`` is invalid.
@@ -51,8 +50,7 @@ def split_csv(text: str, *, separator: str = " ", on_error: ErrorReporter) -> li
 
 
 def split_pattern(text: str, *, pattern: str, ignore_case: bool = False, on_error: ErrorReporter) -> list[str]:
-    """
-    Split ``text`` using a regular expression.
+    """Split ``text`` using a regular expression.
 
     - Falls back to ``str.split()`` if the pattern is invalid.
     """

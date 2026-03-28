@@ -11,8 +11,7 @@ from .types import ProgressMessage
 @final
 @dataclass(kw_only=True, slots=True)
 class ProgressBarLayout:
-    """
-    Configuration for rendering a terminal progress bar.
+    """Configuration for rendering a terminal progress bar.
 
     Attributes:
         width: Number of character cells used for the bar body.
@@ -46,8 +45,7 @@ class ProgressBarLayout:
 @final
 @dataclass(kw_only=True, slots=True)
 class ProgressBar(_ProgressIndicator):
-    """
-    Terminal progress bar for tracking work with a known total.
+    """Terminal progress bar for tracking work with a known total.
 
     - Updates the rendered bar when progress advances.
     - Clamps progress to ``[0, total]`` when ``total > 0``; otherwise renders as permanently 100%.
@@ -121,8 +119,7 @@ class ProgressBar(_ProgressIndicator):
         self.update(self.total)
 
     def start(self, *, message: ProgressMessage = None) -> None:
-        """
-        Render the initial 0% progress state with an optional message.
+        """Render the initial 0% progress state with an optional message.
 
         - Does not advance the progress value.
         """

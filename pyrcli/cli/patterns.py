@@ -7,8 +7,7 @@ from .types import CompiledPatterns, ErrorReporter
 
 
 def compile_or_pattern(patterns: Iterable[re.Pattern[str]], *, ignore_case: bool) -> re.Pattern[str]:
-    """
-    Return a compiled pattern that matches any of the provided patterns.
+    """Return a compiled pattern that matches any of the provided patterns.
 
     - Wraps each pattern as a non-capturing group before combining.
     - Case-insensitive when ``ignore_case`` is ``True``.
@@ -21,8 +20,7 @@ def compile_or_pattern(patterns: Iterable[re.Pattern[str]], *, ignore_case: bool
 
 
 def compile_patterns(patterns: Iterable[str], *, ignore_case: bool, on_error: ErrorReporter) -> CompiledPatterns:
-    """
-    Return compiled patterns for AND-style matching.
+    """Return compiled patterns for AND-style matching.
 
     - Skips empty pattern strings.
     - Case-insensitive when ``ignore_case`` is ``True``.

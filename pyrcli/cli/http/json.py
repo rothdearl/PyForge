@@ -8,8 +8,7 @@ from .types import JsonValue
 
 def get_body(response: requests.Response, *, allowed_types: tuple[type[JsonValue], ...] = (dict, list),
              on_error: ErrorReporter) -> JsonValue | None:
-    """
-    Return the decoded JSON body of ``response``.
+    """Return the decoded JSON body of ``response``.
 
     - Calls ``on_error(message)`` and returns ``None`` if decoding fails or the value is not one of ``allowed_types``.
     """

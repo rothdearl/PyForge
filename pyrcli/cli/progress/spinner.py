@@ -13,8 +13,7 @@ _DEFAULT_SPINNER_FRAMES: Final[tuple[str, ...]] = ("-", "\\", "|", "/")
 @final
 @dataclass(kw_only=True, slots=True)
 class Spinner(_ProgressIndicator):
-    """
-    Terminal spinner for tracking work with an unknown total.
+    """Terminal spinner for tracking work with an unknown total.
 
     - Cycles through configured glyphs on each call to ``advance``.
     - Clears the rendered frame on finalization.

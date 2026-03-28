@@ -50,8 +50,7 @@ def style(text: str, *, ansi_style: str) -> str:
 
 
 def style_matches(text: str, *, patterns: Collection[re.Pattern[str]], ansi_style: str) -> str:
-    """
-    Return ``text`` with pattern matches styled using ``ansi_style``.
+    """Return ``text`` with pattern matches styled using ``ansi_style``.
 
     - Overlapping matches are merged before styling.
     - Resets styling after each match.

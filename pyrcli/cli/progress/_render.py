@@ -27,8 +27,7 @@ def _strip_ansi(text: str) -> str:
 
 
 def _visible_width(text: str) -> int:
-    """
-    Return the visible width of ``text``, excluding ANSI CSI escape sequences.
+    """Return the visible width of ``text``, excluding ANSI CSI escape sequences.
 
     - Does not account for double-width Unicode characters.
     """
@@ -37,8 +36,7 @@ def _visible_width(text: str) -> int:
 
 @dataclass(kw_only=True, slots=True)
 class _LineWriter:
-    """
-    Stateful helper for rewriting a single terminal line in place.
+    """Stateful helper for rewriting a single terminal line in place.
 
     Attributes:
         output_stream: Text stream where output is written.

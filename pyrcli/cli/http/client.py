@@ -41,8 +41,7 @@ def _build_request_body(*, data: JsonArray | JsonObject | None, files: Multipart
 def _build_request_headers(*, accept: str, data: JsonArray | JsonObject | None = None,
                            files: MultipartFiles | None = None, serialize_to_json: bool = True,
                            auth_headers: KeyValuePairs | None = None) -> dict[str, str]:
-    """
-    Return HTTP request headers.
+    """Return HTTP request headers.
 
     - Sets ``Accept`` to ``accept``.
     - Sets ``Content-Type`` based on ``data``, ``files``, and ``serialize_to_json``:
@@ -70,8 +69,7 @@ def _build_request_headers(*, accept: str, data: JsonArray | JsonObject | None =
 def _send_request(*, method: _HTTPMethod, url: str, params: QueryParameters | None = None,
                   data: JsonArray | JsonObject | str | None = None, files: MultipartFiles | None = None,
                   headers: KeyValuePairs, raise_on_error: bool) -> requests.Response:
-    """
-    Send an HTTP request and return the response.
+    """Send an HTTP request and return the response.
 
     - Dispatches to the corresponding ``requests`` function for ``method``.
     - Uses the module-wide request timeout (configurable via ``set_timeout``).
@@ -89,10 +87,8 @@ def _send_request(*, method: _HTTPMethod, url: str, params: QueryParameters | No
 
 def delete(url: str, *, params: QueryParameters | None = None, accept: str = "application/json",
            auth_headers: KeyValuePairs | None = None, raise_on_error: bool = False) -> requests.Response:
-    """
-    Send a DELETE request and return the response.
+    """Send a DELETE request and return the response.
 
-    - Uses ``accept`` as the ``Accept`` header value (default: ``"application/json"``).
     - Merges ``auth_headers`` into the request headers when provided.
     - Calls ``response.raise_for_status()`` when ``raise_on_error`` is ``True``.
     """
@@ -104,10 +100,8 @@ def delete(url: str, *, params: QueryParameters | None = None, accept: str = "ap
 
 def get(url: str, *, params: QueryParameters | None = None, accept: str = "application/json",
         auth_headers: KeyValuePairs | None = None, raise_on_error: bool = False) -> requests.Response:
-    """
-    Send a GET request and return the response.
+    """Send a GET request and return the response.
 
-    - Uses ``accept`` as the ``Accept`` header value (default: ``"application/json"``).
     - Merges ``auth_headers`` into the request headers when provided.
     - Calls ``response.raise_for_status()`` when ``raise_on_error`` is ``True``.
     """
@@ -119,12 +113,10 @@ def get(url: str, *, params: QueryParameters | None = None, accept: str = "appli
 def post(url: str, *, params: QueryParameters | None = None, data: JsonArray | JsonObject | None = None,
          files: MultipartFiles | None = None, serialize_to_json: bool = True, accept: str = "application/json",
          auth_headers: KeyValuePairs | None = None, raise_on_error: bool = False) -> requests.Response:
-    """
-    Send a POST request and return the response.
+    """Send a POST request and return the response.
 
     - Serializes ``data`` to JSON and sets JSON headers when ``serialize_to_json`` is ``True`` and ``files`` is not provided.
     - When ``files`` is provided, sends a multipart/form-data request and lets ``requests`` set the content type.
-    - Uses ``accept`` as the ``Accept`` header value (default: ``"application/json"``).
     - Merges ``auth_headers`` into the request headers when provided.
     - Calls ``response.raise_for_status()`` when ``raise_on_error`` is ``True``.
     """
@@ -139,12 +131,10 @@ def post(url: str, *, params: QueryParameters | None = None, data: JsonArray | J
 def put(url: str, *, params: QueryParameters | None = None, data: JsonArray | JsonObject | None = None,
         files: MultipartFiles | None = None, serialize_to_json: bool = True, accept: str = "application/json",
         auth_headers: KeyValuePairs | None = None, raise_on_error: bool = False) -> requests.Response:
-    """
-    Send a PUT request and return the response.
+    """Send a PUT request and return the response.
 
     - Serializes ``data`` to JSON and sets JSON headers when ``serialize_to_json`` is ``True`` and ``files`` is not provided.
     - When ``files`` is provided, sends a multipart/form-data request and lets ``requests`` set the content type.
-    - Uses ``accept`` as the ``Accept`` header value (default: ``"application/json"``).
     - Merges ``auth_headers`` into the request headers when provided.
     - Calls ``response.raise_for_status()`` when ``raise_on_error`` is ``True``.
     """
@@ -157,7 +147,7 @@ def put(url: str, *, params: QueryParameters | None = None, data: JsonArray | Js
 
 
 def set_timeout(timeout: float) -> None:
-    """Set the module-wide HTTP request timeout in seconds for subsequent requests; ignored if ``timeout`` is non-positive."""
+    """Set the module-wide HTTP request timeout in seconds; ignored if ``timeout`` is non-positive."""
     if timeout <= 0:
         return
 
